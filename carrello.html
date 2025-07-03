@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Tuo Carrello - Incantesimi di Zucchero di Giuly</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: var(--pink);">Incantesimi di Zucchero</a>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Le Nostre Box</a>
+            <a href="chisiamo.html">Chi Sono</a>
+            <a href="contatti.html">Contatti</a>
+            <div class="cart-widget">
+                <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
+                <div class="cart-preview">
+                    <div id="cart-preview-content" class="cart-preview-content"></div>
+                    <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart-page-section">
+            <h2>Il Tuo Carrello Magico</h2>
+            
+            <!-- QUESTA È LA RIGA CHIAVE CON L'ID CORRETTO -->
+            <div id="cart-container" class="cart-container">
+                <!-- I prodotti verranno disegnati qui... -->
+            </div>
+            
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>© 2025 Incantesimi di Zucchero di Giuly. Tutti i diritti riservati.</p>
+        <p>P.IVA 12345678901</p>
+    </footer>
+
+    <div id="notification" class="notification"></div> 
+    <script src="script.js"></script>
+
+</body>
+</html>

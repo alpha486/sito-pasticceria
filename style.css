@@ -1,0 +1,649 @@
+:root {
+    --pink: #E8B4B8;
+    --dark-purple: #4D4C7D;
+    --light-bg: #F9F3F3;
+    --text-color: #363636;
+    --heading-font: 'Dancing Script', cursive;
+    --body-font: 'Poppins', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--body-font); color: var(--text-color); background-color: #fff; }
+h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
+
+.main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background-color: #ffffff; border-bottom: 1px solid var(--light-bg); position: sticky; top: 0; z-index: 100; }
+.logo { font-family: var(--heading-font); font-size: 2rem; color: var(--pink); }
+.main-nav a { margin-left: 20px; text-decoration: none; color: var(--text-color); font-weight: 500; }
+
+.hero-section { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/sfondo.jpg'); height: 90vh; background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; text-align: center; color: white; padding: 2rem; }
+.hero-content h1 { font-size: 4rem; color: white; margin-bottom: 1rem; }
+.hero-content p {
+    font-size: 1.1rem; /* Leggermente più piccolo per stare meglio nel box */
+    line-height: 1.7;  /* Aumenta la spaziatura tra le righe per leggibilità */
+    text-align: center;/* Lo centra! */
+    margin-bottom: 0;  /* Rimuoviamo il margine che non serve più */
+}
+
+.cta-button { background-color: var(--pink); color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; font-weight: 500; transition: background-color 0.3s; }
+.cta-button:hover { background-color: #d79fa3; }
+
+.boxes-section, .about-section, .custom-work-section { padding: 5rem 5%; text-align: center; }
+.boxes-section h2, .about-section h2, .custom-work-section h2 { font-size: 3rem; margin-bottom: 3rem; }
+
+.boxes-section { background-color: var(--light-bg); }
+.boxes-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 2rem; }
+.box-card { background-color: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; max-width: 350px; text-align: center; }
+.box-card img { width: 100%; height: 250px; object-fit: cover; }
+.box-card h3 { font-size: 2rem; margin: 1.5rem 0; }
+.box-card p { padding: 0 1.5rem 1.5rem 1.5rem; line-height: 1.6; }
+
+.secondary-button { display: inline-block; border: 2px solid var(--pink); color: var(--pink); padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 500; margin-bottom: 1.5rem; transition: all 0.3s; }
+.secondary-button:hover { background-color: var(--pink); color: white; }
+
+.about-section { display: flex; align-items: center; gap: 3rem; text-align: left; }
+.about-image img { width: 100%; max-width: 350px; border-radius: 10px; }
+
+.custom-work-section { background-color: var(--dark-purple); color: white; }
+.custom-work-section h2 { color: white; }
+.custom-work-section p { margin-bottom: 2rem; font-size: 1.1rem; }
+
+.main-footer { padding: 2rem 5%; text-align: center; background-color: var(--light-bg); border-top: 1px solid #ddd; color: #888; }
+/* Stili per la pagina shop */
+.shop-page-section { padding: 5rem 5%; text-align: center; }
+.shop-page-section h2 { font-size: 3rem; margin-bottom: 1rem; }
+.shop-intro { max-width: 600px; margin: 0 auto 3rem auto; }
+
+/* Stile per il prezzo */
+.price {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--dark-purple);
+    margin: 1rem 0;
+}
+
+/* Stile per il bottone di acquisto nella card */
+.box-card .cta-button {
+    display: inline-block;
+    width: calc(100% - 3rem); /* Occupa tutta la larghezza meno il padding */
+    margin-bottom: 1.5rem;
+}
+/* Stili per la pagina "Chi Siamo" */
+/* ========================================= */
+/* === STILE ROBUSTO PAGINA CHI SIAMO    === */
+/* ========================================= */
+
+.about-page-section {
+    display: flex;
+    align-items: center; /* Allinea verticalmente immagine e testo */
+    gap: 3rem;           /* Spazio tra immagine e testo */
+    padding: 5rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.about-image {
+    /* LA REGOLA CHIAVE PER DESKTOP:
+       Dice all'immagine di non crescere, non rimpicciolirsi,
+       e di occupare il 40% dello spazio disponibile. */
+    flex: 0 0 40%;
+    max-width: 400px; /* Un limite massimo per evitare che diventi gigante */
+}
+
+.about-image img {
+    width: 100%;       /* L'immagine riempie il suo contenitore */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.about-text {
+    /* Il testo occuperà in modo flessibile lo spazio rimanente */
+    flex: 1;
+}
+
+/* --- Media Query per sistemare la visualizzazione MOBILE --- */
+@media (max-width: 768px) {
+    .about-page-section {
+        /* Su mobile, impiliamo gli elementi in verticale */
+        flex-direction: column;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .about-image {
+        /* Su mobile, l'immagine non è più flessibile ma un blocco normale */
+        flex-basis: auto; 
+        width: 100%;
+        max-width: 350px; /* Limita la larghezza dell'immagine su mobile */
+        margin: 0 auto 2rem auto; /* Centra l'immagine e le dà spazio sotto */
+    }
+
+    .about-text {
+        /* Centriamo il testo per una migliore leggibilità su mobile */
+        text-align: center;
+    }
+}
+
+/* Stile per la casella di testo segnaposto */
+.placeholder-box {
+    border: 2px dashed var(--pink); /* Bordo tratteggiato rosa */
+    border-radius: 10px;
+    padding: 2rem;
+    background-color: #fff9fa; /* Sfondo rosa chiarissimo */
+}
+.placeholder-box p {
+    font-style: italic;
+    color: #777;
+    margin: 0;
+}
+.placeholder-box .placeholder-instruction {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--dark-purple);
+    text-align: center;
+    margin-top: 1rem;
+}
+/* Stili per la pagina Contatti */
+.contact-page-section {
+    padding: 5rem 5%;
+    background-color: var(--light-bg);
+}
+.contact-page-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.contact-intro {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 4rem auto;
+}
+
+.contact-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.contact-form { flex: 2; min-width: 300px; }
+.contact-info { flex: 1; min-width: 300px; }
+
+.contact-form form { display: flex; flex-direction: column; }
+.contact-form label { margin-bottom: 0.5rem; font-weight: 500; }
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    font-family: var(--body-font);
+    font-size: 1rem;
+}
+.contact-form button { border: none; cursor: pointer; width: 100%; }
+
+.contact-info h3 { font-size: 2rem; margin-bottom: 1.5rem; }
+.contact-info p { line-height: 1.7; margin-bottom: 1.5rem; }
+.contact-info a { color: var(--pink); text-decoration: none; }
+.contact-info a:hover { text-decoration: underline; }
+.social-links a {
+    margin-right: 1rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+/* ========================================= */
+/* === ADATTAMENTI PER SCHERMI MOBILI    === */
+/* ========================================= */
+/* 
+  Queste regole verranno lette dal browser solo se la larghezza 
+  dello schermo è di 768px o inferiore (tablet in verticale e telefoni).
+*/
+
+@media (max-width: 768px) {
+
+    /* --- STILI GENERALI --- */
+    
+    /* Riduciamo i titoli principali e di sezione per adattarli allo schermo piccolo */
+    h1 { font-size: 2.8rem; }
+    h2 { font-size: 2.5rem; }
+
+    /* Riduciamo le spaziature verticali (padding) per rendere le sezioni più compatte */
+    .boxes-section, .about-section, .custom-work-section,
+    .shop-page-section, .about-page-section, .contact-page-section {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    /* --- HEADER E NAVIGAZIONE --- */
+
+    .main-header {
+        flex-direction: column; /* Mette il logo sopra la navigazione */
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .logo {
+        margin-bottom: 1rem; /* Aggiunge spazio tra logo e menu */
+    }
+
+    .main-nav a {
+        margin: 0 10px; /* Riduce lo spazio tra le voci di menu */
+        font-size: 0.9rem; /* Rimpicciolisce un po' il testo del menu */
+    }
+    
+    /* --- HOMEPAGE: SEZIONE EROE --- */
+    
+    .hero-content h1 {
+        font-size: 2.5rem; /* Titolo principale più piccolo */
+    }
+
+    /* --- SEZIONI CON LAYOUT AFFIANCATO --- */
+
+    /* 
+      Questa è la magia principale: tutte le sezioni che prima erano affiancate
+      ora si impileranno una sopra l'altra.
+    */
+    .about-section,
+    .about-page-section,
+    .contact-container {
+        flex-direction: column;
+    }
+    
+    .about-text, .about-image {
+        text-align: center; /* Centriamo il testo quando è impilato */
+    }
+
+    /* --- PAGINA CONTATTI --- */
+
+    .contact-container {
+        padding: 2rem 1.5rem; /* Riduciamo il padding interno del box contatti */
+    }
+
+    /* Rendiamo il form più compatto */
+    .contact-form button {
+        padding: 12px 20px;
+    }
+}
+/* Stile per il link del carrello */
+.cart-link {
+    font-weight: bold;
+    color: var(--dark-purple);
+    background-color: var(--light-bg);
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--pink);
+}
+/* ========================================= */
+/* === STILE PER LA NOTIFICA PERSONALIZZATA === */
+/* ========================================= */
+.notification {
+    position: fixed; /* Rimane fisso anche se scorri la pagina */
+    top: 20px;       /* Distanza dall'alto */
+    left: 50%;
+    transform: translateX(-50%); /* Trucco per centrarlo perfettamente */
+    background-color: var(--dark-purple);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 1001; /* Sta sopra a tutto il resto */
+    
+    /* Per l'animazione */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -20px);
+}
+
+/* Classe che viene aggiunta da JavaScript per MOSTRARE la notifica */
+.notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+/* ========================================= */
+/* === STILE PER LA PAGINA CARRELLO      === */
+/* ========================================= */
+.cart-page-section {
+    padding: 5rem 5%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.cart-page-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--light-bg);
+}
+.cart-item-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.cart-item-details { flex-grow: 1; }
+.cart-item-details h3 { font-size: 1.5rem; }
+.cart-item-quantity { display: flex; align-items: center; gap: 0.5rem; }
+.quantity-btn {
+    background: none; border: 1px solid #ccc; width: 30px; height: 30px;
+    cursor: pointer; border-radius: 50%; font-size: 1.2rem;
+}
+.remove-item-btn {
+    color: var(--pink); background: none; border: none;
+    cursor: pointer; text-decoration: underline;
+}
+
+.cart-empty-message { text-align: center; font-size: 1.2rem; padding: 3rem 0; }
+/* ========================================= */
+/* === STILE PER ANTEPRIMA CARRELLO      === */
+/* ========================================= */
+
+/* Contenitore principale del widget */
+.cart-widget {
+    position: relative; /* Necessario per posizionare il menu a tendina */
+    display: inline-block;
+}
+
+/* Il menu a tendina */
+.cart-preview {
+    position: absolute;
+    top: 100%; /* Appare subito sotto l'icona del carrello */
+    right: 0;
+    width: 320px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    padding: 1rem;
+    z-index: 1002;
+    
+    /* Nascosto di default, con animazione */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+/* Regola per MOSTRARE il menu al passaggio del mouse */
+.cart-widget:hover .cart-preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.preview-button {
+    display: block; /* Occupa tutta la larghezza */
+    text-align: center;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* Stili per i singoli articoli nell'anteprima */
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+.preview-item-image img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.preview-item-details { flex-grow: 1; }
+.preview-item-details h4 { font-family: var(--body-font); font-size: 1rem; margin: 0; }
+.preview-item-details p { margin: 0; color: #777; }
+/* Stile per il nuovo box di testo nella sezione hero */
+.hero-text-box {
+    background-color: rgba(45, 44, 70, 0.5); /* Un colore viola/blu scuro semi-trasparente */
+    padding: 1.5rem 2rem;   /* Spaziatura interna per far respirare il testo */
+    border-radius: 10px;      /* Angoli arrotondati per un look morbido */
+    max-width: 750px;         /* Limita la larghezza massima del box */
+    margin: 2rem auto;        /* Spazio sopra/sotto e centratura orizzontale */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Ombra leggera per dare profondità */
+}
+/* ========================================= */
+/* === STILE PAGINA DETTAGLIO PRODOTTO   === */
+/* ========================================= */
+.product-detail-section {
+    padding: 4rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.product-detail-content {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+}
+.product-detail-image {
+    flex: 1; /* Occupa metà dello spazio */
+}
+.product-detail-image img {
+    width: 100%;
+    border-radius: 10px;
+}
+.product-detail-info {
+    flex: 1; /* Occupa l'altra metà */
+}
+.product-detail-info h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.product-detail-info .price {
+    font-size: 2rem;
+    color: var(--pink);
+    margin-bottom: 1.5rem;
+}
+.product-detail-info p {
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+.product-allergens-detail {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: var(--light-bg);
+    border-left: 4px solid var(--pink);
+}
+.product-allergens-detail strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Regola per rendere cliccabili le card nello shop */
+a.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.3s ease;
+}
+a.product-card-link:hover {
+    transform: translateY(-5px);
+}
+
+
+/* ========================================= */
+/* === STILE PAGINE DI SUCCESSO/ERRORE   === */
+/* ========================================= */
+.feedback-page-container {
+    max-width: 600px;
+    margin: 5rem auto; /* Spazio sopra/sotto e centratura orizzontale */
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+}
+
+.feedback-page-container h2 {
+    font-size: 2.5rem;
+    color: var(--dark-purple);
+    margin-bottom: 1.5rem;
+}
+
+.feedback-page-container p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem; /* Aumenta lo spazio prima del bottone */
+}
+
+/* Regola specifica per il bottone in queste pagine */
+.feedback-page-container .cta-button {
+    display: inline-block; /* Assicura che si comporti come un blocco per i margini */
+}
+/* ========================================= */
+/* === RESPONSIVE PER DETTAGLIO PRODOTTO === */
+/* ========================================= */
+@media (max-width: 768px) {
+
+    .product-detail-section {
+        /* Riduciamo lo spazio sopra e sotto su mobile */
+        padding: 2rem 5%;
+    }
+
+    .product-detail-content {
+        /* Questa è la regola più importante:
+           Fa in modo che immagine e testo si impilino in verticale */
+        flex-direction: column;
+        gap: 1.5rem; /* Riduciamo lo spazio tra immagine e testo */
+    }
+
+    .product-detail-info {
+        /* Centriamo tutto il testo per un look pulito su mobile */
+        text-align: center;
+    }
+
+    .product-detail-info h2 {
+        /* Riduciamo la dimensione del titolo su mobile */
+        font-size: 2.5rem;
+    }
+
+    .product-detail-info .price {
+        /* Riduciamo anche la dimensione del prezzo */
+        font-size: 1.8rem;
+    }
+
+    .product-allergens-detail {
+        /* Allineiamo a sinistra il testo degli allergeni anche se il resto è centrato */
+        text-align: left;
+    }
+
+}
+    /* ========================================= */
+    /* === FIX PER HERO SECTION SU MOBILE    === */
+    /* ========================================= */
+
+    .hero-section {
+        /* Rimuoviamo l'immagine di sfondo che non funziona su mobile */
+        background-image: none;
+        /* E la sostituiamo con un colore di sfondo pulito e coerente */
+        background-color: var(--light-bg);
+        
+        /* Adattiamo l'altezza e la spaziatura per mobile */
+        height: auto;
+        padding: 4rem 1.5rem;
+    }
+
+    /* Ora dobbiamo cambiare il colore del testo, che era bianco */
+    .hero-content h1 {
+        color: var(--dark-purple); /* Usa il viola scuro del brand */
+    }
+
+    /* Modifichiamo anche il box di testo */
+    .hero-text-box {
+        /* Sostituiamo lo sfondo trasparente con uno solido */
+        background-color: #ffffff;
+    }
+    
+    .hero-text-box p {
+        /* E rendiamo il testo al suo interno scuro e leggibile */
+        color: var(--text-color);
+    }
+    /* ========================================= */
+/* === STILE FINALE PER TOTALI CARRELLO  === */
+/* ========================================= */
+
+/* Questo è il contenitore principale per i totali e il bottone */
+.cart-totals {
+    max-width: 450px;     /* Imposta una larghezza massima per il blocco */
+    margin-left: auto;      /* LA REGOLA MAGICA: spinge il blocco tutto a destra */
+    margin-right: 0;      /* Assicura che sia allineato al bordo destro */
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+}
+
+/* Stile per ogni riga (es. "Subtotale: € 31.00") */
+.cart-totals-row {
+    display: flex;
+    justify-content: space-between; /* Spinge "Subtotale" a sinistra e il prezzo a destra */
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+}
+
+/* Stile specifico per la riga del totale finale */
+.cart-totals-row.grand-total {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--dark-purple);
+    border-top: 1px solid #ddd;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+/* Stile per il bottone di pagamento dentro questo blocco */
+.cart-totals .cta-button {
+    width: 100%;          /* Occupa tutta la larghezza del box dei totali */
+    text-align: center;
+    margin-top: 1.5rem;   /* Spazio tra i totali e il bottone */
+}
+
+/* --- Media Query per sistemare la visualizzazione MOBILE --- */
+@media (max-width: 768px) {
+    .cart-totals {
+        /* Su mobile, rimuoviamo l'allineamento a destra e la larghezza massima.
+           Ora occuperà tutto lo spazio disponibile. */
+        max-width: 100%;
+        margin-left: 0;
+    }
+}
+/* Stile per il testo della spedizione gratuita */
+.free-shipping-text {
+    color: #27ae60; /* Un bel colore verde speranza */
+    font-style: italic;
+    font-size: 1rem;
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+/* Stile per il banner della spedizione gratuita */
+.shipping-banner {
+    max-width: 800px;
+    margin: 0 auto 3rem auto; /* Spazio sotto e centratura */
+    padding: 1rem 1.5rem;
+    background-color: var(--dark-purple);
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.free-shipping-hint {
+    background-color: #e8f5e9; /* Verde molto chiaro */
+    color: #2e7d32; /* Verde scuro */
+    border-radius: 5px;
+    padding: 0.75rem;
+    font-weight: 500;
+}

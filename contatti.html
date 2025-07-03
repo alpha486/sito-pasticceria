@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatti - Incantesimi di Zucchero di Giuly</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header coerente con le altre pagine -->
+    <header class="main-header">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: var(--pink);">Incantesimi di Zucchero</a>
+        </div>
+        <!-- Esempio dall'header di una pagina qualsiasi -->
+<nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Le Nostre Box</a>
+    <a href="chisiamo.html">Chi Sono</a>
+    <a href="contatti.html">Contatti</a>
+    <!-- NUOVA RIGA DA AGGIUNGERE -->
+    <!-- Inizia il nuovo widget del carrello -->
+<div class="cart-widget">
+    <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
+    
+    <!-- Questo è il menu a tendina, inizialmente nascosto -->
+    <div class="cart-preview">
+        <div id="cart-preview-content" class="cart-preview-content">
+            <!-- Il contenuto dell'anteprima verrà inserito qui da JavaScript -->
+            <p class="cart-empty-message">Il tuo carrello è vuoto.</p>
+        </div>
+        <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
+    </div>
+</div>
+<!-- Finisce il nuovo widget del carrello -->  
+</nav>
+    </header>
+
+    <main>
+        <section class="contact-page-section">
+            <h2>Mettiamoci in Contatto</h2>
+            <p class="contact-intro">Hai una domanda, un'idea per una torta personalizzata o vuoi semplicemente salutarmi? Compila il modulo qui sotto o usa i miei contatti diretti. Sarò felice di risponderti!</p>
+            
+            <div class="contact-container">
+                
+                <!-- Colonna sinistra: Modulo di Contatto -->
+                <div class="contact-form">
+                    <form action="https://formspree.io/f/xwpbzvgl" method="POST">
+                        <label for="name">Il tuo Nome</label>
+                        <input type="text" id="name" name="name" required>
+                        
+                        <label for="email">La tua Email</label>
+                        <input type="email" id="email" name="email" required>
+                        
+                        <label for="message">Il tuo Messaggio</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Scrivi qui la tua richiesta..." required></textarea>
+                        
+                        <button type="submit" class="cta-button">Invia il tuo Messaggio</button>
+                    </form>
+                </div>
+                
+                <!-- Colonna destra: Informazioni di Contatto -->
+                <div class="contact-info">
+                    <h3>I Miei Recapiti</h3>
+                    <p><strong>Email:</strong><br> <a href="mailto:incantesimidizuccherodigiuly@gmail.com">incantesimidizuccherodigiuly@gmail.com</a></p>
+                    <p><strong>WhatsApp:</strong><br> <a href="https://wa.me/393667116421?text=Ciao%2C%20vorrei%20ricevere%20pi%C3%B9%20informazioni." target="_blank">Scrivimi direttamente su WhatsApp</a></p>
+                    <p><strong>Indirizzo:</strong><br> Piazzetta Valmalenco <br>Lazzate (MB), Italia</p>
+                    
+                    <h3>Seguimi sui Social</h3>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/incantesimidizuccherodigiuly/?hl=en" target="_blank">Instagram</a>
+                        <a href="https://www.facebook.com/incantesimidizuccherodiGiuly/" target="_blank">Facebook</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer finale -->
+    <footer class="main-footer">
+        <p>© 2025 Incantesimi di Zucchero di Giuly. Tutti i diritti riservati.</p>
+        <p>P.IVA 12345678901</p>
+    </footer>
+   <!-- ... footer ... -->
+
+    <!-- LA NUOVA RIGA DA AGGIUNGERE -->
+    <div id="notification" class="notification"></div> 
+
+    <script src="script.js"></script>
+
+</body>
+</html>
