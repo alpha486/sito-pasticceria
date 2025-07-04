@@ -77,12 +77,18 @@ exports.handler = async (event) => {
 
         // Chiedi a Stripe di creare la sessione di pagamento.
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card', 'paypal'],
-            line_items: lineItems,
-            mode: 'payment',
-            success_url: `${process.env.URL}/success.html`,
-            cancel_url: `${process.env.URL}/cancel.html`,
-        });
+    payment_method_types: ['card', 'paypal'],
+    line_items: lineItems,
+    mode: 'payment',
+    
+    // --- ECCO LE RIGHE NUOVE E IMPORTANTI ---
+    shipping_address_collection: {
+        allowed_countries: ['IT'], // Per ora, consentiamo solo spedizioni in Italia
+    },
+    
+    success_url: `${process.env.URL || 'http://localhost:8888'}/success.html`,
+    cancel_url: `${process.env.URL || 'http://localhost:8888'}/cancel.html`,
+});
 
         // Rispedisci al browser l'URL della pagina di pagamento.
         return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
