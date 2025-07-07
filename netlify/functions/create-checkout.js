@@ -2,7 +2,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Per massima sicurezza e coerenza, i dati dei prodotti sono definiti qui.
-// Questa è la "fonte della verità" per i prezzi e le taglie.
 const allProducts = [
   { "id": 1, "name": "Box Grande Crunch", "price": 33.00, "size": "grande" },
   { "id": 2, "name": "Box Grande Gnammy", "price": 33.00, "size": "grande" },
@@ -12,19 +11,16 @@ const allProducts = [
 
 /**
  * Funzione helper per calcolare il costo di spedizione in modo sicuro sul server.
- * Prende il carrello come input e restituisce il costo di spedizione.
  */
 const calculateShippingCost = (cart) => {
     const SHIPPING_FEE = 9.90;
     
-    // Calcoliamo la quantità totale di box e quante di esse sono "grandi"
     let totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
     let largeBoxQuantity = cart.filter(item => {
         const productInfo = allProducts.find(p => p.name === item.name);
         return productInfo && productInfo.size === 'grande';
     }).reduce((sum, item) => sum + item.quantity, 0);
     
-    // Applichiamo le regole di business per la spedizione gratuita
     if (largeBoxQuantity >= 2 || totalQuantity >= 3) {
         return 0; 
     }
@@ -35,25 +31,19 @@ const calculateShippingCost = (cart) => {
 
 /**
  * Funzione principale che Netlify eseguirà quando viene chiamata.
- * Crea una sessione di checkout su Stripe.
  */
 exports.handler = async (event) => {
     try {
-        // Controllo di sicurezza fondamentale: la chiave di Stripe deve esistere.
         if (!process.env.STRIPE_SECRET_KEY) {
             throw new Error("Variabile d'ambiente Stripe (STRIPE_SECRET_KEY) non configurata.");
         }
 
-        // Estraiamo solo il carrello dal corpo della richiesta.
-        // Abbiamo rimosso la logica del `discountCode` da qui.
         const { cart: cartItems } = JSON.parse(event.body);
         
-        // Controllo di validità dei dati ricevuti.
         if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
             return { statusCode: 400, body: JSON.stringify({ error: 'Richiesta non valida o carrello vuoto.' }) };
         }
 
-        // Costruisce la lista degli articoli (line_items) da passare a Stripe.
         const lineItems = cartItems.map(item => {
             const product = allProducts.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato nel catalogo server: ${item.name}`);
@@ -68,13 +58,12 @@ exports.handler = async (event) => {
                         name: productNameWithOptions,
                         description: productDescription,
                     },
-                    unit_amount: Math.round(product.price * 100), // Prezzo in centesimi.
+                    unit_amount: Math.round(product.price * 100),
                 },
                 quantity: item.quantity,
             };
         });
 
-        // Calcoliamo e aggiungiamo il costo di spedizione come un articolo separato.
         const shippingCost = calculateShippingCost(cartItems);
         if (shippingCost > 0) {
             lineItems.push({
@@ -90,19 +79,22 @@ exports.handler = async (event) => {
         // Prepariamo il payload (l'insieme dei dati) da inviare a Stripe.
         const sessionPayload = {
             payment_method_types: ['card', 'paypal'],
-            line_items: lineItems,
             mode: 'payment',
-            shipping_address_collection: { allowed_countries: ['IT'] },
-            allow_promotion_codes: true,
-            // Aggiungiamo il placeholder per l'email del cliente
-            customer_email: '{{customer_email}}',
-            // Spostiamo i metadati dentro un nuovo oggetto "payment_intent_data"
-            payment_intent_data: {
-                metadata: {
-                    cart: JSON.stringify(cartItems)
-                }
+            line_items: lineItems,
+            shipping_address_collection: {
+                allowed_countries: ['IT'],
             },
-            success_url: `${process.env.URL}/success.html`,
+            // Abilitiamo il campo per i codici promozionali sulla pagina di checkout di Stripe.
+            allow_promotion_codes: true,
+            
+            // Diciamo a Stripe che, dopo il pagamento, vogliamo recuperare l'oggetto Customer.
+            expand: ['customer'],
+
+            // Manteniamo i metadati per il webhook, sono sempre utili.
+            metadata: { 
+                cart: JSON.stringify(cartItems)
+            },
+            success_url: `${process.env.URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.URL}/cancel.html`,
         };
         
