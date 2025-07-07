@@ -3,10 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
-    let activeDiscount = null; // Tiene traccia dell'intero oggetto sconto
+    let config = { settimane_di_attesa: 0 };
+    let activeDiscount = null; // Tiene traccia dello sconto attivo
 
     // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
-    const saveCart = () => localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    const saveCart = () => {
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    };
     
     const updateCartIcon = () => {
         const cartCountElement = document.getElementById('cart-count');
@@ -31,23 +34,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCartPreview = () => {
         const cartPreviewContainer = document.getElementById('cart-preview-content');
         if (!cartPreviewContainer) return;
-        cartPreviewContainer.innerHTML = cart.length === 0 
-            ? '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>'
-            : cart.map(item => `
+
+        if (cart.length === 0) {
+            cartPreviewContainer.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
+            return;
+        }
+        
+        cartPreviewContainer.innerHTML = cart.map(item => `
             <div class="preview-item">
                 <div class="preview-item-image"><img src="${item.img}" alt="${item.name}"></div>
                 <div class="preview-item-details">
                     <h4>${item.name} ${item.option ? `(${item.option})` : ''}</h4>
                     <p>Quantità: ${item.quantity}</p>
                 </div>
-                <div class="preview-item-price"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
+                <div class="preview-item-price">
+                    <strong>€ ${(item.price * item.quantity).toFixed(2)}</strong>
+                </div>
             </div>
         `).join('');
     };
 
     const renderShopProducts = () => {
         const container = document.getElementById('product-list-container');
-        if (!container) return; 
+        if (!container) return;
         container.innerHTML = allProducts.map(p => `
             <a href="prodotto.html?id=${p.id}" class="product-card-link">
                 <div class="box-card">
@@ -63,19 +72,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
         if (!container || !allProducts.length) return;
+
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
         const product = allProducts.find(p => p.id === productId);
+
         if (!product) {
             container.innerHTML = '<p class="cart-empty-message">Prodotto non trovato. <a href="shop.html">Torna allo shop</a>.</p>';
             return;
         }
+
         document.title = `${product.name} - Incantesimi di Zucchero`;
+
         let optionsHTML = '';
-        if (product.options && product.options.choices) {
-            optionsHTML = `<div class="product-options"><label for="product-option-select">${product.options.label}</label><select id="product-option-select"><option value="">-- Scegli un'opzione --</option>${product.options.choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}</select></div>`;
+        if (product.options) {
+            optionsHTML = `
+                <div class="product-options">
+                    <label for="product-option-select">${product.options.label}</label>
+                    <select id="product-option-select">
+                        <option value="">-- Scegli un'opzione --</option>
+                        ${product.options.choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}
+                    </select>
+                </div>
+            `;
         }
-        container.innerHTML = `<div class="product-detail-content"><div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div><div class="product-detail-info"><h2>${product.name}</h2><div class="price">€ ${product.price.toFixed(2)}</div>${product.size === 'grande' ? `<p class="free-shipping-hint">✨ Aggiungi un'altra box grande e la spedizione è gratis!</p>` : ''}<p>${product.description}</p><div class="product-allergens-detail"><strong>Allergeni Presenti:</strong><p>${product.allergens.join(', ')}</p></div>${optionsHTML}<a href="#" class="cta-button" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a></div></div>`;
+
+        container.innerHTML = `
+            <div class="product-detail-content">
+                <div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div>
+                <div class="product-detail-info">
+                    <h2>${product.name}</h2>
+                    <div class="price">€ ${product.price.toFixed(2)}</div>
+                    ${product.size === 'grande' ? `<p class="free-shipping-hint">✨ Aggiungi un'altra box grande e la spedizione è gratis!</p>` : ''}
+                    <p>${product.description}</p>
+                    ${optionsHTML}
+                    <div class="product-allergens-detail">
+                        <strong>Allergeni Presenti:</strong>
+                        <p>${product.allergens.join(', ')}</p>
+                    </div>
+                    <a href="#" class="cta-button" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
+                </div>
+            </div>
+        `;
         attachAddToCartListeners();
     };
 
@@ -84,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!totalsContainer) return;
         
         let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
         const SHIPPING_FEE = 9.90;
         let shippingCost = SHIPPING_FEE;
         let totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -91,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const p = allProducts.find(prod => prod.name === item.name);
             return p && p.size === 'grande';
         }).reduce((sum, item) => sum + item.quantity, 0);
-        
+
         let shippingDisplay = `€ ${SHIPPING_FEE.toFixed(2)}`;
         if (largeBoxQuantity >= 2 || totalQuantity >= 3) {
             shippingCost = 0;
@@ -102,9 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeDiscount && activeDiscount.percent_off) {
             discountAmount = (subtotal * activeDiscount.percent_off) / 100;
         }
-        let grandTotal = subtotal - discountAmount + shippingCost;
 
-        totalsContainer.innerHTML = `<div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>${activeDiscount ? `<div class="cart-totals-row discount-row"><span>Sconto (${activeDiscount.code}):</span><span>- € ${discountAmount.toFixed(2)}</span></div>` : ''}<div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div><div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div><a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>`;
+        let grandTotal = subtotal - discountAmount + shippingCost;
+        if (grandTotal < 0) grandTotal = 0;
+
+        totalsContainer.innerHTML = `
+            <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
+            ${activeDiscount ? `<div class="cart-totals-row discount-row"><span>Sconto (${activeDiscount.code}):</span><span>- € ${discountAmount.toFixed(2)}</span></div>` : ''}
+            <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
+            <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
+            <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+        `;
         attachCheckoutListener();
     };
 
@@ -115,21 +162,46 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
             return;
         }
+
         try {
-            container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
             const response = await fetch('/.netlify/functions/get-shipping-info');
             if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
             const shippingInfo = await response.json();
-            const shippingInfoHTML = `<div class="shipping-info-box"><p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p><span>Data di spedizione prevista:</span><span class="shipping-date">${shippingInfo.dataSpedizione}</span><p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p></div>`;
+
+            const shippingInfoHTML = `
+                <div class="shipping-info-box">
+                    <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
+                    <span>Data di spedizione prevista:</span>
+                    <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
+                    <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
+                </div>
+            `;
             
-            container.innerHTML = shippingInfoHTML + cart.map((item, index) => `<div class="cart-item"><div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div><div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div><div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div><div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div></div>`).join('') + `<div class="promo-code-section"><label for="promo-code-input">Hai un codice sconto?</label><div class="promo-code-input-wrapper"><input type="text" id="promo-code-input" placeholder="Es: GIULY10"><button id="apply-promo-code-btn">Applica</button></div><div id="promo-code-message" class="promo-code-message"></div></div><div id="cart-totals"></div>`;
+            container.innerHTML = shippingInfoHTML + cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                    <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
+                    <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
+                    <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
+                </div>
+            `).join('') + `
+                <div class="promo-code-section">
+                    <label for="promo-code-input">Hai un codice sconto?</label>
+                    <div class="promo-code-input-wrapper">
+                        <input type="text" id="promo-code-input" placeholder="Es: GIULY10">
+                        <button id="apply-promo-code-btn">Applica</button>
+                    </div>
+                    <div id="promo-code-message" class="promo-code-message"></div>
+                </div>
+                <div id="cart-totals"></div>
+            `;
+            
             renderTotals();
             attachApplyPromoListener();
+
         } catch (error) {
             console.error("Errore nel caricare le info di spedizione:", error);
-            const errorHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Siamo spiacenti, non è stato possibile caricare le informazioni sulla spedizione.</p><p>Potrebbe essere un problema temporaneo. Per favore, prova a ricaricare la pagina.</p></div>`;
-            container.innerHTML = errorHTML + (cart.length > 0 ? '<div id="cart-totals"></div>' : '');
-            if(cart.length > 0) renderTotals();
+            container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>` + container.innerHTML;
         }
     };
 
@@ -145,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const optionSelect = document.getElementById('product-option-select');
                 if (optionSelect) {
                     if (!optionSelect.value) {
-                        alert("Per favore, seleziona un'opzione prima di aggiungere al carrello.");
+                        alert('Per favore, seleziona un\'opzione prima di aggiungere al carrello.');
                         return;
                     }
                     selectedOption = optionSelect.value;
@@ -155,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (existingProduct) {
                     existingProduct.quantity++;
                 } else {
-                    cart.push({ id: cartItemId, name, price: parseFloat(price), img, quantity: 1, option: selectedOption });
+                    cart.push({ id: cartItemId, name: name, price: parseFloat(price), img: img, quantity: 1, option: selectedOption });
                 }
                 saveCart();
                 updateCartIcon();
@@ -171,44 +243,38 @@ document.addEventListener('DOMContentLoaded', () => {
         container.addEventListener('click', event => {
             const target = event.target;
             if (!target.matches('.quantity-btn') && !target.matches('.remove-item-btn')) return;
-            const index = parseInt(target.dataset.index);
-            if (isNaN(index)) return;
-            let cartModified = false;
+            const index = target.dataset.index;
+            if (index === undefined) return;
             if (target.matches('.remove-item-btn')) {
                 cart.splice(index, 1);
-                cartModified = true;
             }
             if (target.matches('.quantity-btn')) {
                 const change = parseInt(target.dataset.change);
                 if (cart[index]) {
                     cart[index].quantity += change;
                     if (cart[index].quantity === 0) cart.splice(index, 1);
-                    cartModified = true;
                 }
             }
-            if (cartModified) {
-                saveCart();
-                updateCartIcon();
-                renderCartPage(); 
-                renderCartPreview();
-            }
+            saveCart();
+            updateCartIcon();
+            renderCartPage(); // Ridisegna tutto il carrello per aggiornare i totali
+            renderCartPreview();
         });
     };
-    
+
     const attachApplyPromoListener = () => {
         const applyBtn = document.getElementById('apply-promo-code-btn');
         if (!applyBtn) return;
         applyBtn.addEventListener('click', async () => {
             const input = document.getElementById('promo-code-input');
             const messageDiv = document.getElementById('promo-code-message');
-            const code = input.value.trim().toUpperCase();
+            const code = input.value.trim();
             if (!code) return;
 
             applyBtn.textContent = 'Verifico...';
             applyBtn.disabled = true;
 
             try {
-                // USA FETCH (versione robusta)
                 const response = await fetch('/.netlify/functions/validate-promo-code', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -241,53 +307,45 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
             checkoutButton.textContent = 'Attendi...';
-            checkoutButton.disabled = true;
-            
             try {
-                // Passa l'intero oggetto sconto, che è null se non attivo
                 const payload = {
                     cart: cart,
-                    discount: activeDiscount 
+                    discountCode: activeDiscount ? activeDiscount.code : null
                 };
-                // USA FETCH
                 const response = await fetch('/.netlify/functions/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Errore durante la creazione del checkout');
-                }
+                if (!response.ok) throw new Error('Errore dal server durante il checkout');
                 const data = await response.json();
                 window.location.href = data.url;
             } catch (error) {
                 console.error("Errore Checkout:", error);
                 checkoutButton.textContent = 'Errore, riprova';
-                checkoutButton.disabled = false;
             }
         });
     };
 
-    // --- INIZIALIZZAZIONE ---
+    // --- INIZIALIZZAZIONE DEL SITO ---
     const init = async () => {
         try {
-            const response = await fetch('products.json');
-            if (!response.ok) throw new Error('Catalogo products.json non trovato.');
-            allProducts = await response.json();
-            renderShopProducts();
-            renderProductDetailPage();
+            const productResponse = await fetch('products.json');
+            if (!productResponse.ok) throw new Error('Catalogo prodotti non trovato.');
+            allProducts = await productResponse.json();
         } catch (error) {
             console.error("Errore critico nel caricamento dei prodotti:", error);
-            const shopContainer = document.getElementById('product-list-container');
-            if(shopContainer) shopContainer.innerHTML = '<p class="cart-empty-message">Oops! Impossibile caricare i nostri incantesimi. Riprova più tardi.</p>';
         }
         
+        // Esegui sempre queste funzioni, indipendentemente dal catalogo
+        renderShopProducts();
+        renderProductDetailPage();
         renderCartPage();
         attachCartPageListeners();
         updateCartIcon();
         renderCartPreview();
     };
 
+    // Avvia l'intera applicazione.
     init();
 });
