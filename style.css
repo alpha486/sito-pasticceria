@@ -647,3 +647,20 @@ a.product-card-link:hover {
     padding: 0.75rem;
     font-weight: 500;
 }
+/* Stile per il box informativo sulla data di spedizione */
+.shipping-info-box {
+    text-align: center;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    background-color: #e3f2fd; /* Un azzurro chiaro e rassicurante */
+    border: 2px solid #90caf9;
+    border-radius: 10px;
+    color: #1e3a56;
+}
+.shipping-info-box .shipping-date {
+     margin: 0.5rem 0; 
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
