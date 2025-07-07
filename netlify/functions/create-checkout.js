@@ -90,21 +90,20 @@ exports.handler = async (event) => {
         // Prepariamo il payload (l'insieme dei dati) da inviare a Stripe.
         const sessionPayload = {
             payment_method_types: ['card', 'paypal'],
-            mode: 'payment',
             line_items: lineItems,
-            shipping_address_collection: {
-                allowed_countries: ['IT'],
-            },
-            // Logica sconti semplificata: abilitiamo solo il campo su Stripe.
+            mode: 'payment',
+            shipping_address_collection: { allowed_countries: ['IT'] },
             allow_promotion_codes: true,
-            
-            // Manteniamo i metadati per il webhook, sono sempre utili.
-            metadata: { 
-                cart: JSON.stringify(cartItems)
+            // Aggiungiamo il placeholder per l'email del cliente
+            customer_email: '{{customer_email}}',
+            // Spostiamo i metadati dentro un nuovo oggetto "payment_intent_data"
+            payment_intent_data: {
+                metadata: {
+                    cart: JSON.stringify(cartItems)
+                }
             },
             success_url: `${process.env.URL}/success.html`,
             cancel_url: `${process.env.URL}/cancel.html`,
-            customer_email: '{{customer_email}}'
         };
         
         // Creiamo la sessione di checkout su Stripe con tutti i dati preparati.
