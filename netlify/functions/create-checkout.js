@@ -1,14 +1,12 @@
 // Funzione Netlify: create-checkout.js
 
 // --- INCLUSIONI ---
-const { MongoClient } = require('mongodb');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const mongoUri = process.env.MONGODB_URI;
+// Caricamento del catalogo prodotti per una validazione sicura lato server
 const products = require('../../products.json');
 
 /**
  * Funzione helper per calcolare il costo di spedizione in modo sicuro sul server.
- * (Logica invariata)
  */
 const calculateShippingCost = (cart, allProducts) => {
     const SHIPPING_FEE = 9.90;
@@ -32,20 +30,19 @@ const calculateShippingCost = (cart, allProducts) => {
  */
 exports.handler = async (event) => {
     try {
-        // Controllo di sicurezza: verifica che le chiavi segrete siano configurate
-        if (!process.env.STRIPE_SECRET_KEY || !mongoUri) {
-            throw new Error("Una o più variabili d'ambiente (Stripe o MongoDB) non sono configurate.");
+        // Controllo di sicurezza
+        if (!process.env.STRIPE_SECRET_KEY) {
+            throw new Error("Variabile d'ambiente Stripe non configurata.");
         }
 
-        // --- MODIFICA CHIAVE: Estrae l'oggetto complesso dal corpo della richiesta ---
-        const { cart: cartItems, discountCode } = JSON.parse(event.body);
+        // Estraiamo solo il carrello. Non ci interessa più ricevere lo sconto dal client.
+        const { cart: cartItems } = JSON.parse(event.body);
         
         if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
             return { statusCode: 400, body: JSON.stringify({ error: 'Richiesta non valida o carrello vuoto.' }) };
         }
 
-        // Costruisce la lista degli articoli per Stripe, validando ogni prodotto
-        // e includendo le opzioni scelte nel nome e nella descrizione (logica esistente)
+        // Costruisce la lista degli articoli per Stripe
         const lineItems = cartItems.map(item => {
             const product = products.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato nel catalogo: ${item.name}`);
@@ -65,7 +62,7 @@ exports.handler = async (event) => {
             };
         });
 
-        // Calcola e aggiunge il costo di spedizione (logica esistente)
+        // Calcola e aggiunge il costo di spedizione
         const shippingCost = calculateShippingCost(cartItems, products);
         if (shippingCost > 0) {
             lineItems.push({
@@ -78,7 +75,7 @@ exports.handler = async (event) => {
             });
         }
 
-        // --- MODIFICA CHIAVE: Prepara il payload per la sessione di Stripe ---
+        // Prepara il payload per la sessione di Stripe
         const sessionPayload = {
             payment_method_types: ['card', 'paypal'],
             mode: 'payment',
@@ -86,32 +83,26 @@ exports.handler = async (event) => {
             shipping_address_collection: {
                 allowed_countries: ['IT'],
             },
+            
+            // --- LA MODIFICA CHIAVE CHE SEMPLIFICA TUTTO ---
+            // Diciamo a Stripe di mostrare il campo per i codici promozionali.
+            allow_promotion_codes: true,
+            
+            // Manteniamo i metadati per il webhook di salvataggio ordine
             metadata: {
-                cart: JSON.stringify(cartItems) // Fondamentale da mantenere per il webhook
+                cart: JSON.stringify(cartItems)
             },
+            
             success_url: `${process.env.URL}/success.html`,
             cancel_url: `${process.env.URL}/cancel.html`,
         };
         
-        // --- MODIFICA CHIAVE: Applica il codice sconto alla sessione se esiste ---
-        if (discountCode) {
-            sessionPayload.discounts = [{
-                // NOTA: il "discountCode" deve essere l'ID del "Promotion Code" di Stripe
-                promotion_code: discountCode, 
-            }];
-        }
+        // La vecchia logica `sessionPayload.discounts` è stata correttamente rimossa.
 
-        // Chiedi a Stripe di creare la sessione di pagamento usando il payload costruito
         const session = await stripe.checkout.sessions.create(sessionPayload);
-
-        // Restituisce l'URL di pagamento al browser
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ url: session.url }),
-        };
+        return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
 
     } catch (error) {
-        // Gestione centralizzata degli errori
         console.error("Errore nella funzione di checkout:", error);
         return { 
             statusCode: 500, 
