@@ -1,19 +1,13 @@
-// Funzione Netlify: create-checkout-session.js
+// Funzione Netlify: create-checkout.js
 
-// --- INCLUSIONI DAL NUOVO CODICE ---
-// 1. Inclusione del client per MongoDB
-// Questa riga prepara la connessione al database, che verrà usata in un'altra funzione
-// (il webhook) per salvare l'ordine dopo il pagamento.
+// --- INCLUSIONI ---
+// Inclusione del client per MongoDB (per usi futuri come il webhook)
 const { MongoClient } = require('mongodb');
-
-// 2. Inclusione della libreria Stripe, inizializzata con la chiave segreta
+// Inclusione della libreria Stripe, inizializzata con la chiave segreta
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-// --- INCLUSIONI DAL VECCHIO CODICE (E NUOVO) ---
-// 3. Lettura della URI di connessione a MongoDB dalle variabili d'ambiente
+// Lettura della URI di connessione a MongoDB dalle variabili d'ambiente
 const mongoUri = process.env.MONGODB_URI;
-
-// 4. Caricamento del catalogo prodotti per una validazione sicura lato server
+// Caricamento del catalogo prodotti per una validazione sicura lato server
 const products = require('../../products.json');
 
 /**
@@ -31,6 +25,7 @@ const calculateShippingCost = (cart, allProducts) => {
 
     cart.forEach(item => {
         totalQuantity += item.quantity;
+        // La validazione si basa sempre sul nome base del prodotto
         const productData = allProducts.find(p => p.name === item.name);
         if (productData && productData.size === 'grande') {
             largeBoxQuantity += item.quantity;
@@ -49,7 +44,7 @@ const calculateShippingCost = (cart, allProducts) => {
  */
 exports.handler = async (event) => {
 
-    // Struttura di gestione degli errori robusta (dal vecchio codice)
+    // Struttura di gestione degli errori robusta
     try {
         // Controllo di sicurezza: verifica che le chiavi segrete siano configurate
         if (!process.env.STRIPE_SECRET_KEY || !mongoUri) {
@@ -62,16 +57,26 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'Richiesta non valida o carrello vuoto.' }) };
         }
 
+        // --- MODIFICA CHIAVE INTEGRATA QUI ---
         // Costruisce la lista degli articoli per Stripe, validando ogni prodotto
-        // contro il nostro catalogo `products.json` per evitare manomissioni
+        // e includendo le opzioni scelte nel nome e nella descrizione.
         const lineItems = cartItems.map(item => {
+            // La validazione del prezzo avviene sempre sul prodotto base
             const product = products.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato nel catalogo: ${item.name}`);
+
+            // Creiamo un nome dinamico e una descrizione per la pagina di checkout di Stripe
+            const productNameWithOptions = item.option ? `${item.name} (${item.option})` : item.name;
+            const productDescription = item.option ? `Scelta: ${item.option}` : 'Prodotto standard';
+
             return {
                 price_data: {
                     currency: 'eur',
-                    product_data: { name: product.name },
-                    unit_amount: Math.round(product.price * 100), // Prezzo in centesimi
+                    product_data: { 
+                        name: productNameWithOptions,    // USA IL NOME COMPLETO CON L'OPZIONE
+                        description: productDescription, // AGGIUNGE L'OPZIONE COME DESCRIZIONE
+                    },
+                    unit_amount: Math.round(product.price * 100), // Prezzo in centesimi, dal prodotto validato
                 },
                 quantity: item.quantity,
             };
@@ -92,20 +97,20 @@ exports.handler = async (event) => {
             });
         }
 
-        // Chiedi a Stripe di creare la sessione di pagamento, unendo tutte le configurazioni
+        // Chiedi a Stripe di creare la sessione di pagamento
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card', 'paypal'],
             mode: 'payment',
             line_items: lineItems,
             
-            // Richiesta dell'indirizzo di spedizione (dal vecchio codice)
+            // Richiesta dell'indirizzo di spedizione
             shipping_address_collection: {
                 allowed_countries: ['IT'],
             },
             
-            // --- INCLUSIONE CHIAVE DAL NUOVO CODICE ---
-            // Aggiungiamo i metadati alla sessione. Questo è FONDAMENTALE per poter
-            // salvare i dettagli dell'ordine nel nostro database DOPO il pagamento.
+            // Aggiungiamo i metadati alla sessione. Questo è FONDAMENTALE.
+            // Salviamo il carrello originale completo (con le opzioni) per poterlo 
+            // registrare nel nostro database dopo il pagamento (tramite webhook).
             metadata: {
                 cart: JSON.stringify(cartItems)
             },
@@ -122,7 +127,7 @@ exports.handler = async (event) => {
         };
 
     } catch (error) {
-        // Gestione centralizzata degli errori (dal vecchio codice)
+        // Gestione centralizzata degli errori
         console.error("Errore nella funzione di checkout:", error);
         return { 
             statusCode: 500, 
