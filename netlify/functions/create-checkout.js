@@ -1,8 +1,7 @@
 // --- INCLUSIONI E CONFIGURAZIONE INIZIALE ---
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// Per massima sicurezza e coerenza, i dati dei prodotti sono definiti qui,
-// direttamente nella funzione, invece di essere letti da un file esterno.
+// Per massima sicurezza e coerenza, i dati dei prodotti sono definiti qui.
 // Questa è la "fonte della verità" per i prezzi e le taglie.
 const allProducts = [
   { "id": 1, "name": "Box Grande Crunch", "price": 25.00, "size": "grande" },
@@ -14,6 +13,7 @@ const allProducts = [
 /**
  * Funzione helper per calcolare il costo di spedizione in modo sicuro sul server.
  * Prende il carrello come input e restituisce il costo di spedizione.
+ * (Logica invariata)
  */
 const calculateShippingCost = (cart) => {
     const SHIPPING_FEE = 9.90;
@@ -45,21 +45,20 @@ exports.handler = async (event) => {
             throw new Error("Variabile d'ambiente Stripe (STRIPE_SECRET_KEY) non configurata.");
         }
 
-        // Estraiamo i dati inviati dal frontend (il carrello e l'eventuale codice sconto).
-        const { cart: cartItems, discountCode } = JSON.parse(event.body);
+        // --- MODIFICA CHIAVE: Riceviamo solo il carrello dal frontend ---
+        // La variabile discountCode non viene più letta né gestita qui.
+        const { cart: cartItems } = JSON.parse(event.body);
         
-        // Controllo di validità dei dati ricevuti.
+        // Controllo di validità dei dati ricevuti. (Logica invariata)
         if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
             return { statusCode: 400, body: JSON.stringify({ error: 'Richiesta non valida o carrello vuoto.' }) };
         }
 
-        // Costruisce la lista degli articoli (line_items) da passare a Stripe.
+        // Costruisce la lista degli articoli (line_items) da passare a Stripe. (Logica invariata)
         const lineItems = cartItems.map(item => {
-            // Per ogni articolo nel carrello, troviamo il prodotto corrispondente nella nostra lista sicura.
             const product = allProducts.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato nel catalogo server: ${item.name}`);
             
-            // Creiamo un nome e una descrizione personalizzati se ci sono opzioni (es. gusti).
             const productNameWithOptions = item.option ? `${item.name} (${item.option})` : item.name;
             const productDescription = item.option ? `Scelta: ${item.option}` : 'Prodotto standard';
 
@@ -76,7 +75,7 @@ exports.handler = async (event) => {
             };
         });
 
-        // Calcoliamo e aggiungiamo il costo di spedizione come un articolo separato.
+        // Calcoliamo e aggiungiamo il costo di spedizione come un articolo separato. (Logica invariata)
         const shippingCost = calculateShippingCost(cartItems);
         if (shippingCost > 0) {
             lineItems.push({
@@ -97,35 +96,19 @@ exports.handler = async (event) => {
             shipping_address_collection: {
                 allowed_countries: ['IT'],
             },
-            metadata: { // Salviamo i dati del carrello per usarli nel webhook dopo il pagamento
+            // --- MODIFICA CHIAVE: Logica sconti semplificata ---
+            // Abilitiamo semplicemente il campo per i codici promozionali sulla pagina di checkout di Stripe.
+            allow_promotion_codes: true,
+            
+            // Manteniamo i metadati per il webhook, sono sempre utili.
+            metadata: { 
                 cart: JSON.stringify(cartItems)
             },
             success_url: `${process.env.URL}/success.html`,
             cancel_url: `${process.env.URL}/cancel.html`,
         };
         
-        // Logica finale e robusta per la gestione dei codici sconto.
-        if (discountCode) {
-            // Se l'utente ha inserito un codice, lo cerchiamo su Stripe.
-            const promotionCodes = await stripe.promotionCodes.list({
-                active: true,
-                code: discountCode.trim().toUpperCase(),
-                limit: 1,
-            });
-
-            if (promotionCodes.data.length > 0) {
-                // Se il codice è valido, lo aggiungiamo alla sessione.
-                sessionPayload.discounts = [{
-                    promotion_code: promotionCodes.data[0].id,
-                }];
-            } else {
-                // Se il codice non è valido, abilitiamo comunque il campo su Stripe.
-                sessionPayload.allow_promotion_codes = true;
-            }
-        } else {
-            // Se non è stato inviato alcun codice, abilitiamo il campo su Stripe.
-            sessionPayload.allow_promotion_codes = true;
-        }
+        // La vecchia logica complessa `if (discountCode)` è stata completamente rimossa.
 
         // Creiamo la sessione di checkout su Stripe con tutti i dati preparati.
         const session = await stripe.checkout.sessions.create(sessionPayload);
@@ -134,7 +117,7 @@ exports.handler = async (event) => {
         return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
 
     } catch (error) {
-        // Gestione centralizzata di tutti i possibili errori.
+        // Gestione centralizzata di tutti i possibili errori. (Logica invariata)
         console.error("Errore critico nella funzione di checkout:", error);
         return { 
             statusCode: 500, 

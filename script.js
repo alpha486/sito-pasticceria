@@ -117,94 +117,88 @@ document.addEventListener('DOMContentLoaded', () => {
         attachAddToCartListeners();
     };
 
-    const renderTotals = () => {
-        const totalsContainer = document.getElementById('cart-totals');
-        if (!totalsContainer) return;
-        
-        let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        const SHIPPING_FEE = 9.90;
-        let shippingCost = SHIPPING_FEE;
-        let totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-        let largeBoxQuantity = cart.filter(item => {
-            const p = allProducts.find(prod => prod.name === item.name);
-            return p && p.size === 'grande';
-        }).reduce((sum, item) => sum + item.quantity, 0);
+    
 
-        let shippingDisplay = `€ ${SHIPPING_FEE.toFixed(2)}`;
-        if (largeBoxQuantity >= 2 || totalQuantity >= 3) {
-            shippingCost = 0;
-            shippingDisplay = `Gratuita!`;
-        }
+    /**
+ * Genera l'HTML per la pagina del carrello, incluse le informazioni sulla spedizione e il riepilogo dei totali.
+ * Questa versione semplificata non include più un campo per l'inserimento del codice sconto direttamente nel carrello.
+ */
+const renderCartPage = async () => {
+    const container = document.getElementById('cart-container');
+    if (!container) return; // Uscita di sicurezza se il container non esiste
 
-        let discountAmount = 0;
-        if (activeDiscount && activeDiscount.percent_off) {
-            discountAmount = (subtotal * activeDiscount.percent_off) / 100;
-        }
+    // Messaggio per carrello vuoto
+    if (cart.length === 0) {
+        container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
+        return;
+    }
 
-        let grandTotal = subtotal - discountAmount + shippingCost;
-        if (grandTotal < 0) grandTotal = 0;
+    try {
+        // --- 1. Recupero informazioni sulla spedizione (logica mantenuta) ---
+        const response = await fetch('/.netlify/functions/get-shipping-info');
+        if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
+        const shippingInfo = await response.json();
 
-        totalsContainer.innerHTML = `
-            <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
-            ${activeDiscount ? `<div class="cart-totals-row discount-row"><span>Sconto (${activeDiscount.code}):</span><span>- € ${discountAmount.toFixed(2)}</span></div>` : ''}
-            <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
-            <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-            <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+        // Blocco HTML per le informazioni sulla spedizione
+        const shippingInfoHTML = `
+            <div class="shipping-info-box">
+                <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
+                <span>Data di spedizione prevista:</span>
+                <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
+                <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
+            </div>
         `;
+        
+        // --- 2. Calcolo dei totali direttamente nella funzione ---
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        // Replica della logica di calcolo della spedizione (come da funzione Netlify)
+        const SHIPPING_FEE = 9.90;
+        const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const largeBoxQuantity = cart
+            .filter(item => item.size === 'grande')
+            .reduce((sum, item) => sum + item.quantity, 0);
+
+        const shippingCost = (largeBoxQuantity >= 2 || totalQuantity >= 3) ? 0 : SHIPPING_FEE;
+        const shippingDisplay = shippingCost === 0 ? 'Gratuita' : `€ ${shippingCost.toFixed(2)}`;
+        
+        const grandTotal = subtotal + shippingCost;
+        
+        // Generazione HTML degli articoli nel carrello (logica mantenuta)
+        const cartItemsHTML = cart.map((item, index) => `
+            <div class="cart-item">
+                <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
+                <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
+                <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
+            </div>
+        `).join('');
+
+        // Blocco HTML finale con il riepilogo dei totali
+        const totalsHTML = `
+            <div class="cart-totals">
+                <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
+                <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
+                ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
+                <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
+                <p class="cart-totals-note">Eventuali sconti verranno applicati nella pagina di pagamento.</p>
+                <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+            </div>
+        `;
+
+        // --- 3. Assemblaggio e rendering finale dell'HTML ---
+        // Il blocco del codice promozionale è stato completamente rimosso.
+        container.innerHTML = shippingInfoHTML + cartItemsHTML + totalsHTML;
+        
+        // Allega il listener per il nuovo pulsante di checkout
         attachCheckoutListener();
-    };
 
-    const renderCartPage = async () => {
-        const container = document.getElementById('cart-container');
-        if (!container) return;
-        if (cart.length === 0) {
-            container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
-            return;
-        }
-
-        try {
-            const response = await fetch('/.netlify/functions/get-shipping-info');
-            if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
-            const shippingInfo = await response.json();
-
-            const shippingInfoHTML = `
-                <div class="shipping-info-box">
-                    <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
-                    <span>Data di spedizione prevista:</span>
-                    <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
-                    <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
-                </div>
-            `;
-            
-            container.innerHTML = shippingInfoHTML + cart.map((item, index) => `
-                <div class="cart-item">
-                    <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
-                    <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
-                    <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
-                    <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
-                </div>
-            `).join('') + `
-                <div class="promo-code-section">
-                    <label for="promo-code-input">Hai un codice sconto?</label>
-                    <div class="promo-code-input-wrapper">
-                        <input type="text" id="promo-code-input" placeholder="Es: GIULY10">
-                        <button id="apply-promo-code-btn">Applica</button>
-                    </div>
-                    <div id="promo-code-message" class="promo-code-message"></div>
-                </div>
-                <div id="cart-totals"></div>
-            `;
-            
-            renderTotals();
-            attachApplyPromoListener();
-
-        } catch (error) {
-            console.error("Errore nel caricare le info di spedizione:", error);
-            container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>` + container.innerHTML;
-        }
-    };
-
+    } catch (error) {
+        // Gestione degli errori (logica mantenuta)
+        console.error("Errore nel caricare la pagina del carrello:", error);
+        container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione. Controlla la tua connessione e riprova.</p></div>`;
+    }
+};
     // --- FUNZIONI PER GLI ASCOLTATORI ---
     const attachAddToCartListeners = () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
@@ -262,44 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const attachApplyPromoListener = () => {
-        const applyBtn = document.getElementById('apply-promo-code-btn');
-        if (!applyBtn) return;
-        applyBtn.addEventListener('click', async () => {
-            const input = document.getElementById('promo-code-input');
-            const messageDiv = document.getElementById('promo-code-message');
-            const code = input.value.trim();
-            if (!code) return;
-
-            applyBtn.textContent = 'Verifico...';
-            applyBtn.disabled = true;
-
-            try {
-                const response = await fetch('/.netlify/functions/validate-promo-code', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Codice non valido');
-                }
-                const data = await response.json();
-                activeDiscount = data;
-                messageDiv.textContent = `Sconto "${activeDiscount.code}" applicato!`;
-                messageDiv.className = 'promo-code-message success';
-                renderTotals();
-            } catch (error) {
-                activeDiscount = null;
-                messageDiv.textContent = error.message;
-                messageDiv.className = 'promo-code-message error';
-                renderTotals();
-            } finally {
-                applyBtn.textContent = 'Applica';
-                applyBtn.disabled = false;
-            }
-        });
-    };
+    
     
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
