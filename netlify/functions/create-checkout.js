@@ -88,7 +88,7 @@ exports.handler = async (event) => {
             allow_promotion_codes: true,
             
             // Diciamo a Stripe che, dopo il pagamento, vogliamo recuperare l'oggetto Customer.
-            expand: ['customer'],
+            customer_creation: 'always',
 
             // Manteniamo i metadati per il webhook, sono sempre utili.
             metadata: { 
