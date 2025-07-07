@@ -104,7 +104,7 @@ exports.handler = async (event) => {
             },
             success_url: `${process.env.URL}/success.html`,
             cancel_url: `${process.env.URL}/cancel.html`,
-            customer_email: '{{customer_email}}',
+            customer_email: '{{customer_email}}'
         };
         
         // Creiamo la sessione di checkout su Stripe con tutti i dati preparati.
