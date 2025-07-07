@@ -4,16 +4,16 @@
     "name": "Box Grande Crunch",
     "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 1 crostatina alla Nutella (frolla alla vaniglia) e 1 crostatina con Dulce de Leche (frolla alla vaniglia).",
     "price": 31.00,
-    "image_url": "images/box-biscotti.jpg",
+    "image_url": "images/boxcrunch.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "grande"
   },
   {
     "id": 2,
-    "name": "Box Grande Gnammi",
+    "name": "Box Grande Gnammy",
     "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostatina con confettura (a scelta tra fragola, albicocca o frutti di bosco).",
     "price": 31.00,
-    "image_url": "images/box-crostate.jpg",
+    "image_url": "images/boxgnammy.jpg",
     "allergens": ["Glutine", "Uova", "Latte"],
     "size": "grande"
   },
@@ -22,7 +22,7 @@
     "name": "Box Piccola Slurp",
     "description": "1 crostatina alla Nutella (frolla al cacao), 2 cookies (gusto Pistacchio e gusto Classico), 100 g di Giuliette, 150 g di biscotti misti (vaniglia e cacao) e 80 g di Brownie",
     "price": 28.00,
-    "image_url": "images/box-mista.jpg",
+    "image_url": "images/boxslurp.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "normale"
   }

@@ -67,11 +67,11 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     width: calc(100% - 3rem); /* Occupa tutta la larghezza meno il padding */
     margin-bottom: 1.5rem;
 }
-/* Stili per la pagina "Chi Siamo" */
 /* ========================================= */
-/* === STILE ROBUSTO PAGINA CHI SIAMO    === */
+/* === STILE FINALE PAGINA CHI SIAMO     === */
 /* ========================================= */
 
+/* Stile base per entrambe le sezioni su DESKTOP */
 .about-page-section {
     display: flex;
     align-items: center; /* Allinea verticalmente immagine e testo */
@@ -81,12 +81,15 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     margin: 0 auto;
 }
 
+/* Regola per invertire il layout del secondo blocco SU DESKTOP */
+.about-page-section.layout-reversed {
+    flex-direction: row-reverse;
+}
+
 .about-image {
-    /* LA REGOLA CHIAVE PER DESKTOP:
-       Dice all'immagine di non crescere, non rimpicciolirsi,
-       e di occupare il 40% dello spazio disponibile. */
+    /* Regola per dare una dimensione fissa all'immagine su desktop */
     flex: 0 0 40%;
-    max-width: 400px; /* Un limite massimo per evitare che diventi gigante */
+    max-width: 400px; /* Limite massimo per non farla diventare troppo grande */
 }
 
 .about-image img {
@@ -103,6 +106,35 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 /* --- Media Query per sistemare la visualizzazione MOBILE --- */
 @media (max-width: 768px) {
     .about-page-section {
+        /* Su mobile, impiliamo sempre in verticale */
+        flex-direction: column;
+        padding: 3rem 5%;
+    }
+
+    /* Regola chiave per il secondo blocco: lo invertiamo per avere Immagine -> Testo */
+    .about-page-section.layout-reversed {
+        flex-direction: column-reverse;
+    }
+
+    .about-image {
+        /* Su mobile, l'immagine diventa un blocco normale */
+        flex-basis: auto; 
+        width: 100%;
+        max-width: 350px; /* Limita la larghezza dell'immagine su mobile */
+        margin: 0 auto;   /* Centra l'immagine */
+    }
+
+    .about-text {
+        text-align: center; /* Centriamo il testo per leggibilità */
+        margin-bottom: 2rem; /* Aggiungiamo spazio tra testo e immagine sottostante */
+    }
+}
+
+/* --- Media Query per sistemare la visualizzazione MOBILE --- */
+@media (max-width: 768px) {
+    .about-page-section ,
+    .about-page-section.layout-reversed { /* Aggiungi questa riga */
+        flex-direction: column;
         /* Su mobile, impiliamo gli elementi in verticale */
         flex-direction: column;
         padding-top: 3rem;
@@ -319,19 +351,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     font-size: 3rem;
     margin-bottom: 3rem;
 }
-.cart-item {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--light-bg);
-}
-.cart-item-image img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 10px;
-}
+
 .cart-item-details { flex-grow: 1; }
 .cart-item-details h3 { font-size: 1.5rem; }
 .cart-item-quantity { display: flex; align-items: center; gap: 0.5rem; }
@@ -388,20 +408,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     width: 100%;
 }
 
-/* Stili per i singoli articoli nell'anteprima */
-.preview-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-.preview-item-image img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
-}
+
 .preview-item-details { flex-grow: 1; }
 .preview-item-details h4 { font-family: var(--body-font); font-size: 1rem; margin: 0; }
 .preview-item-details p { margin: 0; color: #777; }
@@ -663,4 +670,55 @@ a.product-card-link:hover {
     font-size: 1.5rem;
     font-weight: bold;
     margin-top: 0.5rem;
+}
+/* ========================================= */
+/* === STILE IMMAGINI CARRELLO E PREVIEW === */
+/* ========================================= */
+
+/* --- Stile per la pagina Carrello principale (carrello.html) --- */
+
+/* Contenitore di un singolo articolo */
+.cart-item {
+    display: flex; /* Mette gli elementi in riga */
+    align-items: center; /* Allinea verticalmente l'immagine e i dettagli */
+    gap: 1.5rem; /* Spazio tra gli elementi */
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--light-bg);
+}
+
+/* Contenitore dell'immagine nella pagina carrello */
+.cart-item-image {
+    flex-shrink: 0; /* Impedisce all'immagine di rimpicciolirsi */
+}
+.cart-item-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover; /* Riempie lo spazio senza deformarsi */
+    border-radius: 10px;
+}
+
+/* --- Stile per l'anteprima (widget a discesa) --- */
+
+/* Contenitore di un singolo articolo nell'anteprima */
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Contenitore dell'immagine nell'anteprima */
+.preview-item-image {
+    flex-shrink: 0;
+}
+.preview-item-image img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.preview-item-details {
+    flex-grow: 1; /* Occupa lo spazio rimanente */
 }

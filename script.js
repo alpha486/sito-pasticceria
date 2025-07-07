@@ -28,12 +28,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNZIONI PER "DISEGNARE" LE PAGINE ---
 
     const renderCartPreview = () => {
-        const cartPreviewContainer = document.getElementById('cart-preview-content');
-        if (!cartPreviewContainer) return;
-        cartPreviewContainer.innerHTML = cart.length === 0 
-            ? '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>'
-            : cart.map(item => `<div class="preview-item"><div class="preview-item-image"><img src="${item.img}" alt="${item.name}"></div><div class="preview-item-details"><h4>${item.name}</h4><p>Quantità: ${item.quantity}</p></div><div class="preview-item-price"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div></div>`).join('');
-    };
+    const cartPreviewContainer = document.getElementById('cart-preview-content');
+    if (!cartPreviewContainer) return;
+
+    if (cart.length === 0) {
+        cartPreviewContainer.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
+        return;
+    }
+    
+    cartPreviewContainer.innerHTML = cart.map(item => `
+        <div class="preview-item">
+            <!-- IMMAGINE AGGIUNTA QUI -->
+            <div class="preview-item-image">
+                <img src="${item.img}" alt="${item.name}">
+            </div>
+            <div class="preview-item-details">
+                <h4>${item.name}</h4>
+                <p>Quantità: ${item.quantity}</p>
+            </div>
+            <div class="preview-item-price">
+                <strong>€ ${(item.price * item.quantity).toFixed(2)}</strong>
+            </div>
+        </div>
+    `).join('');
+};
 
     const renderShopProducts = () => {
         const container = document.getElementById('product-list-container');
@@ -84,87 +102,91 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderCartPage = async () => {
-        const container = document.getElementById('cart-container');
-        if (!container) return;
+    const container = document.getElementById('cart-container');
+    if (!container) return;
 
-        if (cart.length === 0) {
-            container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
-            return;
+    if (cart.length === 0) {
+        container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
+        return;
+    }
+
+    // Il blocco try...catch gestisce l'intero processo di rendering
+    try {
+        // Mostra un messaggio di caricamento iniziale per una migliore UX
+        container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
+
+        // Chiama la funzione serverless per ottenere i dati di spedizione
+        const response = await fetch('/.netlify/functions/get-shipping-info');
+        if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
+        const shippingInfo = await response.json();
+
+        // Costruisce l'HTML del box informativo con i dati dinamici dal server
+        const shippingInfoHTML = `
+            <div class="shipping-info-box">
+                <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
+                <span>Data di spedizione prevista:</span>
+                <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
+                <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
+            </div>
+        `;
+        
+        // Calcolo dei totali, basato sul carrello attuale
+        let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const SHIPPING_FEE = 9.90;
+        let shippingCost = SHIPPING_FEE;
+        
+        let totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+        let largeBoxQuantity = cart.filter(item => {
+            const p = allProducts.find(prod => prod.name === item.name);
+            return p && p.size === 'grande';
+        }).reduce((sum, item) => sum + item.quantity, 0);
+        
+        // Logica per la spedizione gratuita
+        let shippingDisplay = `€ ${SHIPPING_FEE.toFixed(2)}`;
+        if (largeBoxQuantity >= 2 || totalQuantity >= 3) {
+            shippingCost = 0;
+            shippingDisplay = `Gratuita!`;
         }
-
-        // Il blocco try...catch ora gestisce l'errore in modo più granulare
-        try {
-            // Mostra un messaggio di caricamento iniziale
-            container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
-
-            // Chiama la funzione per avere i dati di spedizione
-            const response = await fetch('/.netlify/functions/get-shipping-info');
-            if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
-            const shippingInfo = await response.json();
-
-            // Costruisce l'HTML del box informativo con i dati dal server
-            const shippingInfoHTML = `
-                <div class="shipping-info-box">
-                    <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
-                    <span>Data di spedizione prevista:</span>
-                    <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
-                    <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
+        let grandTotal = subtotal + shippingCost;
+        
+        // Disegniamo l'intera pagina del carrello in un'unica operazione
+        container.innerHTML = 
+            // 1. Box con le informazioni sulla spedizione
+            shippingInfoHTML + 
+            
+            // 2. Mappa di ogni articolo nel carrello per creare l'HTML corrispondente
+            cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                    <div class="cart-item-details"><h3>${item.name}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
+                    <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
+                    <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
                 </div>
-            `;
+            `).join('') + 
             
-            // Calcolo totali (logica invariata)
-            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const SHIPPING_FEE = 9.90;
-            let shippingCost = SHIPPING_FEE;
-            
-            let totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-            let largeBoxQuantity = cart.filter(item => {
-                const p = allProducts.find(prod => prod.name === item.name);
-                return p && p.size === 'grande';
-            }).reduce((sum, item) => sum + item.quantity, 0);
-            
-            let shippingDisplay = `€ ${SHIPPING_FEE.toFixed(2)}`;
-            if (largeBoxQuantity >= 2 || totalQuantity >= 3) {
-                shippingCost = 0;
-                shippingDisplay = `Gratuita!`;
-            }
-            let grandTotal = subtotal + shippingCost;
-            
-            // Disegniamo l'intera pagina del carrello
-            container.innerHTML = 
-                shippingInfoHTML + 
-                
-                cart.map((item, index) => `
-                    <div class="cart-item">
-                        <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
-                        <div class="cart-item-details"><h3>${item.name}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
-                        <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
-                        <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
-                    </div>
-                `).join('') + 
-                
-                `<div class="cart-totals">
-                    <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
-                    <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
-                    ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
-                    <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-                    <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
-                </div>`;
-            
-            // MODIFICA CHIAVE: L'ascoltatore viene attivato DOPO che il bottone è stato disegnato
-            attachCheckoutListener();
+            // 3. Blocco finale con i totali e il bottone di checkout
+            `<div class="cart-totals">
+                <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
+                <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
+                ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
+                <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
+                <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+            </div>`;
+        
+        // Una volta che il bottone #checkout-button esiste nell'HTML, attiviamo il suo ascoltatore
+        attachCheckoutListener();
 
-        } catch (error) {
-            console.error("Errore nel caricare le info di spedizione:", error);
-            // Il nuovo blocco di gestione errore, più specifico
-            const errorHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;">
-                                <p><strong>Oops!</strong> Siamo spiacenti, non è stato possibile caricare le informazioni sulla spedizione.</p>
-                                <p>Potrebbe essere un problema temporaneo. Per favore, prova a ricaricare la pagina.</p>
-                             </div>`;
-            // Mostra il messaggio di errore ma preserva il resto del carrello se già renderizzato (improbabile, ma è la logica del nuovo codice)
-            container.innerHTML = errorHTML + (container.innerHTML || '');
-        }
-    };
+    } catch (error) {
+        console.error("Errore nel caricare le info di spedizione:", error);
+        // In caso di errore nella chiamata, mostra un messaggio di errore specifico
+        const errorHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;">
+                            <p><strong>Oops!</strong> Siamo spiacenti, non è stato possibile caricare le informazioni sulla spedizione.</p>
+                            <p>Potrebbe essere un problema temporaneo. Per favore, prova a ricaricare la pagina.</p>
+                         </div>`;
+        // Sostituisce il messaggio di caricamento con quello di errore, preservando il resto del carrello se fosse già stato disegnato
+        container.innerHTML = errorHTML + (container.innerHTML || '');
+    }
+};
 
     // --- FUNZIONI PER GLI ASCOLTATORI ---
     const attachAddToCartListeners = () => {

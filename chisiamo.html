@@ -1,76 +1,81 @@
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Sono - Incantesimi di Zucchero di Giuly</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
 
-
-
-    <!-- Header coerente con le altre pagine -->
     <header class="main-header">
         <div class="logo">
             <a href="index.html" style="text-decoration: none; color: var(--pink);">Incantesimi di Zucchero</a>
         </div>
-        <!-- Esempio dall'header di una pagina qualsiasi -->
-<nav class="main-nav">
-    <a href="index.html">Home</a>
-    <a href="shop.html">Le Nostre Box</a>
-    <a href="chisiamo.html">Chi Sono</a>
-    <a href="contatti.html">Contatti</a>
-    <!-- NUOVA RIGA DA AGGIUNGERE -->
-    <!-- Inizia il nuovo widget del carrello -->
-<div class="cart-widget">
-    <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
-    
-    <!-- Questo è il menu a tendina, inizialmente nascosto -->
-    <div class="cart-preview">
-        <div id="cart-preview-content" class="cart-preview-content">
-            <!-- Il contenuto dell'anteprima verrà inserito qui da JavaScript -->
-            <p class="cart-empty-message">Il tuo carrello è vuoto.</p>
-        </div>
-        <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
-    </div>
-</div>
-<!-- Finisce il nuovo widget del carrello -->  
-</nav>
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Le Nostre Box</a>
+            <a href="chisiamo.html">Chi Sono</a>
+            <a href="contatti.html">Contatti</a>
+            <div class="cart-widget">
+                <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
+                <div class="cart-preview">
+                    <div id="cart-preview-content" class="cart-preview-content"></div>
+                    <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
+                </div>
+            </div>
+        </nav>
     </header>
 
     <main>
-        <!-- Sezione "Chi Sono" con layout immagine + testo -->
+        <!-- PRIMO BLOCCO: Immagine a Sinistra, Testo a Destra -->
         <section class="about-page-section">
             
             <div class="about-image">
-                <!-- Puoi sostituire questa immagine con una tua foto professionale -->
+                <!-- IMMAGINE 1 -->
                 <img src="images/giuly.jpg" alt="Giuly, la creatrice di Incantesimi di Zucchero">
             </div>
-
+    
             <div class="about-text">
                 <h2>La Mia Storia, la Mia Magia</h2>
-                
-                <!-- Ecco la casella segnaposto come hai chiesto -->
-                <div class="placeholder-box">
-                    <p><em>Benvenuti nel mio mondo, dove la pasticceria diventa magia.
-Mi chiamo Giuly e nel mio laboratorio Incantesimi di Zucchero creo dolci artigianali con passione e cura. Il mio primo amore e la mia vera vocazione sono il cake design e le torte personalizzate: progetti unici nati per rendere speciale ogni occasione.
-Ma anche la pasticceria secca ha un posto importante nel mio cuore, perché racchiude tutto il gusto e la semplicità delle cose fatte bene.
-
-Da oggi i miei biscotti, cookies, brownies e altre prelibatezze dai sapori autentici potranno arrivare anche a chi è lontano, semplicemente acquistando nello shop online.</em></p>
-                    
-                </div>
-
+                <p>
+                    Benvenuti nel mio mondo, dove la pasticceria diventa magia. Mi chiamo Giuly e nel mio laboratorio Incantesimi di Zucchero creo dolci artigianali con passione e cura. Il mio primo amore e la mia vera vocazione sono il cake design e le torte personalizzate: progetti unici nati per rendere speciale ogni occasione. Ma anche la pasticceria secca ha un posto importante nel mio cuore, perché racchiude tutto il gusto e la semplicità delle cose fatte bene. Da oggi i miei biscotti, cookies, brownies e altre prelibatezze dai sapori autentici potranno arrivare anche a chi è lontano, semplicemente acquistando nello shop online.
+                </p>
             </div>
+    
+        </section>
+    
+        <!-- SECONDO BLOCCO: Testo a Sinistra, Immagine a Destra -->
+        <section class="about-page-section layout-reversed">
+            
+            <div class="about-text">
+                <h2>Ingredienti, Amore e Fantasia</h2>
+                <p>
+                    Il primo prodotto che lancerò nel mio shop sono queste tre box degustazione: un assaggio della mia pasticceria artigianale, realizzata a mano e senza conservanti o additivi.
 
+Tutti i dolci vengono preparati su ordinazione, senza alcuna produzione anticipata. Per questo motivo hanno tempi di conservazione naturali e limitati e sono pensati per essere gustati appena ricevuti.
+
+Ci impegniamo a garantire una spedizione in 2-3 giorni lavorativi al massimo e ti avviseremo non appena l’ordine sarà pronto.
+                </p>
+            </div>
+            
+            <div class="about-image">
+                <!-- IMMAGINE 2 (Usa una nuova immagine qui) -->
+                <img src="images/giulybox.jpg" alt="Dettaglio dei prodotti di pasticceria artigianale">
+            </div>
+    
         </section>
     </main>
 
-    <!-- Footer coerente con le altre pagine -->
     <footer class="main-footer">
         <p>© 2025 Incantesimi di Zucchero di Giuly. Tutti i diritti riservati.</p>
-        <p>Contattami: info@incantesimidizucchero.it</p>
+        <p>P.IVA 12345678901</p>
     </footer>
-    <!-- ... footer ... -->
 
-    <!-- LA NUOVA RIGA DA AGGIUNGERE -->
     <div id="notification" class="notification"></div> 
-
     <script src="script.js"></script>
 
 </body>
