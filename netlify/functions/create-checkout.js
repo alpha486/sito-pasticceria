@@ -4,16 +4,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // Per massima sicurezza e coerenza, i dati dei prodotti sono definiti qui.
 // Questa è la "fonte della verità" per i prezzi e le taglie.
 const allProducts = [
-  { "id": 1, "name": "Box Grande Crunch", "price": 25.00, "size": "grande" },
-  { "id": 2, "name": "Box Grande Gnammy", "price": 22.00, "size": "grande" },
-  { "id": 3, "name": "Box Fantasia di Sapori", "price": 28.00, "size": "normale" }
+  { "id": 1, "name": "Box Grande Crunch", "price": 33.00, "size": "grande" },
+  { "id": 2, "name": "Box Grande Gnammy", "price": 33.00, "size": "grande" },
+  { "id": 3, "name": "Box Piccola Slurp", "price": 26.00, "size": "normale" }
 ];
 
 
 /**
  * Funzione helper per calcolare il costo di spedizione in modo sicuro sul server.
  * Prende il carrello come input e restituisce il costo di spedizione.
- * (Logica invariata)
  */
 const calculateShippingCost = (cart) => {
     const SHIPPING_FEE = 9.90;
@@ -45,16 +44,16 @@ exports.handler = async (event) => {
             throw new Error("Variabile d'ambiente Stripe (STRIPE_SECRET_KEY) non configurata.");
         }
 
-        // --- MODIFICA CHIAVE: Riceviamo solo il carrello dal frontend ---
-        // La variabile discountCode non viene più letta né gestita qui.
+        // Estraiamo solo il carrello dal corpo della richiesta.
+        // Abbiamo rimosso la logica del `discountCode` da qui.
         const { cart: cartItems } = JSON.parse(event.body);
         
-        // Controllo di validità dei dati ricevuti. (Logica invariata)
+        // Controllo di validità dei dati ricevuti.
         if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
             return { statusCode: 400, body: JSON.stringify({ error: 'Richiesta non valida o carrello vuoto.' }) };
         }
 
-        // Costruisce la lista degli articoli (line_items) da passare a Stripe. (Logica invariata)
+        // Costruisce la lista degli articoli (line_items) da passare a Stripe.
         const lineItems = cartItems.map(item => {
             const product = allProducts.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato nel catalogo server: ${item.name}`);
@@ -75,7 +74,7 @@ exports.handler = async (event) => {
             };
         });
 
-        // Calcoliamo e aggiungiamo il costo di spedizione come un articolo separato. (Logica invariata)
+        // Calcoliamo e aggiungiamo il costo di spedizione come un articolo separato.
         const shippingCost = calculateShippingCost(cartItems);
         if (shippingCost > 0) {
             lineItems.push({
@@ -96,8 +95,7 @@ exports.handler = async (event) => {
             shipping_address_collection: {
                 allowed_countries: ['IT'],
             },
-            // --- MODIFICA CHIAVE: Logica sconti semplificata ---
-            // Abilitiamo semplicemente il campo per i codici promozionali sulla pagina di checkout di Stripe.
+            // Logica sconti semplificata: abilitiamo solo il campo su Stripe.
             allow_promotion_codes: true,
             
             // Manteniamo i metadati per il webhook, sono sempre utili.
@@ -108,8 +106,6 @@ exports.handler = async (event) => {
             cancel_url: `${process.env.URL}/cancel.html`,
         };
         
-        // La vecchia logica complessa `if (discountCode)` è stata completamente rimossa.
-
         // Creiamo la sessione di checkout su Stripe con tutti i dati preparati.
         const session = await stripe.checkout.sessions.create(sessionPayload);
         
@@ -117,7 +113,7 @@ exports.handler = async (event) => {
         return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
 
     } catch (error) {
-        // Gestione centralizzata di tutti i possibili errori. (Logica invariata)
+        // Gestione centralizzata di tutti i possibili errori.
         console.error("Errore critico nella funzione di checkout:", error);
         return { 
             statusCode: 500, 
