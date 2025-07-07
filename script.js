@@ -1,12 +1,9 @@
-// Importiamo axios all'inizio del file per poterlo usare
-import axios from 'axios';
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
-    let activeDiscount = null; // NUOVO: per tenere traccia dello sconto attivo
+    let activeDiscount = null; // Tiene traccia dell'intero oggetto sconto
 
     // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
     const saveCart = () => localStorage.setItem('shoppingCart', JSON.stringify(cart));
@@ -34,13 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCartPreview = () => {
         const cartPreviewContainer = document.getElementById('cart-preview-content');
         if (!cartPreviewContainer) return;
-
-        if (cart.length === 0) {
-            cartPreviewContainer.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
-            return;
-        }
-        
-        cartPreviewContainer.innerHTML = cart.map(item => `
+        cartPreviewContainer.innerHTML = cart.length === 0 
+            ? '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>'
+            : cart.map(item => `
             <div class="preview-item">
                 <div class="preview-item-image"><img src="${item.img}" alt="${item.name}"></div>
                 <div class="preview-item-details">
@@ -70,51 +63,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
         if (!container || !allProducts.length) return;
-
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
         const product = allProducts.find(p => p.id === productId);
-
         if (!product) {
             container.innerHTML = '<p class="cart-empty-message">Prodotto non trovato. <a href="shop.html">Torna allo shop</a>.</p>';
             return;
         }
-
         document.title = `${product.name} - Incantesimi di Zucchero`;
         let optionsHTML = '';
         if (product.options && product.options.choices) {
-            optionsHTML = `
-                <div class="product-options">
-                    <label for="product-option-select">${product.options.label}</label>
-                    <select id="product-option-select">
-                        <option value="">-- Scegli un'opzione --</option>
-                        ${product.options.choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}
-                    </select>
-                </div>
-            `;
+            optionsHTML = `<div class="product-options"><label for="product-option-select">${product.options.label}</label><select id="product-option-select"><option value="">-- Scegli un'opzione --</option>${product.options.choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}</select></div>`;
         }
-
-        container.innerHTML = `
-            <div class="product-detail-content">
-                <div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div>
-                <div class="product-detail-info">
-                    <h2>${product.name}</h2>
-                    <div class="price">€ ${product.price.toFixed(2)}</div>
-                    ${product.size === 'grande' ? `<p class="free-shipping-hint">✨ Aggiungi un'altra box grande e la spedizione è gratis!</p>` : ''}
-                    <p>${product.description}</p>
-                    <div class="product-allergens-detail">
-                        <strong>Allergeni Presenti:</strong>
-                        <p>${product.allergens.join(', ')}</p>
-                    </div>
-                    ${optionsHTML} 
-                    <a href="#" class="cta-button" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
-                </div>
-            </div>
-        `;
+        container.innerHTML = `<div class="product-detail-content"><div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div><div class="product-detail-info"><h2>${product.name}</h2><div class="price">€ ${product.price.toFixed(2)}</div>${product.size === 'grande' ? `<p class="free-shipping-hint">✨ Aggiungi un'altra box grande e la spedizione è gratis!</p>` : ''}<p>${product.description}</p><div class="product-allergens-detail"><strong>Allergeni Presenti:</strong><p>${product.allergens.join(', ')}</p></div>${optionsHTML}<a href="#" class="cta-button" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a></div></div>`;
         attachAddToCartListeners();
     };
 
-    // --- NUOVA FUNZIONE DEDICATA A DISEGNARE SOLO I TOTALI ---
     const renderTotals = () => {
         const totalsContainer = document.getElementById('cart-totals');
         if (!totalsContainer) return;
@@ -135,77 +99,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let discountAmount = 0;
-        if (activeDiscount) {
+        if (activeDiscount && activeDiscount.percent_off) {
             discountAmount = (subtotal * activeDiscount.percent_off) / 100;
         }
         let grandTotal = subtotal - discountAmount + shippingCost;
 
-        totalsContainer.innerHTML = `
-            <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
-            ${activeDiscount ? `<div class="cart-totals-row discount-row"><span>Sconto (${activeDiscount.code}):</span><span>- € ${discountAmount.toFixed(2)}</span></div>` : ''}
-            <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
-            <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-            <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
-        `;
+        totalsContainer.innerHTML = `<div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>${activeDiscount ? `<div class="cart-totals-row discount-row"><span>Sconto (${activeDiscount.code}):</span><span>- € ${discountAmount.toFixed(2)}</span></div>` : ''}<div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div><div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div><a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>`;
         attachCheckoutListener();
     };
 
-    // --- RENDER CART PAGE AGGIORNATA ---
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
-
         if (cart.length === 0) {
             container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
             return;
         }
-
         try {
             container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
             const response = await fetch('/.netlify/functions/get-shipping-info');
             if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
             const shippingInfo = await response.json();
-
-            const shippingInfoHTML = `
-                <div class="shipping-info-box">
-                    <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
-                    <span>Data di spedizione prevista:</span>
-                    <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
-                    <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
-                </div>
-            `;
+            const shippingInfoHTML = `<div class="shipping-info-box"><p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p><span>Data di spedizione prevista:</span><span class="shipping-date">${shippingInfo.dataSpedizione}</span><p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p></div>`;
             
-            container.innerHTML = 
-                shippingInfoHTML + 
-                cart.map((item, index) => `
-                    <div class="cart-item">
-                        <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
-                        <div class="cart-item-details">
-                            <h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3>
-                            <p>Prezzo: € ${item.price.toFixed(2)}</p>
-                            <button class="remove-item-btn" data-index="${index}">Rimuovi</button>
-                        </div>
-                        <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
-                        <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
-                    </div>
-                `).join('') + 
-                `<div class="promo-code-section">
-                    <label for="promo-code-input">Hai un codice sconto?</label>
-                    <div class="promo-code-input-wrapper">
-                        <input type="text" id="promo-code-input" placeholder="Es: GIULY10">
-                        <button id="apply-promo-code-btn">Applica</button>
-                    </div>
-                    <div id="promo-code-message"></div>
-                </div>
-                <div id="cart-totals"></div>`;
-            
+            container.innerHTML = shippingInfoHTML + cart.map((item, index) => `<div class="cart-item"><div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div><div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div><div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div><div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div></div>`).join('') + `<div class="promo-code-section"><label for="promo-code-input">Hai un codice sconto?</label><div class="promo-code-input-wrapper"><input type="text" id="promo-code-input" placeholder="Es: GIULY10"><button id="apply-promo-code-btn">Applica</button></div><div id="promo-code-message" class="promo-code-message"></div></div><div id="cart-totals"></div>`;
             renderTotals();
             attachApplyPromoListener();
-
         } catch (error) {
             console.error("Errore nel caricare le info di spedizione:", error);
-            const errorHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> ...</p></div>`;
-            container.innerHTML = errorHTML + (container.innerHTML || '');
+            const errorHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Siamo spiacenti, non è stato possibile caricare le informazioni sulla spedizione.</p><p>Potrebbe essere un problema temporaneo. Per favore, prova a ricaricare la pagina.</p></div>`;
+            container.innerHTML = errorHTML + (cart.length > 0 ? '<div id="cart-totals"></div>' : '');
+            if(cart.length > 0) renderTotals();
         }
     };
 
@@ -247,55 +171,62 @@ document.addEventListener('DOMContentLoaded', () => {
         container.addEventListener('click', event => {
             const target = event.target;
             if (!target.matches('.quantity-btn') && !target.matches('.remove-item-btn')) return;
-            const index = target.dataset.index;
-            if (index === undefined) return;
+            const index = parseInt(target.dataset.index);
+            if (isNaN(index)) return;
+            let cartModified = false;
             if (target.matches('.remove-item-btn')) {
                 cart.splice(index, 1);
+                cartModified = true;
             }
             if (target.matches('.quantity-btn')) {
                 const change = parseInt(target.dataset.change);
                 if (cart[index]) {
                     cart[index].quantity += change;
                     if (cart[index].quantity === 0) cart.splice(index, 1);
+                    cartModified = true;
                 }
             }
-            saveCart();
-            updateCartIcon();
-            if (cart.length === 0) {
-                renderCartPage();
-            } else {
-                renderTotals();
+            if (cartModified) {
+                saveCart();
+                updateCartIcon();
+                renderCartPage(); 
+                renderCartPreview();
             }
-            renderCartPreview();
         });
     };
     
-    // --- NUOVO ASCOLTATORE PER IL CODICE PROMOZIONALE (usa axios) ---
     const attachApplyPromoListener = () => {
         const applyBtn = document.getElementById('apply-promo-code-btn');
-        const input = document.getElementById('promo-code-input');
-        const messageDiv = document.getElementById('promo-code-message');
-        if (!applyBtn || !input || !messageDiv) return;
-
+        if (!applyBtn) return;
         applyBtn.addEventListener('click', async () => {
+            const input = document.getElementById('promo-code-input');
+            const messageDiv = document.getElementById('promo-code-message');
             const code = input.value.trim().toUpperCase();
             if (!code) return;
-            
+
             applyBtn.textContent = 'Verifico...';
             applyBtn.disabled = true;
 
             try {
-                // USA AXIOS per la chiamata POST alla funzione Netlify
-                const response = await axios.post('/.netlify/functions/validate-promo-code', { code });
-                activeDiscount = response.data;
+                // USA FETCH (versione robusta)
+                const response = await fetch('/.netlify/functions/validate-promo-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Codice non valido');
+                }
+                const data = await response.json();
+                activeDiscount = data;
                 messageDiv.textContent = `Sconto "${activeDiscount.code}" applicato!`;
-                messageDiv.style.color = 'var(--accent-color)';
+                messageDiv.className = 'promo-code-message success';
                 renderTotals();
             } catch (error) {
                 activeDiscount = null;
-                // Gestisce l'errore specifico restituito da axios
-                messageDiv.textContent = error.response?.data?.error || 'Codice non valido o si è verificato un errore.';
-                messageDiv.style.color = 'var(--error-color)';
+                messageDiv.textContent = error.message;
+                messageDiv.className = 'promo-code-message error';
                 renderTotals();
             } finally {
                 applyBtn.textContent = 'Applica';
@@ -304,35 +235,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // --- MODIFICATO: Invia lo sconto attivo al checkout (usa axios) ---
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
         if (!checkoutButton) return;
-
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
             checkoutButton.textContent = 'Attendi...';
             checkoutButton.disabled = true;
-
+            
             try {
+                // Passa l'intero oggetto sconto, che è null se non attivo
                 const payload = {
                     cart: cart,
-                    discountCode: activeDiscount ? activeDiscount.code : null
+                    discount: activeDiscount 
                 };
-                
-                // USA AXIOS per creare la sessione di checkout
-                const response = await axios.post('/.netlify/functions/create-checkout', payload);
-                window.location.href = response.data.url;
-
+                // USA FETCH
+                const response = await fetch('/.netlify/functions/create-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Errore durante la creazione del checkout');
+                }
+                const data = await response.json();
+                window.location.href = data.url;
             } catch (error) {
-                console.error("Errore durante il checkout:", error);
+                console.error("Errore Checkout:", error);
                 checkoutButton.textContent = 'Errore, riprova';
                 checkoutButton.disabled = false;
             }
         });
     };
 
-    // --- INIZIALIZZAZIONE DEL SITO (invariata) ---
+    // --- INIZIALIZZAZIONE ---
     const init = async () => {
         try {
             const response = await fetch('products.json');
