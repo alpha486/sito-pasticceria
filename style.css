@@ -722,3 +722,21 @@ a.product-card-link:hover {
 .preview-item-details {
     flex-grow: 1; /* Occupa lo spazio rimanente */
 }
+/* Stile per il selettore di opzioni prodotto */
+.product-options {
+    margin: 2rem 0;
+}
+.product-options label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+.product-options select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: var(--body-font);
+    font-size: 1rem;
+    background-color: white;
+}
