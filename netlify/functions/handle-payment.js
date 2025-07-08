@@ -10,29 +10,45 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 const mongoUri = process.env.MONGODB_URI;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// --- FUNZIONE HELPER getNextWednesday (DEVE ESSERE IDENTICA A QUELLA IN get-shipping-info) ---
+// --- FUNZIONE HELPER getNextWednesday (VERSIONE FINALE - IDENTICA A get-shipping-info.js) ---
+// Questa versione è la più robusta perché prima calcola la data di spedizione potenziale
+// e POI controlla se cade in un periodo di chiusura. Se così fosse, ricalcola la data
+// partendo dal giorno successivo alla fine della chiusura, garantendo che il risultato sia sempre valido.
 const getNextWednesday = (startDate, weeksToAdd = 0) => {
     let date = new Date(startDate);
     
-    if (config.chiusura && config.chiusura.start && config.chiusura.end) {
-        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
-        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
-
-        if (date >= inizioChiusura && date <= fineChiusura) {
-            date = new Date(fineChiusura);
-            date.setDate(date.getDate() + 1);
-        }
-    }
-    
+    // 1. Aggiungi subito le settimane di attesa accumulate durante la ricerca di posti liberi
     date.setDate(date.getDate() + (weeksToAdd * 7));
     
-    const day = date.getDay();
+    // 2. Calcola il prossimo mercoledì partendo dalla data aggiornata
+    let day = date.getDay(); // (Domenica=0, Lunedì=1, ..., Mercoledì=3)
     let daysUntilWednesday = (3 - day + 7) % 7;
-    if (daysUntilWednesday === 0 && new Date().toDateString() === date.toDateString() && date.getHours() >= 12) {
+    
+    // Caso speciale: se l'ordine viene fatto di mercoledì dopo le 12:00, si slitta al mercoledì successivo.
+    // Usiamo new Date() per l'ora corrente, perché è il momento dell'ordine che conta.
+    if (daysUntilWednesday === 0 && new Date().toDateString() === date.toDateString() && new Date().getHours() >= 12) {
         daysUntilWednesday = 7;
     }
     date.setDate(date.getDate() + daysUntilWednesday);
 
+    // 3. ORA, CONTROLLA SE LA DATA CALCOLATA È IN PERIODO DI CHIUSURA
+    // Questo è il controllo di sicurezza finale e più importante.
+    if (config.chiusura && config.chiusura.start && config.chiusura.end) {
+        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
+        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
+
+        // Se la data di spedizione calcolata cade nelle ferie...
+        if (date >= inizioChiusura && date <= fineChiusura) {
+            // ...si imposta una nuova data di partenza al giorno dopo la fine delle ferie...
+            const ripartenza = new Date(fineChiusura);
+            ripartenza.setDate(ripartenza.getDate() + 1);
+            
+            // ...e si ricalcola da capo il primo mercoledì utile (chiamata ricorsiva).
+            return getNextWednesday(ripartenza, 0); 
+        }
+    }
+    
+    // 4. Se la data è valida, la restituisce.
     return date;
 };
 
@@ -64,18 +80,20 @@ exports.handler = async ({ body, headers }) => {
             const collection = client.db('incantesimi-zucchero-db').collection('ordini_settimanali');
             
             // LOGICA PER TROVARE LA SETTIMANA GIUSTA IN CUI INSERIRE L'ORDINE
+            // Questa logica DEVE rispecchiare quella in get-shipping-info
             let settimaneDiAttesa = 0;
             let postiLiberi = false;
             let weekIdentifier;
 
             while (!postiLiberi) {
+                // Usa la funzione getNextWednesday aggiornata e corretta
                 const targetDate = getNextWednesday(new Date(), settimaneDiAttesa);
                 weekIdentifier = targetDate.toISOString().split('T')[0];
                 
                 const weekData = await collection.findOne({ settimana: weekIdentifier });
                 const boxOrdinate = weekData ? weekData.boxOrdinate : 0;
 
-                // Usa il valore dal file di configurazione
+                // Controlla se c'è spazio per le NUOVE box in questa settimana
                 if (boxOrdinate + totalBoxes <= config.maxBoxPerSettimana) {
                     postiLiberi = true;
                 } else {
