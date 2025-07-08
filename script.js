@@ -213,8 +213,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
             if (button.dataset.listenerAttached) return;
             button.dataset.listenerAttached = 'true';
+            
             button.addEventListener('click', event => {
                 event.preventDefault();
+                
+                // 1. Calcoliamo la quantità attuale nel carrello
+                const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+                // 2. Controlliamo se aggiungere un'altra box supera il limite
+                if (currentTotalBoxes + 1 > MAX_BOXES_PER_ORDER) {
+                    alert(`Spiacenti, non è possibile ordinare più di ${MAX_BOXES_PER_ORDER} box in un singolo ordine.\nPer ordini più grandi, contattaci direttamente!`);
+                    return; // Interrompiamo l'esecuzione e non aggiungiamo nulla
+                }
+
+                // 3. Se il controllo passa, procediamo con la logica normale
                 const { name, price, img } = button.dataset;
                 let selectedOption = null;
                 const optionSelect = document.getElementById('product-option-select');
@@ -233,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const productInfo = allProducts.find(p => p.name === name);
                     cart.push({ id: cartItemId, name: name, price: parseFloat(price), img: img, quantity: 1, option: selectedOption, size: productInfo ? productInfo.size : 'normale' });
                 }
+
                 saveCart();
                 updateCartIcon();
                 renderCartPreview();
@@ -247,21 +260,36 @@ document.addEventListener('DOMContentLoaded', () => {
         container.addEventListener('click', event => {
             const target = event.target;
             if (!target.matches('.quantity-btn') && !target.matches('.remove-item-btn')) return;
+            
             const index = target.dataset.index;
             if (index === undefined) return;
+            
             if (target.matches('.remove-item-btn')) {
                 cart.splice(index, 1);
             }
+            
             if (target.matches('.quantity-btn')) {
                 const change = parseInt(target.dataset.change);
+                
+                // Se stiamo cercando di aggiungere, applichiamo il controllo del limite
+                if (change > 0) {
+                    const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
+                    if (currentTotalBoxes + 1 > MAX_BOXES_PER_ORDER) {
+                        alert(`Spiacenti, il limite massimo per ordine è di ${MAX_BOXES_PER_ORDER} box.`);
+                        return; // Non aggiungere se il limite è superato
+                    }
+                }
+
                 if (cart[index]) {
                     cart[index].quantity += change;
-                    if (cart[index].quantity === 0) cart.splice(index, 1);
+                    if (cart[index].quantity === 0) {
+                        cart.splice(index, 1);
+                    }
                 }
             }
             saveCart();
             updateCartIcon();
-            renderCartPage(); // Ridisegna la pagina del carrello
+            renderCartPage();
             renderCartPreview();
         });
     };
