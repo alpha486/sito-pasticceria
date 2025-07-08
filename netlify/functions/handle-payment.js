@@ -54,7 +54,8 @@ exports.handler = async ({ body, headers }) => {
             // --- LETTURA DEL FILE DI CONFIGURAZIONE ---
             // Cerca il file nella sottocartella _data
 // Cerca il file nella directory di esecuzione
-const configPath = 'config.json';
+// Cerca il file nella directory di esecuzione
+const configPath = path.join(__dirname, '..', '..', 'config.json');
             const configData = fs.readFileSync(configPath, 'utf8');
             const config = JSON.parse(configData);
 
