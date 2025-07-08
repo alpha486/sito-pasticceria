@@ -6,6 +6,7 @@
     --heading-font: 'Dancing Script', cursive;
     --body-font: 'Poppins', sans-serif;
 }
+/*mmm*/
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { font-family: var(--body-font); color: var(--text-color); background-color: #fff; }
