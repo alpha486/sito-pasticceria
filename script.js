@@ -3,9 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
-    // La variabile `activeDiscount` è stata rimossa.
 
     // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
+    // (Questa sezione è corretta e rimane invariata)
     const saveCart = () => {
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
     };
@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNZIONI PER "DISEGNARE" LE PAGINE ---
 
+    // (Questa funzione è corretta e rimane invariata)
     const renderCartPreview = () => {
         const cartPreviewContainer = document.getElementById('cart-preview-content');
         if (!cartPreviewContainer) return;
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
+    // (Questa funzione è corretta e rimane invariata)
     const renderShopProducts = () => {
         const container = document.getElementById('product-list-container');
         if (!container) return;
@@ -68,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
     
+    // (Questa funzione è corretta e rimane invariata)
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
         if (!container || !allProducts.length) return;
@@ -116,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attachAddToCartListeners();
     };
 
+    // --- MODIFICA FONDAMENTALE 1: renderCartPage ---
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
@@ -147,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).reduce((sum, item) => sum + item.quantity, 0);
 
             const shippingCost = (largeBoxQuantity >= 2 || totalQuantity >= 3) ? 0 : SHIPPING_FEE;
-            const shippingDisplay = shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`;
+            const shippingDisplay = shippingCost === 0 ? 'Gratuita' : `€ ${shippingCost.toFixed(2)}`;
             const grandTotal = subtotal + shippingCost;
             
             const cartItemsHTML = cart.map((item, index) => `
@@ -159,14 +163,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
 
+            // Qui viene inserito il campo email, come richiesto.
             const totalsHTML = `
                 <div class="cart-totals">
                     <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
                     <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
                     ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
                     <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-                    <p class="cart-totals-note">Eventuali sconti verranno applicati nella pagina di pagamento.</p>
+                    
+                    <!-- NUOVO CAMPO EMAIL OBBLIGATORIO -->
+                    <div class="checkout-email-section">
+                        <label for="customer-email">La tua email per completare l'ordine:</label>
+                        <input type="email" id="customer-email" placeholder="lamiamail@esempio.com" required>
+                    </div>
+
                     <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+                    <p class="cart-totals-note">Potrai inserire eventuali codici sconto nella pagina sicura di pagamento.</p>
                 </div>
             `;
 
@@ -180,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- FUNZIONI PER GLI ASCOLTATORI ---
+    
+    // (Questa funzione è corretta e rimane invariata)
     const attachAddToCartListeners = () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
             if (button.dataset.listenerAttached) return;
@@ -212,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // (Questa funzione è corretta e rimane invariata)
     const attachCartPageListeners = () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
@@ -237,31 +252,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
+    // --- MODIFICA FONDAMENTALE 2: attachCheckoutListener ---
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
         if (!checkoutButton) return;
+        
+        // Impediamo di aggiungere più volte lo stesso listener
+        if (checkoutButton.dataset.listenerAttached) return;
+        checkoutButton.dataset.listenerAttached = 'true';
+
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
+            
+            // 1. Raccogliamo l'email dall'input
+            const emailInput = document.getElementById('customer-email');
+            const email = emailInput.value.trim();
+
+            // 2. Validazione robusta dell'email
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                alert('Per favore, inserisci un indirizzo email valido per continuare.');
+                emailInput.focus();
+                return; // Interrompi l'esecuzione se l'email non è valida
+            }
+
+            // 3. Gestione dello stato del pulsante
+            checkoutButton.disabled = true;
             checkoutButton.textContent = 'Attendi...';
+
             try {
-                // Il payload ora invia solo il carrello. Niente più sconti.
-                const payload = { cart: cart };
+                // 4. Creiamo il payload con carrello E email
+                const payload = { 
+                    cart: cart,
+                    customerEmail: email
+                };
+
                 const response = await fetch('/.netlify/functions/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (!response.ok) throw new Error('Errore dal server durante il checkout');
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Errore dal server durante la creazione del checkout.');
+                }
+
                 const data = await response.json();
                 window.location.href = data.url;
+
             } catch (error) {
-                console.error("Errore Checkout:", error);
-                checkoutButton.textContent = 'Errore, riprova';
+                console.error("Errore durante il processo di Checkout:", error);
+                alert(`Si è verificato un errore: ${error.message}. Riprova.`);
+                // 5. Ripristino del pulsante in caso di errore
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Procedi al Pagamento';
             }
         });
     };
 
     // --- INIZIALIZZAZIONE DEL SITO ---
+    // (Questa sezione è corretta e rimane invariata)
     const init = async () => {
         try {
             const productResponse = await fetch('products.json');
@@ -269,8 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
             allProducts = await productResponse.json();
         } catch (error) {
             console.error("Errore critico nel caricamento dei prodotti:", error);
+            document.body.innerHTML = '<p style="text-align: center; padding: 2rem;">Oops! Non siamo riusciti a caricare i nostri prodotti. Riprova più tardi.</p>';
         }
         
+        // Esecuzione delle funzioni per popolare la pagina
         renderShopProducts();
         renderProductDetailPage();
         renderCartPage();
@@ -279,5 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartPreview();
     };
 
+    // Avvia tutto
     init();
 });

@@ -745,3 +745,6 @@ a.product-card-link:hover {
 .promo-code-input-wrapper input { flex-grow: 1; border-right: none; }
 .promo-code-input-wrapper button { border-radius: 0 5px 5px 0; }
 .discount-row { color: #27ae60; font-weight: bold; }
+.checkout-email-section { margin: 1.5rem 0; }
+.checkout-email-section label { display: block; margin-bottom: 0.5rem; }
+.checkout-email-section input { width: 100%; padding: 12px; }
