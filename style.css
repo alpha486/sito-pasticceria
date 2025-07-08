@@ -765,3 +765,12 @@ a.product-card-link:hover {
     border-radius: 5px;
     font-size: 1rem;
 }
+/* Stile per il banner di chiusura per ferie */
+.closure-banner {
+    background-color: var(--pink);
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
