@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let allProducts = [];
     let config = {}; // Oggetto che conterrà la configurazione (es. ferie)
     const MAX_BOXES_PER_ORDER = 25; // Limite massimo di box per ordine
+    
+    // NUOVA VARIABILE: Memorizza i dati di spedizione per il controllo al checkout
+    let shippingInfoState = null; 
 
     // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
     const saveCart = () => {
@@ -29,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // --- NUOVA FUNZIONE PER GESTIRE IL BANNER DI CHIUSURA ---
+    // --- FUNZIONE PER GESTIRE IL BANNER DI CHIUSURA ---
     const handleClosureBanner = () => {
         const bannerContainer = document.getElementById('closure-banner-container');
         if (!bannerContainer || !config.chiusura || !config.chiusura.start || !config.chiusura.end) return;
@@ -135,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         attachAddToCartListeners();
     };
 
+    // MODIFICATA: Ora memorizza anche i dati di spedizione
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
@@ -152,7 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ cart: cart })
             });
             if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
+            
             const shippingInfo = await response.json();
+            
+            // --- MODIFICA CHIAVE ---
+            // Salviamo i dati ricevuti nello stato globale per usarli al checkout
+            shippingInfoState = shippingInfo; 
 
             const shippingInfoHTML = `
                 <div class="shipping-info-box">
@@ -198,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Errore nel caricare la pagina del carrello:", error);
+            shippingInfoState = null; // Resettiamo lo stato in caso di errore
             container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
         }
     };
@@ -283,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
+    // MODIFICATA: Ora include il controllo di sicurezza ("guardia del corpo")
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
         if (!checkoutButton) return;
@@ -293,6 +304,19 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
             
+            // --- INSERIMENTO DELLA LOGICA DAL PRIMO CODICE ---
+            // 1. Calcoliamo la quantità totale di box nel carrello
+            const cartTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            // 2. LA "GUARDIA DEL CORPO": controlla la disponibilità
+            // Controlla se abbiamo le info sui posti rimasti e se la quantità nel carrello è maggiore
+            if (shippingInfoState && cartTotalBoxes > shippingInfoState.postiRimasti) {
+                alert(`Spiacenti, stai cercando di ordinare ${cartTotalBoxes} box, ma per la prossima data di spedizione ne sono rimaste solo ${shippingInfoState.postiRimasti}.\nPer favore, riduci la quantità nel carrello.`);
+                return; // BLOCCHIAMO IL PROCESSO DI CHECKOUT
+            }
+            // --- FINE INSERIMENTO ---
+
+            // 3. Se il controllo passa, procediamo con la validazione dell'email e il pagamento
             const emailInput = document.getElementById('customer-email');
             const email = emailInput.value.trim();
 
@@ -349,10 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
             config = await configResponse.json();
 
             // Una volta caricati i dati, esegui il resto
-            handleClosureBanner();
+            handleClosureBanner(); // Gestisce il banner ferie
             renderShopProducts();
             renderProductDetailPage();
-            renderCartPage();
+            renderCartPage(); // Ora carica anche i dati di spedizione
             attachCartPageListeners();
             updateCartIcon();
             renderCartPreview();
