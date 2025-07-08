@@ -1,15 +1,18 @@
 const { MongoClient } = require('mongodb');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const fs = require('fs');
-const path = require('path');
 
+// --- IMPORTAZIONE DIRETTA DEI DATI (METODO GARANTITO) ---
+// Importiamo il file di configurazione direttamente.
+// Il percorso relativo '..' esce dalla cartella corrente.
+const config = require('../../config.json');
+
+// Legge le variabili d'ambiente sicure
 const mongoUri = process.env.MONGODB_URI;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// --- FUNZIONE HELPER getNextWednesday AGGIORNATA ---
+// --- FUNZIONE HELPER getNextWednesday (invariata, ma ora usa `config` importato) ---
 // È FONDAMENTALE che sia IDENTICA a quella in get-shipping-info.js
-// per garantire che il calcolo della data sia coerente.
-const getNextWednesday = (startDate, weeksToAdd = 0, config) => {
+const getNextWednesday = (startDate, weeksToAdd = 0, currentConfig) => {
     let date = new Date(startDate);
     
     date.setDate(date.getDate() + (weeksToAdd * 7));
@@ -22,22 +25,22 @@ const getNextWednesday = (startDate, weeksToAdd = 0, config) => {
     const daysUntilWednesday = (3 - day + 7) % 7;
     date.setDate(date.getDate() + daysUntilWednesday);
 
-    if (config && config.chiusura && config.chiusura.start && config.chiusura.end) {
-        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
-        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
+    if (currentConfig && currentConfig.chiusura && currentConfig.chiusura.start && currentConfig.chiusura.end) {
+        const inizioChiusura = new Date(currentConfig.chiusura.start + "T00:00:00");
+        const fineChiusura = new Date(currentConfig.chiusura.end + "T23:59:59");
 
         if (date >= inizioChiusura && date <= fineChiusura) {
             const ripartenza = new Date(fineChiusura);
             ripartenza.setDate(ripartenza.getDate() + 1);
-            return getNextWednesday(ripartenza, 0, config);
+            return getNextWednesday(ripartenza, 0, currentConfig);
         }
     }
     
     return date;
 };
 
+// --- FUNZIONE HANDLER PRINCIPALE (semplificata) ---
 exports.handler = async ({ body, headers }) => {
-    // Controlli di sicurezza sulle variabili d'ambiente
     if (!mongoUri || !webhookSecret) {
         console.error("Errore: variabili d'ambiente MONGODB_URI o STRIPE_WEBHOOK_SECRET non impostate.");
         return { statusCode: 500, body: 'Errore di configurazione del server.' };
@@ -51,13 +54,8 @@ exports.handler = async ({ body, headers }) => {
         );
 
         if (stripeEvent.type === 'checkout.session.completed') {
-            // --- LETTURA DEL FILE DI CONFIGURAZIONE ---
-            // Cerca il file nella sottocartella _data
-// Cerca il file nella directory di esecuzione
-// Cerca il file nella directory di esecuzione
-const configPath = path.join(__dirname, '..', '..', 'config.json');
-            const configData = fs.readFileSync(configPath, 'utf8');
-            const config = JSON.parse(configData);
+            // I dati di configurazione sono già disponibili grazie a `require` all'inizio del file.
+            // Non c'è più bisogno di `fs.readFileSync` o `JSON.parse`.
 
             const session = stripeEvent.data.object;
             const cart = JSON.parse(session.metadata.cart);
@@ -67,13 +65,13 @@ const configPath = path.join(__dirname, '..', '..', 'config.json');
             await client.connect();
             const collection = client.db('incantesimi-zucchero-db').collection('ordini_settimanali');
             
-            // --- LOGICA PER TROVARE LA SETTIMANA GIUSTA, ORA CONSAPEVOLE DELLA CONFIGURAZIONE ---
+            // LOGICA PER TROVARE LA SETTIMANA GIUSTA, ORA CONSAPEVOLE DELLA CONFIGURAZIONE
             let settimaneDiAttesa = 0;
             let postiLiberi = false;
             let weekIdentifier;
 
             while (!postiLiberi) {
-                // Passiamo la configurazione alla funzione per il calcolo della data
+                // Usiamo l'oggetto `config` importato all'inizio del file
                 const targetDate = getNextWednesday(new Date(), settimaneDiAttesa, config);
                 weekIdentifier = targetDate.toISOString().split('T')[0];
                 
