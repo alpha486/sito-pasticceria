@@ -581,47 +581,49 @@ a.product-card-link:hover {
 /* === STILE FINALE PER TOTALI CARRELLO  === */
 /* ========================================= */
 
-/* Questo è il contenitore principale per i totali e il bottone */
+/* Contenitore principale per totali, email e bottone */
 .cart-totals {
-    max-width: 450px;     /* Imposta una larghezza massima per il blocco */
-    margin-left: auto;      /* LA REGOLA MAGICA: spinge il blocco tutto a destra */
-    margin-right: 0;      /* Assicura che sia allineato al bordo destro */
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: 0;
     margin-top: 2rem;
     padding: 1.5rem;
     background-color: var(--light-bg);
     border-radius: 10px;
+    
+    /* Usiamo Grid per un controllo totale sul layout */
+    display: grid;
+    gap: 1rem; /* Spazio tra le righe */
 }
 
-/* Stile per ogni riga (es. "Subtotale: € 31.00") */
+/* Stile per ogni riga di totali (Subtotale, Spedizione, Sconto) */
 .cart-totals-row {
     display: flex;
-    justify-content: space-between; /* Spinge "Subtotale" a sinistra e il prezzo a destra */
+    justify-content: space-between;
     font-size: 1.1rem;
-    padding: 0.75rem 0;
+    padding: 0.25rem 0;
 }
 
-/* Stile specifico per la riga del totale finale */
 .cart-totals-row.grand-total {
     font-size: 1.6rem;
     font-weight: bold;
     color: var(--dark-purple);
     border-top: 1px solid #ddd;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     padding-top: 1rem;
 }
 
 /* Stile per il bottone di pagamento dentro questo blocco */
 .cart-totals .cta-button {
-    width: 100%;          /* Occupa tutta la larghezza del box dei totali */
+    width: 100%;
     text-align: center;
-    margin-top: 1.5rem;   /* Spazio tra i totali e il bottone */
+    margin-top: 1rem; /* Spazio prima del bottone */
 }
 
 /* --- Media Query per sistemare la visualizzazione MOBILE --- */
 @media (max-width: 768px) {
     .cart-totals {
-        /* Su mobile, rimuoviamo l'allineamento a destra e la larghezza massima.
-           Ora occuperà tutto lo spazio disponibile. */
+        /* Su mobile, il box occupa tutta la larghezza */
         max-width: 100%;
         margin-left: 0;
     }
@@ -744,7 +746,22 @@ a.product-card-link:hover {
 .promo-code-input-wrapper { display: flex; max-width: 450px; margin-left: auto; }
 .promo-code-input-wrapper input { flex-grow: 1; border-right: none; }
 .promo-code-input-wrapper button { border-radius: 0 5px 5px 0; }
-.discount-row { color: #27ae60; font-weight: bold; }
-.checkout-email-section { margin: 1.5rem 0; }
-.checkout-email-section label { display: block; margin-bottom: 0.5rem; }
-.checkout-email-section input { width: 100%; padding: 12px; }
+.discount-row {
+    color: #27ae60;
+    font-weight: bold;
+}
+.checkout-email-section {
+    margin-top: 0.5rem; /* Spazio prima del campo email */
+}
+.checkout-email-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.checkout-email-section input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
