@@ -59,61 +59,51 @@ const calculateShippingCost = (cart, productsList) => {
 // --- FUNZIONE HANDLER PRINCIPALE (semplificata) ---
 exports.handler = async (event) => {
     if (!mongoUri) {
-        console.error("Errore: la variabile MONGODB_URI non è impostata.");
-        return { statusCode: 500, body: JSON.stringify({ error: 'Errore di configurazione del server.' }) };
+        console.error("Errore: MONGODB_URI non impostato.");
+        return { statusCode: 500, body: JSON.stringify({ error: 'Errore di configurazione.' }) };
     }
 
+    const client = new MongoClient(mongoUri);
+
     try {
-        // I dati di configurazione e prodotti sono già disponibili grazie a `require`.
-        // Non c'è più bisogno di `fs.readFileSync` o `JSON.parse`.
-
-        const { cart } = JSON.parse(event.body || '{}');
-
-        // CALCOLO DELLA DATA DI SPEDIZIONE CON LOGICA DI CHIUSURA
-        const client = new MongoClient(mongoUri);
         await client.connect();
-        const database = client.db('incantesimi-zucchero-db');
-        const collection = database.collection('ordini_settimanali');
+        const collection = client.db('incantesimi-zucchero-db').collection('ordini_settimanali');
 
         let settimaneDiAttesa = 0;
         let postiLiberi = false;
         let boxOrdinate = 0;
         
         while (!postiLiberi) {
-            // Usiamo l'oggetto `config` importato all'inizio del file
             const targetDate = getNextWednesday(new Date(), settimaneDiAttesa, config);
             const weekIdentifier = targetDate.toISOString().split('T')[0];
             
             const weekData = await collection.findOne({ settimana: weekIdentifier });
             boxOrdinate = weekData ? weekData.boxOrdinate : 0;
 
+            // Ora questo controllo funzionerà!
             if (boxOrdinate < config.maxBoxPerSettimana) {
                 postiLiberi = true;
             } else {
                 settimaneDiAttesa++;
             }
         }
-        await client.close();
 
         const finalShippingDate = getNextWednesday(new Date(), settimaneDiAttesa, config);
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = finalShippingDate.toLocaleDateString('it-IT', dateOptions);
-
-        // CALCOLO COSTO SPEDIZIONE
-        // Usiamo l'oggetto `allProducts` importato all'inizio del file
-        const shippingCost = calculateShippingCost(cart, allProducts);
+        
+        await client.close();
 
         return {
             statusCode: 200,
             body: JSON.stringify({ 
                 dataSpedizione: formattedDate,
-                postiRimasti: config.maxBoxPerSettimana - boxOrdinate,
-                shippingCost: shippingCost
+                postiRimasti: config.maxBoxPerSettimana - boxOrdinate
             }),
         };
 
     } catch (error) {
-        console.error("Errore nella funzione get-shipping-info:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: 'Errore nel recupero dei dati di spedizione.' }) };
+        console.error("Errore in get-shipping-info:", error);
+        return { statusCode: 500, body: JSON.stringify({ error: 'Errore nel recupero dati.' }) };
     } 
 };
