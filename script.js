@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
+    let config = {}; // Oggetto che conterrà la configurazione (es. ferie)
     const MAX_BOXES_PER_ORDER = 25; // Limite massimo di box per ordine
 
     // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
@@ -26,6 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
         window.notificationTimeout = setTimeout(() => {
             notificationElement.classList.remove('show');
         }, 3000);
+    };
+
+    // --- NUOVA FUNZIONE PER GESTIRE IL BANNER DI CHIUSURA ---
+    const handleClosureBanner = () => {
+        const bannerContainer = document.getElementById('closure-banner-container');
+        if (!bannerContainer || !config.chiusura || !config.chiusura.start || !config.chiusura.end) return;
+
+        const oggi = new Date();
+        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
+        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
+
+        if (oggi >= inizioChiusura && oggi <= fineChiusura) {
+            bannerContainer.innerHTML = `
+                <div class="closure-banner">
+                    Attenzione: Siamo chiusi per ferie! Gli ordini ricevuti verranno spediti dopo il ${new Date(config.chiusura.end).toLocaleDateString('it-IT', {day: 'numeric', month: 'long'})}.
+                </div>
+            `;
+        }
     };
 
     // --- FUNZIONI PER "DISEGNARE" LE PAGINE ---
@@ -125,8 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('/.netlify/functions/get-shipping-info');
-            if (!response.ok) throw new Error('Risposta non valida dal server');
+            container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
+            
+            const response = await fetch('/.netlify/functions/get-shipping-info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart: cart })
+            });
+            if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
             const shippingInfo = await response.json();
 
             const shippingInfoHTML = `
@@ -139,14 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const SHIPPING_FEE = 9.90;
-            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const largeBoxQuantity = cart.filter(item => {
-                const p = allProducts.find(prod => prod.name === item.name);
-                return p && p.size === 'grande';
-            }).reduce((sum, item) => sum + item.quantity, 0);
-
-            const shippingCost = (largeBoxQuantity >= 2 || totalQuantity >= 3) ? 0 : SHIPPING_FEE;
+            
+            const shippingCost = shippingInfo.shippingCost;
             const shippingDisplay = shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`;
             const grandTotal = subtotal + shippingCost;
             
@@ -165,8 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
                     ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
                     <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-                    <p class="cart-totals-note">Eventuali sconti verranno applicati nella pagina di pagamento.</p>
+                    <div class="checkout-email-section">
+                        <label for="customer-email">La tua email per completare l'ordine:</label>
+                        <input type="email" id="customer-email" placeholder="lamiamail@esempio.com" required>
+                    </div>
                     <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
+                    <p class="cart-totals-note">Potrai inserire eventuali codici sconto nella pagina sicura di pagamento.</p>
                 </div>
             `;
 
@@ -175,12 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Errore nel caricare la pagina del carrello:", error);
-            container.innerHTML = `<div class="shipping-info-box error"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
+            container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
         }
     };
 
     // --- FUNZIONI PER GLI ASCOLTATORI ---
-    
     const attachAddToCartListeners = () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
             if (button.dataset.listenerAttached) return;
@@ -207,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const cartItemId = selectedOption ? `${name}-${selectedOption}` : name;
                 const existingProduct = cart.find(item => item.id === cartItemId);
-
                 if (existingProduct) {
                     existingProduct.quantity++;
                 } else {
@@ -265,45 +286,81 @@ document.addEventListener('DOMContentLoaded', () => {
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
         if (!checkoutButton) return;
+        
+        if (checkoutButton.dataset.listenerAttached) return;
+        checkoutButton.dataset.listenerAttached = 'true';
+
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
-            checkoutButton.textContent = 'Attendi...';
+            
+            const emailInput = document.getElementById('customer-email');
+            const email = emailInput.value.trim();
+
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                alert('Per favore, inserisci un indirizzo email valido per continuare.');
+                emailInput.focus();
+                return;
+            }
+
             checkoutButton.disabled = true;
+            checkoutButton.textContent = 'Attendi...';
+
             try {
-                const payload = { cart: cart };
+                const payload = { 
+                    cart: cart,
+                    customerEmail: email
+                };
+
                 const response = await fetch('/.netlify/functions/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (!response.ok) throw new Error('Errore dal server durante il checkout');
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Errore dal server durante la creazione del checkout.');
+                }
+
                 const data = await response.json();
                 window.location.href = data.url;
+
             } catch (error) {
-                console.error("Errore Checkout:", error);
-                checkoutButton.textContent = 'Errore, riprova';
+                console.error("Errore durante il processo di Checkout:", error);
+                alert(`Si è verificato un errore: ${error.message}. Riprova.`);
                 checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Procedi al Pagamento';
             }
         });
     };
 
-    // --- INIZIALIZZAZIONE DEL SITO ---
+    // --- FUNZIONE DI INIZIALIZZAZIONE ---
     const init = async () => {
         try {
-            const productResponse = await fetch('products.json');
+            const [productResponse, configResponse] = await Promise.all([
+                fetch('products.json'),
+                fetch('config.json')
+            ]);
+
             if (!productResponse.ok) throw new Error('Catalogo prodotti non trovato.');
+            if (!configResponse.ok) throw new Error('File di configurazione non trovato.');
+            
             allProducts = await productResponse.json();
+            config = await configResponse.json();
+
+            // Una volta caricati i dati, esegui il resto
+            handleClosureBanner();
+            renderShopProducts();
+            renderProductDetailPage();
+            renderCartPage();
+            attachCartPageListeners();
+            updateCartIcon();
+            renderCartPreview();
+
         } catch (error) {
-            console.error("Errore critico nel caricamento dei prodotti:", error);
-            // Non blocchiamo l'intero sito, ma mostriamo un errore dove serve
+            console.error("Errore critico nell'inizializzazione:", error);
+            document.body.innerHTML = '<p style="text-align: center; padding: 2rem;">Oops! C\'è stato un problema nel caricare il sito. Riprova più tardi.</p>';
         }
-        
-        renderShopProducts();
-        renderProductDetailPage();
-        renderCartPage();
-        attachCartPageListeners();
-        updateCartIcon();
-        renderCartPreview();
     };
 
     // Avvia l'intera applicazione.
