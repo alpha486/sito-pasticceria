@@ -69,8 +69,9 @@ exports.handler = async (event) => {
     try {
         // --- LETTURA DEI FILE DI CONFIGURAZIONE E PRODOTTI ---
         // Cerca i file nella sottocartella _data
-const configPath = path.resolve(__dirname, '_data/config.json');
-const productsPath = path.resolve(__dirname, '_data/products.json');
+// Cerca i file nella directory di esecuzione
+const configPath = 'config.json';
+const productsPath = 'products.json';
         
         const configData = fs.readFileSync(configPath, 'utf8');
         const productsData = fs.readFileSync(productsPath, 'utf8');
