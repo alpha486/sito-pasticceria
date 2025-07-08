@@ -1,6 +1,6 @@
 :root {
     --pink: #E8B4B8;
-    --dark-purple: #4D4C7D;
+    --dark-purple: hsl(326, 99%, 65%);
     --light-bg: #F9F3F3;
     --text-color: #363636;
     --heading-font: 'Dancing Script', cursive;
@@ -773,4 +773,12 @@ a.product-card-link:hover {
     padding: 0.75rem;
     font-weight: 500;
     font-size: 1.1rem;
+}
+.footer-legal-links {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+.footer-legal-links a {
+    color: var(--text-color);
+    margin: 0 10px;
 }
