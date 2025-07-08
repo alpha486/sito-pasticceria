@@ -52,7 +52,8 @@ exports.handler = async ({ body, headers }) => {
 
         if (stripeEvent.type === 'checkout.session.completed') {
             // --- LETTURA DEL FILE DI CONFIGURAZIONE ---
-            const configPath = path.resolve(process.cwd(), 'config.json');
+            // Cerca il file nella sottocartella _data
+const configPath = path.resolve(__dirname, '_data/config.json');
             const configData = fs.readFileSync(configPath, 'utf8');
             const config = JSON.parse(configData);
 
