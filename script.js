@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- STATO GLOBALE DELL'APPLICAZIONE (UNITO) ---
+    // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
-    let config = {}; // Oggetto per contenere la configurazione (da Versione 1)
+    const MAX_BOXES_PER_ORDER = 25; // Limite massimo di box per ordine
 
-    // --- FUNZIONI DI BASE (invariate, corrette) ---
+    // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
     const saveCart = () => {
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
     };
@@ -28,26 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // --- NUOVA FUNZIONE PER GESTIRE IL BANNER DI CHIUSURA (da Versione 1) ---
-    const handleClosureBanner = () => {
-        const bannerContainer = document.getElementById('closure-banner-container');
-        if (!bannerContainer || !config.chiusura || !config.chiusura.start || !config.chiusura.end) return;
+    // --- FUNZIONI PER "DISEGNARE" LE PAGINE ---
 
-        const oggi = new Date();
-        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
-        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
-
-        if (oggi >= inizioChiusura && oggi <= fineChiusura) {
-            bannerContainer.innerHTML = `
-                <div class="closure-banner">
-                    Attenzione: Siamo chiusi per ferie! Gli ordini ricevuti verranno spediti dopo il ${new Date(config.chiusura.end).toLocaleDateString('it-IT', {day: 'numeric', month: 'long'})}.
-                </div>
-            `;
-            bannerContainer.style.display = 'block'; // Assicurati che il banner sia visibile
-        }
-    };
-
-    // --- FUNZIONI PER "DISEGNARE" LE PAGINE (invariate, corrette) ---
     const renderCartPreview = () => {
         const cartPreviewContainer = document.getElementById('cart-preview-content');
         if (!cartPreviewContainer) return;
@@ -134,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
         attachAddToCartListeners();
     };
 
-    // --- FUNZIONE renderCartPage (UNITA) ---
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
@@ -144,16 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Messaggio di caricamento per una migliore UX
-            container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
-            
-            // Unica chiamata al backend per avere data E costo di spedizione
-            const response = await fetch('/.netlify/functions/get-shipping-info', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cart: cart }) // Invia il carrello per il calcolo
-            });
-            if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
+            const response = await fetch('/.netlify/functions/get-shipping-info');
+            if (!response.ok) throw new Error('Risposta non valida dal server');
             const shippingInfo = await response.json();
 
             const shippingInfoHTML = `
@@ -166,10 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // Usa il costo di spedizione calcolato dal server (da Versione 1)
-            const shippingCost = shippingInfo.shippingCost;
-            const shippingDisplay = shippingCost === 0 ? 'Gratuita' : `€ ${shippingCost.toFixed(2)}`;
+            const SHIPPING_FEE = 9.90;
+            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const largeBoxQuantity = cart.filter(item => {
+                const p = allProducts.find(prod => prod.name === item.name);
+                return p && p.size === 'grande';
+            }).reduce((sum, item) => sum + item.quantity, 0);
+
+            const shippingCost = (largeBoxQuantity >= 2 || totalQuantity >= 3) ? 0 : SHIPPING_FEE;
+            const shippingDisplay = shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`;
             const grandTotal = subtotal + shippingCost;
             
             const cartItemsHTML = cart.map((item, index) => `
@@ -181,21 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
 
-            // Include il campo email obbligatorio (da Versione 2)
             const totalsHTML = `
                 <div class="cart-totals">
                     <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
                     <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
                     ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
                     <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
-                    
-                    <div class="checkout-email-section">
-                        <label for="customer-email">La tua email per completare l'ordine:</label>
-                        <input type="email" id="customer-email" placeholder="lamiamail@esempio.com" required>
-                    </div>
-
+                    <p class="cart-totals-note">Eventuali sconti verranno applicati nella pagina di pagamento.</p>
                     <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
-                    <p class="cart-totals-note">Potrai inserire eventuali codici sconto nella pagina sicura di pagamento.</p>
                 </div>
             `;
 
@@ -204,11 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error("Errore nel caricare la pagina del carrello:", error);
-            container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
+            container.innerHTML = `<div class="shipping-info-box error"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
         }
     };
 
-    // --- FUNZIONI PER GLI ASCOLTATORI (unite e corrette) ---
+    // --- FUNZIONI PER GLI ASCOLTATORI ---
+    
     const attachAddToCartListeners = () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
             if (button.dataset.listenerAttached) return;
@@ -217,16 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
             button.addEventListener('click', event => {
                 event.preventDefault();
                 
-                // 1. Calcoliamo la quantità attuale nel carrello
                 const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-                // 2. Controlliamo se aggiungere un'altra box supera il limite
-                if (currentTotalBoxes + 1 > MAX_BOXES_PER_ORDER) {
+                if (currentTotalBoxes >= MAX_BOXES_PER_ORDER) {
                     alert(`Spiacenti, non è possibile ordinare più di ${MAX_BOXES_PER_ORDER} box in un singolo ordine.\nPer ordini più grandi, contattaci direttamente!`);
-                    return; // Interrompiamo l'esecuzione e non aggiungiamo nulla
+                    return;
                 }
 
-                // 3. Se il controllo passa, procediamo con la logica normale
                 const { name, price, img } = button.dataset;
                 let selectedOption = null;
                 const optionSelect = document.getElementById('product-option-select');
@@ -239,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const cartItemId = selectedOption ? `${name}-${selectedOption}` : name;
                 const existingProduct = cart.find(item => item.id === cartItemId);
+
                 if (existingProduct) {
                     existingProduct.quantity++;
                 } else {
@@ -271,12 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target.matches('.quantity-btn')) {
                 const change = parseInt(target.dataset.change);
                 
-                // Se stiamo cercando di aggiungere, applichiamo il controllo del limite
                 if (change > 0) {
                     const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-                    if (currentTotalBoxes + 1 > MAX_BOXES_PER_ORDER) {
+                    if (currentTotalBoxes >= MAX_BOXES_PER_ORDER) {
                         alert(`Spiacenti, il limite massimo per ordine è di ${MAX_BOXES_PER_ORDER} box.`);
-                        return; // Non aggiungere se il limite è superato
+                        return;
                     }
                 }
 
@@ -294,84 +262,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
-    // Versione finale e robusta dell'ascoltatore di checkout (da Versione 2)
     const attachCheckoutListener = () => {
         const checkoutButton = document.getElementById('checkout-button');
         if (!checkoutButton) return;
-        
-        if (checkoutButton.dataset.listenerAttached) return;
-        checkoutButton.dataset.listenerAttached = 'true';
-
         checkoutButton.addEventListener('click', async (event) => {
             event.preventDefault();
-            
-            const emailInput = document.getElementById('customer-email');
-            const email = emailInput.value.trim();
-
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                alert('Per favore, inserisci un indirizzo email valido per continuare.');
-                emailInput.focus();
-                return;
-            }
-
-            checkoutButton.disabled = true;
             checkoutButton.textContent = 'Attendi...';
-
+            checkoutButton.disabled = true;
             try {
-                // Il payload è corretto e include sia carrello che email
-                const payload = { 
-                    cart: cart,
-                    customerEmail: email
-                };
-
+                const payload = { cart: cart };
                 const response = await fetch('/.netlify/functions/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Errore dal server durante la creazione del checkout.');
-                }
-
+                if (!response.ok) throw new Error('Errore dal server durante il checkout');
                 const data = await response.json();
                 window.location.href = data.url;
-
             } catch (error) {
-                console.error("Errore durante il processo di Checkout:", error);
-                alert(`Si è verificato un errore: ${error.message}. Riprova.`);
+                console.error("Errore Checkout:", error);
+                checkoutButton.textContent = 'Errore, riprova';
                 checkoutButton.disabled = false;
-                checkoutButton.textContent = 'Procedi al Pagamento';
             }
         });
     };
 
-    // --- FUNZIONE DI INIZIALIZZAZIONE (UNITA E MIGLIORATA) ---
+    // --- INIZIALIZZAZIONE DEL SITO ---
     const init = async () => {
         try {
-            // Caricamento in parallelo per massima efficienza (da Versione 1)
-            const [productResponse, configResponse] = await Promise.all([
-                fetch('products.json'),
-                fetch('config.json')
-            ]);
-
+            const productResponse = await fetch('products.json');
             if (!productResponse.ok) throw new Error('Catalogo prodotti non trovato.');
-            if (!configResponse.ok) throw new Error('File di configurazione non trovato.');
-            
             allProducts = await productResponse.json();
-            config = await configResponse.json();
-
-            // Una volta caricata la configurazione, gestiamo il banner
-            handleClosureBanner();
-
         } catch (error) {
-            console.error("Errore critico nel caricamento dei dati:", error);
-            document.body.innerHTML = '<p style="text-align: center; padding: 2rem;">Oops! C\'è stato un problema nel caricare il sito. Riprova più tardi.</p>';
-            return; // Interrompe l'esecuzione se i dati critici non vengono caricati
+            console.error("Errore critico nel caricamento dei prodotti:", error);
+            // Non blocchiamo l'intero sito, ma mostriamo un errore dove serve
         }
         
-        // Esegui il resto delle funzioni solo se i dati sono stati caricati
         renderShopProducts();
         renderProductDetailPage();
         renderCartPage();
@@ -380,6 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartPreview();
     };
 
-    // Avvia tutto
+    // Avvia l'intera applicazione.
     init();
 });
