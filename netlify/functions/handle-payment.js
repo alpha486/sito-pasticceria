@@ -1,36 +1,31 @@
 const { MongoClient } = require('mongodb');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const fs = require('fs');
+const path = require('path');
 
-// --- IMPORTAZIONE DIRETTA DEI DATI (METODO GARANTITO) ---
-// Importiamo il file di configurazione direttamente.
-// Il percorso relativo '..' esce dalla cartella corrente.
-const config = require('../../config.json');
+// --- METODO ROBUSTO PER LEGGERE IL FILE DI CONFIGURAZIONE ---
+const configPath = path.resolve(__dirname, '..', '..', 'config.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
-// Legge le variabili d'ambiente sicure
 const mongoUri = process.env.MONGODB_URI;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// --- FUNZIONE HELPER getNextWednesday (invariata, ma ora usa `config` importato) ---
-// È FONDAMENTALE che sia IDENTICA a quella in get-shipping-info.js
+// --- FUNZIONE HELPER getNextWednesday (DEVE ESSERE IDENTICA A QUELLA IN get-shipping-info) ---
 const getNextWednesday = (startDate, weeksToAdd = 0) => {
     let date = new Date(startDate);
     
-    // Controlla prima se la data di partenza è in un periodo di chiusura
     if (config.chiusura && config.chiusura.start && config.chiusura.end) {
         const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
         const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
 
         if (date >= inizioChiusura && date <= fineChiusura) {
-            // Se siamo in chiusura, ripartiamo dal giorno dopo
             date = new Date(fineChiusura);
             date.setDate(date.getDate() + 1);
         }
     }
     
-    // Aggiungi eventuali settimane di attesa
     date.setDate(date.getDate() + (weeksToAdd * 7));
     
-    // Calcola il prossimo mercoledì da questa data
     const day = date.getDay();
     let daysUntilWednesday = (3 - day + 7) % 7;
     if (daysUntilWednesday === 0 && new Date().toDateString() === date.toDateString() && date.getHours() >= 12) {
@@ -41,46 +36,46 @@ const getNextWednesday = (startDate, weeksToAdd = 0) => {
     return date;
 };
 
-// --- FUNZIONE HANDLER PRINCIPALE (semplificata) ---
-exports.handler = async ({ body, headers }) => {
-    if (!mongoUri || !webhookSecret) {
-        console.error("Errore: variabili d'ambiente MONGODB_URI o STRIPE_WEBHOOK_SECRET non impostate.");
-        return { statusCode: 500, body: 'Errore di configurazione del server.' };
-    }
 
+// --- FUNZIONE HANDLER PRINCIPALE ---
+exports.handler = async ({ body, headers }) => {
     try {
+        // Verifica la firma del webhook per sicurezza
         const stripeEvent = stripe.webhooks.constructEvent(
             body,
             headers['stripe-signature'],
             webhookSecret
         );
 
+        // Gestisci solo l'evento che ci interessa: il completamento del checkout
         if (stripeEvent.type === 'checkout.session.completed') {
-            // I dati di configurazione sono già disponibili grazie a `require` all'inizio del file.
-            // Non c'è più bisogno di `fs.readFileSync` o `JSON.parse`.
-
             const session = stripeEvent.data.object;
             const cart = JSON.parse(session.metadata.cart);
             const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            // Se non ci sono box, non c'è nulla da registrare
+            if (totalBoxes === 0) {
+                console.log("Webhook ricevuto per un ordine senza box. Nessun aggiornamento al DB.");
+                return { statusCode: 200, body: JSON.stringify({ received: true }) };
+            }
 
             const client = new MongoClient(mongoUri);
             await client.connect();
             const collection = client.db('incantesimi-zucchero-db').collection('ordini_settimanali');
             
-            // LOGICA PER TROVARE LA SETTIMANA GIUSTA, ORA CONSAPEVOLE DELLA CONFIGURAZIONE
+            // LOGICA PER TROVARE LA SETTIMANA GIUSTA IN CUI INSERIRE L'ORDINE
             let settimaneDiAttesa = 0;
             let postiLiberi = false;
             let weekIdentifier;
 
             while (!postiLiberi) {
-                // Usiamo l'oggetto `config` importato all'inizio del file
-                const targetDate = getNextWednesday(new Date(), settimaneDiAttesa, config);
+                const targetDate = getNextWednesday(new Date(), settimaneDiAttesa);
                 weekIdentifier = targetDate.toISOString().split('T')[0];
                 
                 const weekData = await collection.findOne({ settimana: weekIdentifier });
                 const boxOrdinate = weekData ? weekData.boxOrdinate : 0;
 
-                // Usiamo il valore dal file di configurazione invece di un numero fisso
+                // Usa il valore dal file di configurazione
                 if (boxOrdinate + totalBoxes <= config.maxBoxPerSettimana) {
                     postiLiberi = true;
                 } else {
@@ -89,17 +84,18 @@ exports.handler = async ({ body, headers }) => {
             }
             
             // Aggiorna il database per la settimana corretta trovata
+            console.log(`Tentativo di aggiornamento per la settimana: ${weekIdentifier}, aggiungendo ${totalBoxes} box.`);
             await collection.updateOne(
                 { settimana: weekIdentifier },
                 { 
                     $inc: { boxOrdinate: totalBoxes },
                     $set: { settimana: weekIdentifier }
                 },
-                { upsert: true }
+                { upsert: true } // Crea il documento se non esiste
             );
             await client.close();
             
-            console.log(`Ordine registrato con successo per la settimana: ${weekIdentifier}. Aggiunte ${totalBoxes} box.`);
+            console.log(`Ordine registrato con successo per la settimana: ${weekIdentifier}.`);
         }
 
         return { statusCode: 200, body: JSON.stringify({ received: true }) };
