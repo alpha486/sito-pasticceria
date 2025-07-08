@@ -12,30 +12,32 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // --- FUNZIONE HELPER getNextWednesday (invariata, ma ora usa `config` importato) ---
 // È FONDAMENTALE che sia IDENTICA a quella in get-shipping-info.js
-const getNextWednesday = (startDate, weeksToAdd = 0, currentConfig) => {
+const getNextWednesday = (startDate, weeksToAdd = 0) => {
     let date = new Date(startDate);
     
-    date.setDate(date.getDate() + (weeksToAdd * 7));
-
-    if (date.getDay() === 3 && date.getHours() >= 12) {
-        date.setDate(date.getDate() + 1);
-    }
-    
-    const day = date.getDay();
-    const daysUntilWednesday = (3 - day + 7) % 7;
-    date.setDate(date.getDate() + daysUntilWednesday);
-
-    if (currentConfig && currentConfig.chiusura && currentConfig.chiusura.start && currentConfig.chiusura.end) {
-        const inizioChiusura = new Date(currentConfig.chiusura.start + "T00:00:00");
-        const fineChiusura = new Date(currentConfig.chiusura.end + "T23:59:59");
+    // Controlla prima se la data di partenza è in un periodo di chiusura
+    if (config.chiusura && config.chiusura.start && config.chiusura.end) {
+        const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
+        const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
 
         if (date >= inizioChiusura && date <= fineChiusura) {
-            const ripartenza = new Date(fineChiusura);
-            ripartenza.setDate(ripartenza.getDate() + 1);
-            return getNextWednesday(ripartenza, 0, currentConfig);
+            // Se siamo in chiusura, ripartiamo dal giorno dopo
+            date = new Date(fineChiusura);
+            date.setDate(date.getDate() + 1);
         }
     }
     
+    // Aggiungi eventuali settimane di attesa
+    date.setDate(date.getDate() + (weeksToAdd * 7));
+    
+    // Calcola il prossimo mercoledì da questa data
+    const day = date.getDay();
+    let daysUntilWednesday = (3 - day + 7) % 7;
+    if (daysUntilWednesday === 0 && new Date().toDateString() === date.toDateString() && date.getHours() >= 12) {
+        daysUntilWednesday = 7;
+    }
+    date.setDate(date.getDate() + daysUntilWednesday);
+
     return date;
 };
 
