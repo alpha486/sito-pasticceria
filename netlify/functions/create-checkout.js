@@ -9,7 +9,11 @@ const productPriceMap = {
 };
 const shippingPriceId = "price_1Riuh1BIB1UTN6OSWeMIrf5f"; // <-- INCOLLA QUI L'ID PREZZO DELLA SPEDIZIONE
 
-
+const allProducts = [
+  { "name": "Box Grande Crunch", "size": "grande" },
+  { "name": "Box Grande Gnammy", "size": "grande" },
+  { "name": "Box Piccola Slurp", "size": "normale" }
+];
 /**
  * Funzione helper per calcolare il costo di spedizione. (Logica invariata)
  */
