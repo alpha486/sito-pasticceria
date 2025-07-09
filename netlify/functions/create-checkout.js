@@ -67,7 +67,7 @@ exports.handler = async (event) => {
         }
 
         const sessionPayload = {
-            payment_method_types: ['card', 'paypal'],
+            payment_method_types: ['card', 'paypal', 'google_pay', 'apple_pay', 'satispay'],
             mode: 'payment',
             line_items: lineItems,
             shipping_address_collection: { allowed_countries: ['IT'] },
