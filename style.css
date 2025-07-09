@@ -13,7 +13,7 @@ body { font-family: var(--body-font); color: var(--text-color); background-color
 h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 
 .main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background-color: #ffffff; border-bottom: 1px solid var(--light-bg); position: sticky; top: 0; z-index: 100; }
-.logo { font-family: var(--heading-font); font-size: 2rem; color: var(--pink); }
+.logo { font-family: var(--heading-font); font-size: 2rem; color: var(--dark-purple); }
 .main-nav a { margin-left: 20px; text-decoration: none; color: var(--text-color); font-weight: 500; }
 
 .hero-section { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/sfondo.jpg'); height: 90vh; background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; text-align: center; color: white; padding: 2rem; }
