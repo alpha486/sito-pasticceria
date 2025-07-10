@@ -1,5 +1,5 @@
 {
-  "maxBoxPerSettimana": 25,
+  "maxBoxPerSettimana": 50,
   "chiusura": {
     "start": "", 
     "end": ""
