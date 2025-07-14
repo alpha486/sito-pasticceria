@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Box Grande Crunch",
-    "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 2 crostatine alla Nutella (frolla alla vaniglia e al cacao), 1 crostatina con confettura (confettura a scelta tra frutti di bosco, albicocca e fragola) e 150 g di Giuliette.",
+    "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 2 crostatine alla Nutella (frolla alla vaniglia e al cacao), 1 crostatina con confettura (confettura marca 'Zuegg' a scelta tra frutti di bosco, albicocca e fragola) e 150 g di Giuliette.",
     "price": 33.00,
     "image_url": "images/boxcrunch.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
@@ -15,7 +15,7 @@
   {
     "id": 2,
     "name": "Box Grande Gnammy",
-    "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostata (frolla alla vaniglia) con confettura (a scelta tra fragola, albicocca o frutti di bosco) o alla Nutella.",
+    "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostata (frolla alla vaniglia) con confettura (marca 'Zuegg'a scelta tra fragola, albicocca o frutti di bosco) o alla Nutella.",
     "price": 33.00,
     "image_url": "images/boxgnammy.jpg",
     "allergens": ["Glutine", "Uova", "Latte"],
