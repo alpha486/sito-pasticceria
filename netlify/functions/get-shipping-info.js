@@ -7,10 +7,21 @@ const path = require('path');
 const configPath = path.resolve(__dirname, '..', '..', 'config.json');
 const productsPath = path.resolve(__dirname, '..', '..', 'products.json');
 
+// ... altre righe
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-const allProducts = JSON.parse(fs.readFileSync(productsPath, 'utf-8'));
+const allProducts = JSON.parse(fs.readFileSync(productPath, 'utf-8'));
 
-const mongoUri = process.env.MONGODB_URI;
+// --- LOGICA PER SELEZIONARE IL DATABASE CORRETTO (PRODUZIONE O TEST) ---
+const isProduction = process.env.CONTEXT === 'production';
+
+// Assegna il valore alla variabile 'mongouri' come usata nel resto del file
+const mongouri = isProduction
+  ? process.env.MONGODB_URI       // Se in produzione, usa la variabile live
+  : process.env.TEST_MONGODB_URI; // Altrimenti (test, develop), usa la nuova variabile di test
+
+// Aggiungiamo un log per essere sicuri al 100% di quale DB stiamo usando
+console.log(`CONTEXT: ${process.env.CONTEXT}. Using ${isProduction ? 'PRODUCTION' : 'TEST'} database.`);
+// ------------------------------------------------------------------------
 
 
 // --- FUNZIONE HELPER getNextWednesday (VERSIONE FINALE E CORRETTA) ---

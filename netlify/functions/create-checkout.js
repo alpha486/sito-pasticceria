@@ -1,5 +1,18 @@
 // --- INCLUSIONI E CONFIGURAZIONE INIZIALE ---
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripePackage = require('stripe');
+
+// --- LOGICA PER SELEZIONARE LE CHIAVI STRIPE CORRETTE (LIVE O TEST) ---
+const isProduction = process.env.CONTEXT === 'production';
+
+const stripeKey = isProduction
+  ? process.env.STRIPE_SECRET_KEY       // Se in produzione, usa la chiave live
+  : process.env.TEST_STRIPE_SECRET_KEY; // Altrimenti (test, develop), usa la nuova chiave di test
+
+// Aggiungiamo un log per essere sicuri al 100% di quale chiave stiamo usando
+console.log(`CONTEXT: ${process.env.CONTEXT}. Using ${isProduction ? 'LIVE' : 'TEST'} Stripe key.`);
+
+const stripe = stripePackage(stripeKey);
+// -----------------------------------------------------------------------
 
 // La tua mappa di ID Prezzi, che è il metodo corretto per la modalità Live.
 // Assicurati che questi ID corrispondano a quelli nella tua dashboard di Stripe LIVE.

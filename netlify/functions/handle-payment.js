@@ -1,5 +1,18 @@
 const { MongoClient } = require('mongodb');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripePackage = require('stripe');
+
+// --- LOGICA PER SELEZIONARE LE CHIAVI STRIPE CORRETTE (LIVE O TEST) ---
+const isProduction = process.env.CONTEXT === 'production';
+
+const stripeKey = isProduction
+  ? process.env.STRIPE_SECRET_KEY       // Se in produzione, usa la chiave live
+  : process.env.TEST_STRIPE_SECRET_KEY; // Altrimenti (test, develop), usa la nuova chiave di test
+
+// Aggiungiamo un log per essere sicuri al 100% di quale chiave stiamo usando
+console.log(`CONTEXT: ${process.env.CONTEXT}. Using ${isProduction ? 'LIVE' : 'TEST'} Stripe key.`);
+
+const stripe = stripePackage(stripeKey);
+// -----------------------------------------------------------------------
 const fs = require('fs');
 const path = require('path');
 
@@ -7,7 +20,17 @@ const path = require('path');
 const configPath = path.resolve(__dirname, '..', '..', 'config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
-const mongoUri = process.env.MONGODB_URI;
+// --- LOGICA PER SELEZIONARE IL DATABASE CORRETTO (PRODUZIONE O TEST) ---
+const isProduction = process.env.CONTEXT === 'production';
+
+// Assegna il valore alla variabile 'mongouri' come usata nel resto del file
+const mongouri = isProduction
+  ? process.env.MONGODB_URI       // Se in produzione, usa la variabile live
+  : process.env.TEST_MONGODB_URI; // Altrimenti (test, develop), usa la nuova variabile di test
+
+// Aggiungiamo un log per essere sicuri al 100% di quale DB stiamo usando
+console.log(`CONTEXT: ${process.env.CONTEXT}. Using ${isProduction ? 'PRODUCTION' : 'TEST'} database.`);
+// ------------------------------------------------------------------------
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // --- FUNZIONE HELPER getNextWednesday (VERSIONE FINALE - IDENTICA A get-shipping-info.js) ---
