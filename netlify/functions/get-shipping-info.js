@@ -1,15 +1,53 @@
 const { MongoClient } = require('mongodb');
-const fs = require('fs');
-const path = require('path');
+// --- SOLUZIONE INFALLIBILE: INCLUDIAMO I JSON DIRETTAMENTE NEL CODICE ---
+// Non leggiamo più i file, ma definiamo gli oggetti direttamente qui.
 
-// --- NUOVO METODO PER LEGGERE I FILE DI CONFIGURAZIONE ---
-// Le funzioni Netlify vengono eseguite dalla root del progetto durante la build.
-// Usiamo percorsi relativi direttamente dalla root del progetto.
-const configPath = path.resolve(process.cwd(), 'config.json');
-const productsPath = path.resolve(process.cwd(), 'products.json');
+const config = {
+  "maxBoxPerSettimana": 50,
+  "chiusura": {
+    "start": "", 
+    "end": ""
+  }
+};
 
-const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-const allProducts = JSON.parse(fs.readFileSync(productsPath, 'utf-8'));
+const allProducts = [
+  {
+    "id": 1,
+    "name": "Box Grande Crunch",
+    "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 2 crostatine alla Nutella (frolla alla vaniglia e al cacao), 1 crostatina con confettura (confettura marca 'Zuegg' a scelta tra frutti di bosco, albicocca e fragola) e 150 g di Giuliette.",
+    "price": 33.00,
+    "image_url": "images/boxcrunch.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
+    "size": "grande",
+    "options": {
+"label": "Scegli la confettura della crostatina:",
+"choices": ["Fragola", "Albicocca", "Frutti di Bosco"]
+}
+  },
+  {
+    "id": 2,
+    "name": "Box Grande Gnammy",
+    "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostata (frolla alla vaniglia) con confettura (marca 'Zuegg'a scelta tra fragola, albicocca o frutti di bosco) o alla Nutella.",
+    "price": 33.00,
+    "image_url": "images/boxgnammy.jpg",
+    "allergens": ["Glutine", "Uova", "Latte"],
+    "size": "grande",
+    "options": {
+"label": "Scegli la confettura della crostatina:",
+"choices": ["Fragola", "Albicocca", "Frutti di Bosco","Nutella"]
+}
+  },
+  {
+    "id": 3,
+    "name": "Box Piccola Slurp",
+    "description": "1 crostatina alla Nutella (frolla al cacao), 2 cookies (gusto Pistacchio e gusto Classico), 100 g di Giuliette, 150 g di biscotti misti (vaniglia e cacao), 80 g di Brownie e 80 g di Nuvole Croccanti.",
+    "price": 26.00,
+    "image_url": "images/boxslurp.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
+    "size": "normale"
+  }
+];
+// ---------------------------------------------------------------------
 // --------------------------------------------------------
 
 // --- LOGICA PER SELEZIONARE IL DATABASE CORRETTO (PRODUZIONE O TEST) ---
