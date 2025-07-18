@@ -11,17 +11,35 @@ const stripeKey = isProduction
 // Aggiungiamo un log per essere sicuri al 100% di quale chiave stiamo usando
 console.log(`CONTEXT: ${process.env.CONTEXT}. Using ${isProduction ? 'LIVE' : 'TEST'} Stripe key.`);
 
+// ...
 const stripe = stripePackage(stripeKey);
-// -----------------------------------------------------------------------
 
-// La tua mappa di ID Prezzi, che è il metodo corretto per la modalità Live.
-// Assicurati che questi ID corrispondano a quelli nella tua dashboard di Stripe LIVE.
-const productPriceMap = {
-    "Box Grande Crunch": "price_1Riud8BIB1UTN6OS7Nl0MrBu",
-    "Box Grande Gnammy": "price_1RiuebBIB1UTN6OSbWaOLZQ3",
-    "Box Piccola Slurp": "price_1RiufWBIB1UTN6OSXsrBeXPo",
+// --- MAPPA DEGLI ID PREZZO DIVISA PER AMBIENTE ---
+
+// 1. Mappa dei prezzi VERI (dalla tua modalità LIVE, già li hai)
+const livePriceMap = {
+  "Box Grande Crunch": "price_1Riud8BIB1UTN6OS7Nl0MrBu",
+  "Box Grande Gnammy": "price_1RiuebBIB1UTN6OSbWaOLZQ3",
+  "Box Piccola Slurp": "price_1RiufWBIB1UTN6OSXsrBeXPo"
 };
-const shippingPriceId = "price_1Riuh1BIB1UTN6OSWeMIrf5f";
+const liveShippingPriceId = "price_1Riuh1BIB1UTN6OSWeMlrf5f";
+
+// 2. Mappa dei prezzi di TEST (devi ottenerli dalla tua dashboard Stripe in modalità TEST)
+const testPriceMap = {
+  "Box Grande Crunch": "price_1Rm2fVBIB1UTN6OSA2B10udE",
+  "Box Grande Gnammy": "price_1Rm2fvBIB1UTN6OSqQiYJs06",
+  "Box Piccola Slurp": "price_1Rm2gIBIB1UTN6OSEMNo2OTb"
+};
+const testShippingPriceId = "price_1Rm2jABIB1UTN6OSJmWuXiZu";
+
+// 3. Scegli la mappa e l'ID corretti in base al contesto
+//    La variabile 'isProduction' l'abbiamo già definita sopra!
+const productPriceMap = isProduction ? livePriceMap : testPriceMap;
+const shippingPriceId = isProduction ? liveShippingPriceId : testShippingPriceId;
+// ---------------------------------------------------
+
+// La tua lista di prodotti, usata solo per la logica di spedizione interna.
+// ...
 
 // La tua lista di prodotti, usata solo per la logica di spedizione interna.
 const allProducts = [
