@@ -30,7 +30,7 @@ const testPriceMap = {
   "Box Grande Gnammy": "price_1Rm2fvBIB1UTN6OSqQiYJs06",
   "Box Piccola Slurp": "price_1Rm2gIBIB1UTN6OSEMNo2OTb"
 };
-const testShippingPriceId = "price_1Rm2jABIB1UTN6OSJmWuXiZu";
+const testShippingPriceId = "price_1Rm2ufBIB1UTN6OSjOb6Mu81";
 
 // 3. Scegli la mappa e l'ID corretti in base al contesto
 //    La variabile 'isProduction' l'abbiamo già definita sopra!
