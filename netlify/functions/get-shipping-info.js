@@ -2,10 +2,10 @@ const { MongoClient } = require('mongodb');
 
 // --- CONFIGURAZIONE INCORPORATA ---
 const config = {
-  "maxBoxPerSettimana": 25,
+  "maxBoxPerSettimana": 50,
   "chiusura": {
-    "start": "2025-08-01",
-    "end": "2025-08-31"
+    "start": "",
+    "end": ""
   }
 };
 

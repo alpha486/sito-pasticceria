@@ -3,10 +3,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // --- CONFIGURAZIONE INCORPORATA ---
 const config = {
-  "maxBoxPerSettimana": 25,
+  "maxBoxPerSettimana": 50,
   "chiusura": {
-    "start": "2025-08-01",
-    "end": "2025-08-31"
+    "start": "",
+    "end": ""
   }
 };
 
