@@ -54,7 +54,7 @@ const allProducts = [
 const isProduction = process.env.CONTEXT === 'production';
 
 // Assegna il valore alla variabile 'mongouri' come usata nel resto del file
-const mongouri = isProduction
+const mongoUri = isProduction
   ? process.env.MONGODB_URI       // Se in produzione, usa la variabile live
   : process.env.TEST_MONGODB_URI; // Altrimenti (test, develop), usa la nuova variabile di test
 
