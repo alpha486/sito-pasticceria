@@ -2,14 +2,15 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
 
-// --- METODO ROBUSTO PER LEGGERE I FILE DI CONFIGURAZIONE ---
-// Costruiamo il percorso corretto per i file, indipendentemente da dove Netlify esegue la funzione.
-const configPath = path.resolve(__dirname, '..', '..', 'config.json');
-const productsPath = path.resolve(__dirname, '..', '..', 'products.json');
+// --- NUOVO METODO PER LEGGERE I FILE DI CONFIGURAZIONE ---
+// Le funzioni Netlify vengono eseguite dalla root del progetto durante la build.
+// Usiamo percorsi relativi direttamente dalla root del progetto.
+const configPath = path.resolve(process.cwd(), 'config.json');
+const productsPath = path.resolve(process.cwd(), 'products.json');
 
-// ... altre righe
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-const allProducts = JSON.parse(fs.readFileSync(productPath, 'utf-8'));
+const allProducts = JSON.parse(fs.readFileSync(productsPath, 'utf-8'));
+// --------------------------------------------------------
 
 // --- LOGICA PER SELEZIONARE IL DATABASE CORRETTO (PRODUZIONE O TEST) ---
 const isProduction = process.env.CONTEXT === 'production';
