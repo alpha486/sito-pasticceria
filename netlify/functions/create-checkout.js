@@ -86,7 +86,7 @@ exports.handler = async (event) => {
         const session = await stripe.checkout.sessions.create(sessionPayload);
         return { statusCode: 200, body: JSON.stringify({ url: session.url }) };
 
-    } catch (error)
+    } catch (error){
         console.error("Errore checkout:", error);
         return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
     }
