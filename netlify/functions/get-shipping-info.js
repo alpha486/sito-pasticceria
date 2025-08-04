@@ -4,8 +4,8 @@ const { MongoClient } = require('mongodb');
 const config = {
   "maxBoxPerSettimana": 50,
   "chiusura": {
-    "start": "",
-    "end": ""
+    "start": "2025-08-02",
+    "end": "2025-08-24"
   }
 };
 
