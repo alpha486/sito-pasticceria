@@ -783,3 +783,153 @@ a.product-card-link:hover {
     color: var(--text-color);
     margin: 0 10px;
 }
+/* ...TUTTO IL CSS PRECEDENTE... */
+
+/* Stile per il selettore di opzioni prodotto */
+.product-options {
+    margin: 2rem 0;
+}
+.product-options label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+.product-options select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: var(--body-font);
+    font-size: 1rem;
+    background-color: white;
+}
+.promo-code-section { margin: 2rem 0; text-align: right; }
+.promo-code-input-wrapper { display: flex; max-width: 450px; margin-left: auto; }
+.promo-code-input-wrapper input { flex-grow: 1; border-right: none; }
+.promo-code-input-wrapper button { border-radius: 0 5px 5px 0; }
+.discount-row {
+    color: #27ae60;
+    font-weight: bold;
+}
+.checkout-email-section {
+    margin-top: 0.5rem; /* Spazio prima del campo email */
+}
+.checkout-email-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.checkout-email-section input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+/* Stile per il banner di chiusura per ferie */
+.closure-banner {
+    background-color: var(--pink);
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+.footer-legal-links {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+.footer-legal-links a {
+    color: var(--text-color);
+    margin: 0 10px;
+}
+
+/* ...TUTTO IL CSS PRECEDENTE... */
+
+/* NUOVI STILI PER LA PERSONALIZZAZIONE DEI COOKIE */
+.cookie-customizer-container {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--light-bg);
+}
+
+.customizer-label {
+    display: block;
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.selection-counter {
+    background-color: var(--light-bg);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.flavor-grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Una colonna su mobile */
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* Due colonne su schermi più grandi */
+@media (min-width: 500px) {
+    .flavor-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.flavor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.flavor-name {
+    font-size: 1rem;
+    margin-right: 1rem;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quantity-btn-selector {
+    background-color: var(--light-bg);
+    border: 1px solid #ddd;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--pink);
+    transition: background-color 0.2s;
+}
+
+.quantity-btn-selector:hover:not(:disabled) {
+    background-color: var(--pink);
+    color: white;
+}
+
+.quantity-btn-selector:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-count {
+    font-size: 1.2rem;
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+}

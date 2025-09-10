@@ -8,9 +8,9 @@
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "grande",
     "options": {
-"label": "Scegli la confettura della crostatina:",
-"choices": ["Fragola", "Albicocca", "Frutti di Bosco"]
-}
+      "label": "Scegli la confettura della crostatina:",
+      "choices": ["Fragola", "Albicocca", "Frutti di Bosco"]
+    }
   },
   {
     "id": 2,
@@ -21,9 +21,9 @@
     "allergens": ["Glutine", "Uova", "Latte"],
     "size": "grande",
     "options": {
-"label": "Scegli la confettura della crostatina:",
-"choices": ["Fragola", "Albicocca", "Frutti di Bosco","Nutella"]
-}
+      "label": "Scegli la confettura della crostatina:",
+      "choices": ["Fragola", "Albicocca", "Frutti di Bosco", "Nutella"]
+    }
   },
   {
     "id": 3,
@@ -33,5 +33,37 @@
     "image_url": "images/boxslurp.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "normale"
+  },
+  {
+    "id": 4,
+    "name": "Crea la tua Box di Cookies",
+    "description": "Scegli tu i gusti per ogni cookie e crea la box perfetta per te! Seleziona 6 gusti, anche diversi tra loro, e preparati a un'esplosione di sapore.",
+    "price": 26.00,
+    "image_url": "images/boxgnammy.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
+    "size": "normale",
+    "customizable_options": {
+      "quantity": 6,
+      "label": "Scegli i tuoi 6 gusti preferiti:",
+      "choices": [
+        "Classico (Gocce di Cioccolato)",
+        "Dark (Cioccolato Fondente)",
+        "Red Velvet",
+        "Limone",
+        "Pistacchio",
+        "Lotus",
+        "Cioccolato Bianco",
+        "Doppio Cioccolato",
+        "Avena e Uvetta",
+        "Nocciola",
+        "Caramello Salato",
+        "Cocco",
+        "Mandorla",
+        "Caffè",
+        "Tè Matcha",
+        "Arancia e Cannella",
+        "Mirtilli Rossi e Cioccolato Bianco"
+      ]
+    }
   }
 ]

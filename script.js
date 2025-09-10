@@ -99,7 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const product = allProducts.find(p => p.id === productId);
 
         if (!product) {
-            container.innerHTML = '<p class="cart-empty-message">Prodotto non trovato. <a href="shop.html">Torna allo shop</a>.</p>';
+            container.innerHTML = `
+        <div class="product-detail-content">
+            <div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div>
+            <div class="product-detail-info">
+                <h2>${product.name}</h2>
+                <div class="price">€ ${product.price.toFixed(2)}</div>
+                
+                <p class="free-shipping-hint">✨ Aggiungi un'altra box e la spedizione è gratis!</p>
+                <p>${product.description}</p>
+                ${optionsHTML}
+                <div class="product-allergens-detail">
+                    <strong>Allergeni Presenti:</strong>
+                    <p>${product.allergens.join(', ')}</p>
+                </div>
+                <a href="#" class="cta-button" data-product-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
+            </div>
+        </div>
+    `;
             return;
         }
 
@@ -116,7 +133,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     </select>
                 </div>
             `;
+        } else if (product.customizable_options) {
+            const { quantity, label, choices } = product.customizable_options;
+            const flavorsHTML = choices.map(flavor => `
+                <div class="flavor-item" data-flavor="${flavor}">
+                    <span class="flavor-name">${flavor}</span>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn-selector minus" disabled>-</button>
+                        <span class="quantity-count">0</span>
+                        <button class="quantity-btn-selector plus">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            optionsHTML = `
+                <div class="cookie-customizer-container">
+                    <label class="customizer-label">${label}</label>
+                    <div class="selection-counter">
+                        <span>Selezionati:</span>
+                        <span id="current-selection-count">0</span> / ${quantity}
+                    </div>
+                    <div class="flavor-grid-container">
+                        ${flavorsHTML}
+                    </div>
+                </div>
+            `;
         }
+
 
         container.innerHTML = `
             <div class="product-detail-content">
@@ -131,12 +174,70 @@ document.addEventListener('DOMContentLoaded', () => {
                         <strong>Allergeni Presenti:</strong>
                         <p>${product.allergens.join(', ')}</p>
                     </div>
-                    <a href="#" class="cta-button" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
+                    <a href="#" class="cta-button" data-product-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
                 </div>
             </div>
         `;
+
+        if (product.customizable_options) {
+            attachFlavorSelectorListeners(product.customizable_options.quantity);
+        }
         attachAddToCartListeners();
     };
+    
+    const attachFlavorSelectorListeners = (maxQuantity) => {
+        const customizer = document.querySelector('.cookie-customizer-container');
+        if (!customizer) return;
+
+        const plusButtons = customizer.querySelectorAll('.plus');
+        const minusButtons = customizer.querySelectorAll('.minus');
+        const countDisplay = document.getElementById('current-selection-count');
+        
+        let totalCount = 0;
+
+        const updateTotal = () => {
+            totalCount = 0;
+            customizer.querySelectorAll('.quantity-count').forEach(el => {
+                totalCount += parseInt(el.textContent);
+            });
+            countDisplay.textContent = totalCount;
+
+            // Abilita/Disabilita i pulsanti "+" se il totale è raggiunto
+            plusButtons.forEach(btn => {
+                btn.disabled = totalCount >= maxQuantity;
+            });
+
+            // Abilita/Disabilita i pulsanti "-"
+            minusButtons.forEach(btn => {
+                const currentCount = parseInt(btn.nextElementSibling.textContent);
+                btn.disabled = currentCount === 0;
+            });
+        };
+
+        plusButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (totalCount < maxQuantity) {
+                    const countEl = button.previousElementSibling;
+                    countEl.textContent = parseInt(countEl.textContent) + 1;
+                    updateTotal();
+                }
+            });
+        });
+
+        minusButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const countEl = button.nextElementSibling;
+                const currentVal = parseInt(countEl.textContent);
+                if (currentVal > 0) {
+                    countEl.textContent = currentVal - 1;
+                    updateTotal();
+                }
+            });
+        });
+
+        updateTotal(); // Inizializza lo stato dei pulsanti
+    };
+
 
     // MODIFICATA: Ora memorizza anche i dati di spedizione
     const renderCartPage = async () => {
@@ -227,29 +328,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                const productId = parseInt(button.dataset.productId);
+                const productInfo = allProducts.find(p => p.id === productId);
+                if (!productInfo) return;
+
                 const { name, price, img } = button.dataset;
                 let selectedOption = null;
-                const optionSelect = document.getElementById('product-option-select');
-                if (optionSelect) {
+                let cartItemId = name;
+
+                if (productInfo.options) {
+                    const optionSelect = document.getElementById('product-option-select');
                     if (!optionSelect.value) {
                         alert('Per favore, seleziona un\'opzione prima di aggiungere al carrello.');
                         return;
                     }
                     selectedOption = optionSelect.value;
+                    cartItemId = `${name}-${selectedOption}`;
+
+                } else if (productInfo.customizable_options) {
+                    const { quantity } = productInfo.customizable_options;
+                    const flavorItems = document.querySelectorAll('.flavor-item');
+                    const selectedFlavors = [];
+                    let totalSelected = 0;
+
+                    flavorItems.forEach(item => {
+                        const flavorName = item.dataset.flavor;
+                        const count = parseInt(item.querySelector('.quantity-count').textContent);
+                        if (count > 0) {
+                            selectedFlavors.push(`${count}x ${flavorName}`);
+                        }
+                        totalSelected += count;
+                    });
+                    
+                    if (totalSelected !== quantity) {
+                        alert(`Devi selezionare esattamente ${quantity} cookie per completare la box. Ne hai selezionati ${totalSelected}.`);
+                        return;
+                    }
+
+                    selectedOption = selectedFlavors.join(', ');
+                    cartItemId = `${name}-${selectedOption}`; // Crea un ID univoco per questa combinazione
                 }
-                const cartItemId = selectedOption ? `${name}-${selectedOption}` : name;
+
                 const existingProduct = cart.find(item => item.id === cartItemId);
                 if (existingProduct) {
                     existingProduct.quantity++;
                 } else {
-                    const productInfo = allProducts.find(p => p.name === name);
-                    cart.push({ id: cartItemId, name: name, price: parseFloat(price), img: img, quantity: 1, option: selectedOption, size: productInfo ? productInfo.size : 'normale' });
+                    cart.push({ id: cartItemId, name: name, price: parseFloat(price), img: img, quantity: 1, option: selectedOption, size: productInfo.size || 'normale' });
                 }
 
                 saveCart();
                 updateCartIcon();
                 renderCartPreview();
-                showNotification(`Hai aggiunto: ${name} ${selectedOption ? `(${selectedOption})` : ''}!`);
+                showNotification(`Hai aggiunto: ${name}!`);
             });
         });
     };

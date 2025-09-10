@@ -6,53 +6,41 @@
 </head>
 <body>
     <div id="closure-banner-container"></div>
-    <!-- Usiamo lo stesso Header per coerenza -->
     <header class="main-header">
         <div class="logo">
             <a href="index.html" style="text-decoration: none; color: var(--dark-purple);">Incantesimi di Zucchero</a>
         </div>
-        <!-- Esempio dall'header di una pagina qualsiasi -->
-<!-- Esempio dall'header di una pagina qualsiasi -->
-<nav class="main-nav">
+        <nav class="main-nav">
     <a href="index.html">Home</a>
     <a href="shop.html">Le Nostre Box</a>
     <a href="chisiamo.html">Chi Sono</a>
     <a href="contatti.html">Contatti</a>
-    <!-- NUOVA RIGA DA AGGIUNGERE -->
-    <!-- Inizia il nuovo widget del carrello -->
-<div class="cart-widget">
+    <div class="cart-widget">
     <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
     
-    <!-- Questo è il menu a tendina, inizialmente nascosto -->
     <div class="cart-preview">
         <div id="cart-preview-content" class="cart-preview-content">
-            <!-- Il contenuto dell'anteprima verrà inserito qui da JavaScript -->
             <p class="cart-empty-message">Il tuo carrello è vuoto.</p>
         </div>
         <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
     </div>
 </div>
-<!-- Finisce il nuovo widget del carrello --> 
 </nav>
     </header>
 
     <main>
-        <!-- Questa è la sezione specifica della pagina Shop -->
         <section class="shop-page-section">
             <h2>Il nostro negozio incantato</h2>
             <p class="shop-intro">Scegli la tua box preferita e preparati a vivere un momento di pura magia.</p>
             
-<div class="shipping-banner">
-        🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 3 box qualsiasi o con 2 box grandi.
-    </div>
-
-    <div class="boxes-container" id="product-list-container">
-    <!-- I prodotti verranno caricati qui da JavaScript... -->
-</div>
+            <div class="shipping-banner">
+                🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 2 box qualsiasi.
+            </div>
+            <div class="boxes-container" id="product-list-container">
+            </div>
         </section>
     </main>
 
-    <!-- Usiamo lo stesso Footer per coerenza -->
     <footer id="contact" class="main-footer">
         <div class="footer-legal-links">
     <a href="privacy.html">Privacy Policy</a>
@@ -63,9 +51,6 @@
     Incantesimi di Zucchero di Giuly-P.IVA: 11666720963
 </p>
     </footer>
-    <!-- ... footer ... -->
-
-    <!-- LA NUOVA RIGA DA AGGIUNGERE -->
     <div id="notification" class="notification"></div> 
 
     <script src="script.js"></script>
