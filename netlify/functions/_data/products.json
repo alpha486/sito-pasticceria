@@ -8,9 +8,9 @@
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "grande",
     "options": {
-"label": "Scegli la confettura della crostatina:",
-"choices": ["Fragola", "Albicocca", "Frutti di Bosco"]
-}
+      "label": "Scegli la confettura della crostatina:",
+      "choices": ["Fragola", "Albicocca", "Frutti di Bosco"]
+    }
   },
   {
     "id": 2,
@@ -21,9 +21,9 @@
     "allergens": ["Glutine", "Uova", "Latte"],
     "size": "grande",
     "options": {
-"label": "Scegli la confettura della crostatina:",
-"choices": ["Fragola", "Albicocca", "Frutti di Bosco","Nutella"]
-}
+      "label": "Scegli la confettura della crostatina:",
+      "choices": ["Fragola", "Albicocca", "Frutti di Bosco","Nutella"]
+    }
   },
   {
     "id": 3,
@@ -33,18 +33,18 @@
     "image_url": "images/boxslurp.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "normale"
-  }
+  },
   {
     "id": 4,
     "name": "Crea la tua Box di Cookies",
-    "description": "Scegli tu i gusti per ogni cookie e crea la box perfetta per te! Seleziona 6 gusti, anche diversi tra loro, e preparati a un'esplosione di sapore.",
-    "price": 26.00,
-    "image_url": "images/boxgnammy.jpg",
+    "description": "Scegli 6 cookies tra i nostri gusti e componi la tua box personalizzata! Perfetta per un regalo o per una dolce coccola.",
+    "price": 20.00,
+    "image_url": "images/giulybox.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
-    "size": "normale",
+    "size": "personalizzata",
     "customizable_options": {
       "quantity": 6,
-      "label": "Scegli i tuoi 6 gusti preferiti:",
+      "label": "Scegli 6 cookies per comporre la tua box:",
       "choices": [
         "Classico",
         "Lotus",
