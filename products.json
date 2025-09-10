@@ -39,7 +39,7 @@
     "name": "Crea la tua Box di Cookies",
     "description": "Scegli tu i gusti per ogni cookie e crea la box perfetta per te! Seleziona 6 gusti, anche diversi tra loro, e preparati a un'esplosione di sapore.",
     "price": 26.00,
-    "image_url": "images/boxgnammy.jpg",
+    "image_url": "images/cookies.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "normale",
     "customizable_options": {

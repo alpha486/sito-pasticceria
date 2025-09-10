@@ -16,78 +16,70 @@
         <div class="logo">
             Incantesimi di Zucchero
         </div>
-        <!-- Esempio dall'header di una pagina qualsiasi -->
-<nav class="main-nav">
-    <a href="index.html">Home</a>
-    <a href="shop.html">Le Nostre Box</a>
-    <a href="chisiamo.html">Chi Sono</a>
-    <a href="contatti.html">Contatti</a>
-    <!-- NUOVA RIGA DA AGGIUNGERE -->
-    <!-- Inizia il nuovo widget del carrello -->
-<div class="cart-widget">
-    <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
-    
-    <!-- Questo è il menu a tendina, inizialmente nascosto -->
-    <div class="cart-preview">
-        <div id="cart-preview-content" class="cart-preview-content">
-            <!-- Il contenuto dell'anteprima verrà inserito qui da JavaScript -->
-            <p class="cart-empty-message">Il tuo carrello è vuoto.</p>
-        </div>
-        <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
-    </div>
-</div>
-<!-- Finisce il nuovo widget del carrello -->  
-</nav>
+        <nav class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Le Nostre Box</a>
+            <a href="chisiamo.html">Chi Sono</a>
+            <a href="contatti.html">Contatti</a>
+            <div class="cart-widget">
+                <a href="carrello.html" class="cart-link">Carrello (<span id="cart-count">0</span>)</a>
+                <div class="cart-preview">
+                    <div id="cart-preview-content" class="cart-preview-content">
+                        <p class="cart-empty-message">Il tuo carrello è vuoto.</p>
+                    </div>
+                    <a href="carrello.html" class="cta-button preview-button">Vedi il Carrello</a>
+                </div>
+            </div>
+        </nav>
     </header>
 
     <main>
         <section id="home" class="hero-section">
             <div class="hero-content">
-    <h1>Dolci incantesimi, direttamente a casa tua.</h1>
-    
-    <!-- ECCO LA NUOVA STRUTTURA CON IL BOX -->
-    <div class="hero-text-box">
-        <p>Lo shop online di Incantesimi di Zucchero è in una fase iniziale e in continua evoluzione. Al momento puoi scegliere tra tre box degustazione, pensate per offrirti un assaggio delle mie specialità: biscotti, crostatine, brownies e altre dolcezze. Presto il catalogo si arricchirà con nuovi prodotti e sorprese dolci per ogni occasione.</p>
-    </div>
-    
-    <a href="shop.html" class="cta-button">SCOPRI LE NOSTRE BOX</a>
-</div>
+                <h1>Dolci incantesimi, direttamente a casa tua.</h1>
+                <div class="hero-text-box">
+                    <p>Esplora il mio shop online! Scegli tra le box degustazione che ho creato per te, oppure componi la tua box personalizzata con 6 cookies a scelta tra i miei gusti unici. Un mondo di dolcezza ti aspetta!</p>
+                </div>
+                <a href="shop.html" class="cta-button">SCOPRI LE NOSTRE BOX</a>
+            </div>
         </section>
 
         <section id="shop" class="boxes-section">
-    <h2>Le nostre box incantate</h2>
-    <div class="shipping-banner">
-        🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 3 box qualsiasi o con 2 box grandi.
-    </div>
-    
-    <div class="boxes-container" id="product-list-container-home">
+            <h2>Le nostre box incantate</h2>
+            <div class="shipping-banner">
+                🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 3 box qualsiasi o con 2 box grandi.
+            </div>
+            
+            <div class="boxes-container" id="product-list-container-home">
+                <div class="box-card">
+                    <img src="images/boxcrunchindex.jpg" alt="Box con biscotti decorati">
+                    <h3>Box Grande "Crunch"</h3>
+                    <p>Un'esplosione di golosità dedicata a chi non sa resistere ai dolci più amati del mio laboratorio!</p>
+                    <a href="prodotto.html?id=1" class="secondary-button">Vedi Dettagli</a>
+                </div>
 
-        <!-- Box 1: crunch -->
-        <div class="box-card">
-            <img src="images/boxcrunchindex.jpg" alt="Box con biscotti decorati">
-            <h3>Box Grande "Crunch"</h3>
-            <p>Un'esplosione di golosità dedicata a chi non sa resistere ai dolci più amati del mio laboratorio!</p>
-            <a href="shop.html" class="secondary-button">Vedi Dettagli</a>
-        </div>
+                <div class="box-card">
+                    <img src="images/boxgnammyindex.jpg" alt="Box con crostatine assortite">
+                    <h3>Box Grande "Gnammy"</h3>
+                    <p>Un mix irresistibile, pensato per chi cerca gusti classici in un'unica coccola dolce!</p>
+                    <a href="prodotto.html?id=2" class="secondary-button">Vedi Dettagli</a>
+                </div>
 
-        <!-- Box 2: gnammy-->
-        <div class="box-card">
-            <img src="images/boxgnammyindex.jpg" alt="Box con crostatine assortite">
-            <h3>Box Grande "Gnammy"</h3>
-            <p>Un mix irresistibile, pensato per chi cerca gusti classici in un'unica coccola dolce!</p>
-            <a href="shop.html" class="secondary-button">Vedi Dettagli</a>
-        </div>
+                <div class="box-card">
+                    <img src="images/boxslurpindex.jpg" alt="Box assortita con pasticceria secca">
+                    <h3>Box Piccola "Slurp"</h3>
+                    <p>Un piccolo assaggio della pasticceria secca di Giuly, pensato per chi vuole concedersi un peccato di gola!</p>
+                    <a href="prodotto.html?id=3" class="secondary-button">Vedi Dettagli</a>
+                </div>
 
-        <!-- Box 3: slurp-->
-        <div class="box-card">
-            <img src="images/boxslurpindex.jpg" alt="Box assortita con pasticceria secca">
-            <h3>Box Piccola "Slurp"</h3>
-            <p>Un piccolo assaggio della pasticceria secca di Giuly, pensato per chi vuole concedersi un peccato di gola!</p>
-            <a href="shop.html" class="secondary-button">Vedi Dettagli</a>
-        </div>
-
-    </div>
-</section>
+                <div class="box-card">
+                    <img src="images/happycookies.jpg" alt="Crea la tua Box di Cookies personalizzata">
+                    <h3>Crea la tua Box di Cookies</h3>
+                    <p>Componi la tua box con 6 cookies a scelta tra i nostri gusti unici. Un'esperienza su misura per te!</p>
+                    <a href="prodotto.html?id=4" class="secondary-button">Crea la Tua Box</a>
+                </div>
+            </div>
+        </section>
 
         <section id="about" class="about-section">
             <div class="about-image">
@@ -109,17 +101,15 @@
 
     <footer id="contact" class="main-footer">
         <div class="footer-legal-links">
-    <a href="privacy.html">Privacy Policy</a>
-    <span>|</span>
-    <a href="termini.html">Termini e Condizioni</a>
-</div>
-<p class="footer-vat">
-    Incantesimi di Zucchero di Giuly-P.IVA: 11666720963
-</p>
+            <a href="privacy.html">Privacy Policy</a>
+            <span>|</span>
+            <a href="termini.html">Termini e Condizioni</a>
+        </div>
+        <p class="footer-vat">
+            Incantesimi di Zucchero di Giuly-P.IVA: 11666720963
+        </p>
     </footer>
-   <!-- ... footer ... -->
 
-    <!-- LA NUOVA RIGA DA AGGIUNGERE -->
     <div id="notification" class="notification"></div> 
 
     <script src="script.js"></script>

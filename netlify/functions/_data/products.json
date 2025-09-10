@@ -39,7 +39,7 @@
     "name": "Crea la tua Box di Cookies",
     "description": "Scegli 6 cookies tra i nostri gusti e componi la tua box personalizzata! Perfetta per un regalo o per una dolce coccola.",
     "price": 20.00,
-    "image_url": "images/giulybox.jpg",
+    "image_url": "images/cookies.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
     "size": "personalizzata",
     "customizable_options": {
