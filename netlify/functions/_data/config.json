@@ -3,5 +3,8 @@
   "chiusura": {
     "start": "2025-08-01",
     "end": "2025-08-31"
+  },
+  "shipping": {
+    "costoStandard": 9.90
   }
 }
