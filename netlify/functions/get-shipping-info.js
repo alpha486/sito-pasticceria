@@ -1,5 +1,5 @@
 const config = require('./_data/config.json');
-const { getShippingSlots } = require('./_lib/mongodb');
+const { getShippingSlots } = require('./mongodb.js');
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {

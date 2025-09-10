@@ -46,23 +46,23 @@
       "quantity": 6,
       "label": "Scegli i tuoi 6 gusti preferiti:",
       "choices": [
-        "Classico (Gocce di Cioccolato)",
-        "Dark (Cioccolato Fondente)",
-        "Red Velvet",
-        "Limone",
-        "Pistacchio",
+        "Classico",
         "Lotus",
-        "Cioccolato Bianco",
-        "Doppio Cioccolato",
-        "Avena e Uvetta",
+        "Dark",
+        "Red velvet",
         "Nocciola",
-        "Caramello Salato",
-        "Cocco",
-        "Mandorla",
-        "Caffè",
-        "Tè Matcha",
-        "Arancia e Cannella",
-        "Mirtilli Rossi e Cioccolato Bianco"
+        "Pistacchio",
+        "Limone",
+        "Dulche de leche",
+        "Cipolla di Tropea",
+        "Mandorla e bergamotto",
+        "Mandorla e amarena",
+        "Fichi e noci",
+        "Cocco e fondente",
+        "Cinnamon roll",
+        "Peperoncino, arancia e fondente",
+        "Sacher",
+        "Burro di arachidi"
       ]
     }
   }

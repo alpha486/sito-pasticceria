@@ -1,90 +1,99 @@
-const { MongoClient } = require('mongodb');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { MongoClient } = require('mongodb'); // Carica la libreria base
 
-// --- CONFIGURAZIONE INCORPORATA ---
-const config = {
-  "maxBoxPerSettimana": 50,
-  "chiusura": {
-    "start": "2025-08-02",
-    "end": "2025-08-24"
-  }
-};
-
-const mongoUri = process.env.MONGODB_URI;
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-// --- FUNZIONE HELPER getNextWednesday ---
-const getNextWednesday = (startDate, weeksToAdd = 0) => {
-  let date = new Date(startDate);
-  date.setDate(date.getDate() + (weeksToAdd * 7));
-  let day = date.getDay();
-  let daysUntilWednesday = (3 - day + 7) % 7;
-  if (daysUntilWednesday === 0 && new Date().toDateString() === date.toDateString() && new Date().getHours() >= 12) {
-    daysUntilWednesday = 7;
-  }
-  date.setDate(date.getDate() + daysUntilWednesday);
-  if (config.chiusura && config.chiusura.start && config.chiusura.end) {
-    const inizioChiusura = new Date(config.chiusura.start + "T00:00:00");
-    const fineChiusura = new Date(config.chiusura.end + "T23:59:59");
-    if (date >= inizioChiusura && date <= fineChiusura) {
-      const ripartenza = new Date(fineChiusura);
-      ripartenza.setDate(ripartenza.getDate() + 1);
-      return getNextWednesday(ripartenza, 0);
+// --- MODIFICA CHIAVE: Importiamo il nostro file di logica DB ---
+// Definiamo una funzione di connessione qui perché _lib non è disponibile in questo contesto specifico
+let cachedClient = null;
+async function connectToDatabase() {
+    if (cachedClient) {
+        return cachedClient;
     }
-  }
-  return date;
-};
+    const client = new MongoClient(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    cachedClient = await client.connect();
+    return cachedClient;
+}
 
-// --- FUNZIONE HANDLER PRINCIPALE ---
+// Funzione per ottenere la prossima data di spedizione valida (deve essere identica a quella in _lib/mongodb.js)
+const getNextShippingDate = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+    const nextTuesday = new Date(today);
+    nextTuesday.setDate(today.getDate() + daysUntilTuesday);
+    nextTuesday.setHours(0, 0, 0, 0);
+    return nextTuesday;
+};
+// --- FINE MODIFICA ---
+
 exports.handler = async ({ body, headers }) => {
   try {
-    // Verifica la firma del webhook per sicurezza
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     const stripeEvent = stripe.webhooks.constructEvent(
       body,
       headers['stripe-signature'],
       webhookSecret
     );
 
-    // Gestisci solo l'evento che ci interessa: il completamento del checkout
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
-      const cart = JSON.parse(session.metadata.cart);
-      const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-      if (totalBoxes === 0) {
-        console.log("Webhook ricevuto per un ordine senza box. Nessun aggiornamento al DB.");
-        return { statusCode: 200, body: JSON.stringify({ received: true }) };
-      }
-      const client = new MongoClient(mongoUri);
-      await client.connect();
-      const collection = client.db('incantesimi-zucchero-db').collection('ordini_settimanali');
-      let settimaneDiAttesa = 0;
-      let postiLiberi = false;
-      let weekIdentifier;
-      while (!postiLiberi) {
-        const targetDate = getNextWednesday(new Date(), settimaneDiAttesa);
-        weekIdentifier = targetDate.toISOString().split('T')[0];
-        const weekData = await collection.findOne({ settimana: weekIdentifier });
-        const boxOrdinate = weekData ? weekData.boxOrdinate : 0;
-        if (boxOrdinate + totalBoxes <= config.maxBoxPerSettimana) {
-          postiLiberi = true;
-        } else {
-          settimaneDiAttesa++;
-        }
-      }
-      await collection.updateOne(
-        { settimana: weekIdentifier },
-        {
-          $inc: { boxOrdinate: totalBoxes },
-          $set: { settimana: weekIdentifier }
-        },
-        { upsert: true }
+
+      // Recupera i dettagli degli articoli acquistati
+      const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+      
+      const totalBoxes = lineItems.data
+        .filter(item => item.description !== 'Costo di Spedizione')
+        .reduce((sum, item) => sum + item.quantity, 0);
+
+      // --- LOGICA DI AGGIORNAMENTO DATABASE ---
+      const client = await connectToDatabase();
+      const db = client.db('IncantesimiDiZucchero');
+      
+      // 1. Aggiorna i posti disponibili
+      const shippingCollection = db.collection('shipping_dates');
+      const nextShippingDate = getNextShippingDate();
+      const dateString = nextShippingDate.toISOString().split('T')[0];
+
+      await shippingCollection.updateOne(
+        { date: dateString },
+        { $inc: { bookedSlots: totalBoxes } },
+        { upsert: true } // Crea il documento se non esiste
       );
-      await client.close();
-      console.log(`Ordine registrato con successo per la settimana: ${weekIdentifier}.`);
+
+      // 2. Salva il nuovo ordine
+      const ordersCollection = db.collection('ordini_settimanali');
+      const newOrder = {
+        stripeSessionId: session.id,
+        customerEmail: session.customer_details.email,
+        amountTotal: session.amount_total / 100, // in euro
+        currency: session.currency,
+        status: 'pagato',
+        shippingDate: dateString,
+        items: lineItems.data.map(item => ({
+          description: item.description,
+          quantity: item.quantity,
+          amount_total: item.amount_total / 100
+        })),
+        createdAt: new Date(),
+      };
+
+      await ordersCollection.insertOne(newOrder);
+      // --- FINE LOGICA DATABASE ---
+
+      console.log('Pagamento andato a buon fine e ordine salvato!', session.id);
     }
-    return { statusCode: 200, body: JSON.stringify({ received: true }) };
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ received: true }),
+    };
   } catch (err) {
-    console.error(`Errore webhook Stripe: ${err.message}`);
-    return { statusCode: 400, body: `Webhook Error: ${err.message}` };
+    console.error(`Errore nel webhook Stripe: ${err.message}`);
+    return {
+      statusCode: 400,
+      body: `Webhook Error: ${err.message}`,
+    };
   }
 };
