@@ -56,6 +56,7 @@ exports.handler = async (event) => {
             cancel_url: `${config.websiteUrl}/cancel.html`,
             customer_email: customerEmail,
             allow_promotion_codes: true,
+            shipping_address_collection: {allowed_countries: ['IT'],},
         });
 
         return {
