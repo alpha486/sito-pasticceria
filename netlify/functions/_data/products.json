@@ -72,7 +72,7 @@
     "description": "Portaposate in tessuto e nella tasca un biscotto personalizzato come il braccialetto.",
     "price": 10.00,
     "image_url": "images/xmas_pocket_place.jpg",
-    "allergens": ["Glutine", "Uova", "Latte"],
+    "allergens": ["Glutine", "Latte", "Uova"],
     "size": "normale"
   },
   {
@@ -81,7 +81,7 @@
     "description": "Nove pezzi di puzzle-biscotto alla vaniglia ricoperto di pasta di zucchero, da colorare e gustare. Compresa anche la tavolozza con colori alimentari e pennello.",
     "price": 16.00,
     "image_url": "images/christmas_baby_art.jpg",
-    "allergens": ["Glutine", "Frutta a guscio"],
+    "allergens": ["Glutine", "Latte", "Uova"],
     "size": "normale"
   },
   {
@@ -90,7 +90,7 @@
     "description": "Set completo per decorare i biscotti di Natale. Otto biscottoni alla vaniglia, sei contenitori con ghiaccia reale di diversi colori, due barattolini di Sprinkles, sei mini sac a poche, un contagocce, un grembiulino natalizio.",
     "price": 26.00,
     "image_url": "images/box_baby_pastry.jpg",
-    "allergens": ["Latte", "Uova"],
+    "allergens": ["Glutine", "Latte", "Uova"],
     "size": "normale"
   },
   {
@@ -99,7 +99,7 @@
     "description": "Due tazze coordinate e due bombe di cioccolato bianco da fare esplodere nel latte caldo. Nella bomba abbiamo il nesquik, mini marshmallow e sprinkles.",
     "price": 49.90,
     "image_url": "images/box_magica_colazione.jpg",
-    "allergens": ["Glutine", "Latte"],
+    "allergens": ["Latte", "Soia"],
     "size": "normale"
   },
   {
@@ -108,7 +108,7 @@
     "description": "Cream tart da comporre insieme alla famiglia. Porzioni 10/12. KIT: scatola di latta, vassoio, due basi di frolla alla vaniglia a forma di albero di natale, 500 ml di panna da montare, un vasetto di crema spalmabile al Lotus, un vasetto di biscotti Lotus tritati, 2 sac a poche, un beccuccio, un barattolino di Sprinkles, un set di biscottini decorati, un centrino rosso natalizio e una spatola in silicone. Oltre al kit di biscottini decorati per addobbare la Cream Tart a forma di alberello di Natale, su richiesta è incluse nel prezzo, possono essere personalizzati cinque biscotti-palline di Natale con inciso il nome o l'iniziale. Si suggerisce di procurarsi un vasetto da 250 g di mascarpone da unire alla panna per ottenere una crema più sostenuta e più golosa. Le istruzioni saranno all'interno della box.",
     "price": 70.00,
     "image_url": "images/box_christmas_tart.jpg",
-    "allergens": ["Latte", "Uova"],
+    "allergens": ["Glutine", "Latte", "Uova"],
     "size": "normale"
   },
   {
@@ -117,7 +117,7 @@
     "description": "Kit per comporre il dolce di Natale con tutta la famiglia. Porzioni 8/10. KIT: scatola di latta, vassoio, due basi di frolla alla vaniglia a forma di omino di pan di zenzero, 500 ml di panna da montare, un vasetto di crema spalmabile alla nutella, un vasetto di granella di nocciole, 2 sac a poche, un beccuccio, un barattolino di ghiaccia reale color bianco, un barattolino di ghiaccia reale color rosso, un barattolino di Sprinkles, un contagocce, un centrino rosso natalizio è una spatola in silicone. Si suggerisce di procurarsi un vasetto da 250 g di mascarpone da unire alla panna per ottenere una crema più sostenuta e più golosa. Le istruzioni saranno all'interno della box.",
     "price": 60.00,
     "image_url": "images/box_ginger_cake_kit.jpg",
-    "allergens": ["Glutine", "Latte"],
+    "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio"],
     "size": "normale"
   },
   {
@@ -126,7 +126,7 @@
     "description": "Una scatola di latta che contiene un salame di cioccolato da 500 gr, una confezione di biscotti zenzero e cannella da 200gr, una confezione di Brownies da 200gr, una confezione di nuvole croccanti da 180gr e 2 cookies speciali: il gingercookie ed il cookie allo strudel di mele.",
     "price": 45.00,
     "image_url": "images/box_profumi_di_natale.jpg",
-    "allergens": ["Latte", "Uova"],
+    "allergens": ["Glutine", "Latte", "Uova","Frutta a guscio"],
     "size": "normale"
   }
 ]
