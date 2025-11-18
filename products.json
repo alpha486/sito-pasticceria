@@ -73,7 +73,7 @@
     "price": 10.00,
     "image_url": "images/xmas_pocket_place.jpg",
     "allergens": ["Glutine", "Latte", "Uova"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 6,
@@ -82,7 +82,7 @@
     "price": 16.00,
     "image_url": "images/christmas_baby_art.jpg",
     "allergens": ["Glutine", "Latte", "Uova"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 7,
@@ -91,7 +91,7 @@
     "price": 26.00,
     "image_url": "images/box_baby_pastry.jpg",
     "allergens": ["Glutine", "Latte", "Uova"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 8,
@@ -100,7 +100,7 @@
     "price": 49.90,
     "image_url": "images/box_magica_colazione.jpg",
     "allergens": ["Latte", "Soia"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 9,
@@ -109,7 +109,7 @@
     "price": 70.00,
     "image_url": "images/box_christmas_tart.jpg",
     "allergens": ["Glutine", "Latte", "Uova"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 10,
@@ -118,7 +118,7 @@
     "price": 60.00,
     "image_url": "images/box_ginger_cake_kit.jpg",
     "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio"],
-    "size": "normale"
+    "size": "natale"
   },
   {
     "id": 11,
@@ -127,6 +127,6 @@
     "price": 45.00,
     "image_url": "images/box_profumi_di_natale.jpg",
     "allergens": ["Glutine", "Latte", "Uova","Frutta a guscio"],
-    "size": "normale"
+    "size": "natale"
   }
 ]
