@@ -75,47 +75,50 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    const renderShopProducts = () => {
-        const container = document.getElementById('product-list-container');
-        if (!container) return;
-        container.innerHTML = allProducts.map(p => `
-            <a href="prodotto.html?id=${p.id}" class="product-card-link">
-                <div class="box-card">
-                    <img src="${p.image_url}" alt="${p.name}">
-                    <h3>${p.name}</h3>
-                    <p>${p.description.substring(0, 100)}...</p>
-                    <div class="secondary-button">Vedi Dettagli</div>
-                </div>
-            </a>
-        `).join('');
-    };
+    // Funzione per mostrare i prodotti della pagina SHOP
+const renderShopProducts = () => {
+    const container = document.getElementById('product-list-container');
+    if (!container) return;
 
-    const renderChristmasProducts = () => {
-        const container = document.getElementById('christmas-product-list-container');
-        if (!container) return; // Se non siamo nella pagina natale, esci.
+    // FILTRO CHIAVE: Mostra SOLO i prodotti che NON hanno categoria 'natale'
+    const regularProducts = allProducts.filter(p => p.category !== 'natale');
+    
+    container.innerHTML = regularProducts.map(p => `
+        <a href="prodotto.html?id=${p.id}" class="product-card-link">
+            <div class="box-card">
+                <img src="${p.image_url}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <p>${p.description.substring(0, 100)}...</p>
+                <div class="secondary-button">Vedi Dettagli</div>
+            </div>
+        </a>
+    `).join('');
+};
 
-        // Filtra solo i prodotti che hanno categoria 'natale' 
-        // OPPURE (se non hai messo la categoria) i prodotti con ID > 4
-        const christmasProducts = allProducts.filter(p => 
-            p.category === 'natale' || p.id >= 5
-        );
+// NUOVA Funzione per mostrare i prodotti della pagina NATALE
+const renderChristmasProducts = () => {
+    const container = document.getElementById('christmas-product-list-container');
+    if (!container) return;
 
-        if (christmasProducts.length === 0) {
-            container.innerHTML = '<p>Nessun prodotto natalizio trovato al momento.</p>';
-            return;
-        }
+    // FILTRO CHIAVE: Mostra SOLO i prodotti che hanno categoria 'natale'
+    const christmasProducts = allProducts.filter(p => p.category === 'natale');
 
-        container.innerHTML = christmasProducts.map(p => `
-            <a href="prodotto.html?id=${p.id}" class="product-card-link">
-                <div class="box-card">
-                    <img src="${p.image_url}" alt="${p.name}">
-                    <h3>${p.name}</h3>
-                    <p>${p.description.substring(0, 100)}...</p>
-                    <div class="secondary-button">Vedi Dettagli</div>
-                </div>
-            </a>
-        `).join('');
-    };
+    if (christmasProducts.length === 0) {
+        container.innerHTML = '<p>Nessun prodotto natalizio trovato al momento.</p>';
+        return;
+    }
+
+    container.innerHTML = christmasProducts.map(p => `
+        <a href="prodotto.html?id=${p.id}" class="product-card-link">
+            <div class="box-card">
+                <img src="${p.image_url}" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <p>${p.description.substring(0, 100)}...</p>
+                <div class="secondary-button">Vedi Dettagli</div>
+            </div>
+        </a>
+    `).join('');
+};
     
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
