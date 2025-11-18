@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposte di Natale - Incantesimi di Zucchero</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="images/logo.jpg" alt="Incantesimi di Zucchero Logo" class="logo-img">
+            <h1>Incantesimi di Zucchero</h1>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chisiamo.html">Chi Siamo</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="natale.html" class="active-link xmas-link">Natale 🎄</a></li> 
+                <li><a href="contatti.html">Contatti</a></li>
+                <li><a href="carrello.html">Carrello (<span id="cart-count">0</span>)</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <div id="notification" class="notification">Prodotto aggiunto!</div>
+
+    <section class="hero christmas-hero">
+        <div class="hero-content">
+            <h2>✨ Magia del Natale ✨</h2>
+            <p>Dolci artigianali pensati per rendere le tue feste indimenticabili.</p>
+            <a href="#christmas-list" class="cta-button">Scopri la Collezione</a>
+        </div>
+    </section>
+
+    <section class="featured-products" id="christmas-list">
+        <h2 class="section-title">I Nostri Dolci Natalizi</h2>
+        <div class="product-grid" id="christmas-product-list-container">
+            <p style="text-align:center; width:100%;">Caricamento magie di Natale...</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contatti</h3>
+                <p>Via Dolce 123, Città Golosa</p>
+                <p>Email: info@incantesimidizucchero.it</p>
+                <p>Tel: +39 123 456 7890</p>
+            </div>
+            <div class="footer-section">
+                <h3>Seguici</h3>
+                <p>Facebook | Instagram</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2023 Incantesimi di Zucchero. Tutti i diritti riservati.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
