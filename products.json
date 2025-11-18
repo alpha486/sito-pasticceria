@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Box Grande Crunch",
-    "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 2 crostatine alla Nutella (frolla alla vaniglia e al cacao), 1 crostatina con confettura (confettura marca 'Zuegg' a scelta tra frutti di bosco, albicocca e fragola) e 150 g di Giuliette.",
+    "description": "150 g di Brownie, 150 g di Nuvole Croccanti, 2 cookies (gusto Dark e gusto Lotus), 2 crostatine alla Nutella (frolla alla vaniglia e al cacao), 1 crostatina con confettura (confettura a scelta tra frutti di bosco, albicocca e fragola) e 150 g di Giuliette.",
     "price": 33.00,
     "image_url": "images/boxcrunch.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
@@ -15,14 +15,14 @@
   {
     "id": 2,
     "name": "Box Grande Gnammy",
-    "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostata (frolla alla vaniglia) con confettura (marca 'Zuegg'a scelta tra fragola, albicocca o frutti di bosco) o alla Nutella.",
+    "description": "3 cookies (gusto Red Velvet, Limone e Classico), 150 g di Giuliette (frolla alla vaniglia con gocce di cioccolato),150 g di Ginger Bread (biscotti zenzero e cannella), 150 g di Delizie al Limone e 1 crostata (frolla alla vaniglia) con confettura (a scelta tra fragola, albicocca o frutti di bosco) o alla Nutella.",
     "price": 33.00,
     "image_url": "images/boxgnammy.jpg",
     "allergens": ["Glutine", "Uova", "Latte"],
     "size": "grande",
     "options": {
       "label": "Scegli la confettura della crostatina:",
-      "choices": ["Fragola", "Albicocca", "Frutti di Bosco", "Nutella"]
+      "choices": ["Fragola", "Albicocca", "Frutti di Bosco","Nutella"]
     }
   },
   {
@@ -37,14 +37,14 @@
   {
     "id": 4,
     "name": "Crea la tua Box di Cookies",
-    "description": "Scegli tu i gusti per ogni cookie e crea la box perfetta per te! Seleziona 6 gusti, anche diversi tra loro, e preparati a un'esplosione di sapore.",
-    "price": 26.00,
+    "description": "Scegli 6 cookies tra i nostri gusti e componi la tua box personalizzata! Perfetta per un regalo o per una dolce coccola.",
+    "price": 20.00,
     "image_url": "images/cookies.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
-    "size": "normale",
+    "size": "personalizzata",
     "customizable_options": {
       "quantity": 6,
-      "label": "Scegli i tuoi 6 gusti preferiti:",
+      "label": "Scegli 6 cookies per comporre la tua box:",
       "choices": [
         "Classico",
         "Lotus",
@@ -65,5 +65,68 @@
         "Burro di arachidi"
       ]
     }
+  },
+  {
+    "id": 5,
+    "name": "X-mas Pocket Place",
+    "description": "Portaposate in tessuto e nella tasca un biscotto personalizzato come il braccialetto.",
+    "price": 10.00,
+    "image_url": "images/xmas_pocket_place.jpg",
+    "allergens": ["Glutine", "Latte", "Uova"],
+    "size": "normale"
+  },
+  {
+    "id": 6,
+    "name": "Christmas Baby Art",
+    "description": "Nove pezzi di puzzle-biscotto alla vaniglia ricoperto di pasta di zucchero, da colorare e gustare. Compresa anche la tavolozza con colori alimentari e pennello.",
+    "price": 16.00,
+    "image_url": "images/christmas_baby_art.jpg",
+    "allergens": ["Glutine", "Latte", "Uova"],
+    "size": "normale"
+  },
+  {
+    "id": 7,
+    "name": "Box Baby Pastry",
+    "description": "Set completo per decorare i biscotti di Natale. Otto biscottoni alla vaniglia, sei contenitori con ghiaccia reale di diversi colori, due barattolini di Sprinkles, sei mini sac a poche, un contagocce, un grembiulino natalizio.",
+    "price": 26.00,
+    "image_url": "images/box_baby_pastry.jpg",
+    "allergens": ["Glutine", "Latte", "Uova"],
+    "size": "normale"
+  },
+  {
+    "id": 8,
+    "name": "Box Magica Colazione",
+    "description": "Due tazze coordinate e due bombe di cioccolato bianco da fare esplodere nel latte caldo. Nella bomba abbiamo il nesquik, mini marshmallow e sprinkles.",
+    "price": 49.90,
+    "image_url": "images/box_magica_colazione.jpg",
+    "allergens": ["Latte", "Soia"],
+    "size": "normale"
+  },
+  {
+    "id": 9,
+    "name": "Box Christmas Tart",
+    "description": "Cream tart da comporre insieme alla famiglia. Porzioni 10/12. KIT: scatola di latta, vassoio, due basi di frolla alla vaniglia a forma di albero di natale, 500 ml di panna da montare, un vasetto di crema spalmabile al Lotus, un vasetto di biscotti Lotus tritati, 2 sac a poche, un beccuccio, un barattolino di Sprinkles, un set di biscottini decorati, un centrino rosso natalizio e una spatola in silicone. Oltre al kit di biscottini decorati per addobbare la Cream Tart a forma di alberello di Natale, su richiesta è incluse nel prezzo, possono essere personalizzati cinque biscotti-palline di Natale con inciso il nome o l'iniziale. Si suggerisce di procurarsi un vasetto da 250 g di mascarpone da unire alla panna per ottenere una crema più sostenuta e più golosa. Le istruzioni saranno all'interno della box.",
+    "price": 70.00,
+    "image_url": "images/box_christmas_tart.jpg",
+    "allergens": ["Glutine", "Latte", "Uova"],
+    "size": "normale"
+  },
+  {
+    "id": 10,
+    "name": "Box Ginger Cake Kit",
+    "description": "Kit per comporre il dolce di Natale con tutta la famiglia. Porzioni 8/10. KIT: scatola di latta, vassoio, due basi di frolla alla vaniglia a forma di omino di pan di zenzero, 500 ml di panna da montare, un vasetto di crema spalmabile alla nutella, un vasetto di granella di nocciole, 2 sac a poche, un beccuccio, un barattolino di ghiaccia reale color bianco, un barattolino di ghiaccia reale color rosso, un barattolino di Sprinkles, un contagocce, un centrino rosso natalizio è una spatola in silicone. Si suggerisce di procurarsi un vasetto da 250 g di mascarpone da unire alla panna per ottenere una crema più sostenuta e più golosa. Le istruzioni saranno all'interno della box.",
+    "price": 60.00,
+    "image_url": "images/box_ginger_cake_kit.jpg",
+    "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio"],
+    "size": "normale"
+  },
+  {
+    "id": 11,
+    "name": "Box Profumi Di Natale",
+    "description": "Una scatola di latta che contiene un salame di cioccolato da 500 gr, una confezione di biscotti zenzero e cannella da 200gr, una confezione di Brownies da 200gr, una confezione di nuvole croccanti da 180gr e 2 cookies speciali: il gingercookie ed il cookie allo strudel di mele.",
+    "price": 45.00,
+    "image_url": "images/box_profumi_di_natale.jpg",
+    "allergens": ["Glutine", "Latte", "Uova","Frutta a guscio"],
+    "size": "normale"
   }
 ]
