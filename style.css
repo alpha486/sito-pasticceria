@@ -933,3 +933,37 @@ a.product-card-link:hover {
     min-width: 20px;
     text-align: center;
 }
+/* --- STILE NATALIZIO --- */
+
+/* Link Natale nel menu */
+.xmas-link {
+    color: #c0392b !important; /* Rosso Natale */
+    font-weight: bold;
+}
+
+/* Hero section specifica per Natale */
+.christmas-hero {
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/sfondo.jpg'); 
+    /* Se hai un'immagine specifica natalizia, cambia 'images/sfondo.jpg' con quella nuova */
+    background-size: cover;
+    background-position: center;
+}
+
+.christmas-hero h2 {
+    color: #f1c40f; /* Oro */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Titoli delle sezioni nella pagina natale */
+#christmas-list .section-title {
+    color: #c0392b;
+    border-bottom: 2px solid #f1c40f;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+/* Opzionale: Bordo dorato per le card di natale */
+#christmas-product-list-container .box-card {
+    border: 1px solid #f1c40f;
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.1);
+}
