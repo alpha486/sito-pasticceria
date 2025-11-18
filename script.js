@@ -89,6 +89,33 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
         `).join('');
     };
+
+    const renderChristmasProducts = () => {
+        const container = document.getElementById('christmas-product-list-container');
+        if (!container) return; // Se non siamo nella pagina natale, esci.
+
+        // Filtra solo i prodotti che hanno categoria 'natale' 
+        // OPPURE (se non hai messo la categoria) i prodotti con ID > 4
+        const christmasProducts = allProducts.filter(p => 
+            p.category === 'natale' || p.id >= 5
+        );
+
+        if (christmasProducts.length === 0) {
+            container.innerHTML = '<p>Nessun prodotto natalizio trovato al momento.</p>';
+            return;
+        }
+
+        container.innerHTML = christmasProducts.map(p => `
+            <a href="prodotto.html?id=${p.id}" class="product-card-link">
+                <div class="box-card">
+                    <img src="${p.image_url}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <p>${p.description.substring(0, 100)}...</p>
+                    <div class="secondary-button">Vedi Dettagli</div>
+                </div>
+            </a>
+        `).join('');
+    };
     
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
@@ -505,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Una volta caricati i dati, esegui il resto
             handleClosureBanner(); // Gestisce il banner ferie
             renderShopProducts();
+            renderChristmasProducts();
             renderProductDetailPage();
             renderCartPage(); // Ora carica anche i dati di spedizione
             attachCartPageListeners();
