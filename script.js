@@ -3,36 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STATO GLOBALE DELL'APPLICAZIONE ---
     let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
     let allProducts = [];
-    let config = {}; // Oggetto che conterrà la configurazione (es. ferie)
-    const MAX_BOXES_PER_ORDER = 25; // Limite massimo di box per ordine
-    
-    // NUOVA VARIABILE: Memorizza i dati di spedizione per il controllo al checkout
+    let config = {}; 
+    const MAX_BOXES_PER_ORDER = 25;
     let shippingInfoState = null; 
 
-    // --- FUNZIONI DI BASE (salvataggio, icone, notifiche) ---
+    // --- FUNZIONI DI BASE ---
     const saveCart = () => {
         localStorage.setItem('shoppingCart', JSON.stringify(cart));
     };
     
     const updateCartIcon = () => {
         const cartCountElement = document.getElementById('cart-count');
-        if (!cartCountElement) return;
-        const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-        cartCountElement.textContent = totalItems;
+        if (cartCountElement) {
+            const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            cartCountElement.textContent = totalItems;
+        }
     };
     
     const showNotification = (message) => {
         const notificationElement = document.getElementById('notification');
-        if (!notificationElement) return;
-        clearTimeout(window.notificationTimeout);
-        notificationElement.textContent = message;
-        notificationElement.classList.add('show');
-        window.notificationTimeout = setTimeout(() => {
-            notificationElement.classList.remove('show');
-        }, 3000);
+        if (notificationElement) {
+            clearTimeout(window.notificationTimeout);
+            notificationElement.textContent = message;
+            notificationElement.classList.add('show');
+            window.notificationTimeout = setTimeout(() => {
+                notificationElement.classList.remove('show');
+            }, 3000);
+        }
     };
 
-    // --- FUNZIONE PER GESTIRE IL BANNER DI CHIUSURA ---
+    // --- GESTIONE BANNER CHIUSURA ---
     const handleClosureBanner = () => {
         const bannerContainer = document.getElementById('closure-banner-container');
         if (!bannerContainer || !config.chiusura || !config.chiusura.start || !config.chiusura.end) return;
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- FUNZIONI PER "DISEGNARE" LE PAGINE ---
+    // --- RENDERING PAGINE ---
 
     const renderCartPreview = () => {
         const cartPreviewContainer = document.getElementById('cart-preview-content');
@@ -75,50 +75,51 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    // Funzione per mostrare i prodotti della pagina SHOP
-const renderShopProducts = () => {
-    const container = document.getElementById('product-list-container');
-    if (!container) return;
+    // 1. FUNZIONE SHOP (Mostra tutto TRANNE Natale)
+    const renderShopProducts = () => {
+        const container = document.getElementById('product-list-container');
+        if (!container) return;
 
-    // FILTRO CHIAVE: Mostra SOLO i prodotti che NON hanno categoria 'natale'
-    const regularProducts = allProducts.filter(p => p.category !== 'natale');
-    
-    container.innerHTML = regularProducts.map(p => `
-        <a href="prodotto.html?id=${p.id}" class="product-card-link">
-            <div class="box-card">
-                <img src="${p.image_url}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p>${p.description.substring(0, 100)}...</p>
-                <div class="secondary-button">Vedi Dettagli</div>
-            </div>
-        </a>
-    `).join('');
-};
+        // FILTRO: Escludi i prodotti con categoria 'natale'
+        const shopProducts = allProducts.filter(p => p.category !== 'natale');
 
-// NUOVA Funzione per mostrare i prodotti della pagina NATALE
-const renderChristmasProducts = () => {
-    const container = document.getElementById('christmas-product-list-container');
-    if (!container) return;
+        container.innerHTML = shopProducts.map(p => `
+            <a href="prodotto.html?id=${p.id}" class="product-card-link">
+                <div class="box-card">
+                    <img src="${p.image_url}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <p>${p.description.substring(0, 100)}...</p>
+                    <div class="secondary-button">Vedi Dettagli</div>
+                </div>
+            </a>
+        `).join('');
+    };
 
-    // FILTRO CHIAVE: Mostra SOLO i prodotti che hanno categoria 'natale'
-    const christmasProducts = allProducts.filter(p => p.category === 'natale');
+    // 2. FUNZIONE NATALE (Mostra SOLO Natale)
+    const renderChristmasProducts = () => {
+        const container = document.getElementById('christmas-product-list-container');
+        if (!container) return; // Se non siamo nella pagina natale, non fare nulla
 
-    if (christmasProducts.length === 0) {
-        container.innerHTML = '<p>Nessun prodotto natalizio trovato al momento.</p>';
-        return;
-    }
+        // FILTRO: Includi SOLO i prodotti con categoria 'natale'
+        const christmasProducts = allProducts.filter(p => p.category === 'natale');
 
-    container.innerHTML = christmasProducts.map(p => `
-        <a href="prodotto.html?id=${p.id}" class="product-card-link">
-            <div class="box-card">
-                <img src="${p.image_url}" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p>${p.description.substring(0, 100)}...</p>
-                <div class="secondary-button">Vedi Dettagli</div>
-            </div>
-        </a>
-    `).join('');
-};
+        if (christmasProducts.length === 0) {
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nessun prodotto natalizio trovato. Controlla il file products.json!</p>';
+            console.warn("Attenzione: Nessun prodotto con 'category': 'natale' trovato nel JSON.");
+            return;
+        }
+
+        container.innerHTML = christmasProducts.map(p => `
+            <a href="prodotto.html?id=${p.id}" class="product-card-link">
+                <div class="box-card">
+                    <img src="${p.image_url}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <p>${p.description.substring(0, 100)}...</p>
+                    <div class="secondary-button">Vedi Dettagli</div>
+                </div>
+            </a>
+        `).join('');
+    };
     
     const renderProductDetailPage = () => {
         const container = document.getElementById('product-detail-container');
@@ -129,24 +130,7 @@ const renderChristmasProducts = () => {
         const product = allProducts.find(p => p.id === productId);
 
         if (!product) {
-            container.innerHTML = `
-        <div class="product-detail-content">
-            <div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div>
-            <div class="product-detail-info">
-                <h2>${product.name}</h2>
-                <div class="price">€ ${product.price.toFixed(2)}</div>
-                
-                <p class="free-shipping-hint">✨ Aggiungi un'altra box e la spedizione è gratis!</p>
-                <p>${product.description}</p>
-                ${optionsHTML}
-                <div class="product-allergens-detail">
-                    <strong>Allergeni Presenti:</strong>
-                    <p>${product.allergens.join(', ')}</p>
-                </div>
-                <a href="#" class="cta-button" data-product-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
-            </div>
-        </div>
-    `;
+            container.innerHTML = '<p>Prodotto non trovato.</p>';
             return;
         }
 
@@ -190,7 +174,6 @@ const renderChristmasProducts = () => {
             `;
         }
 
-
         container.innerHTML = `
             <div class="product-detail-content">
                 <div class="product-detail-image"><img src="${product.image_url}" alt="${product.name}"></div>
@@ -215,61 +198,28 @@ const renderChristmasProducts = () => {
         attachAddToCartListeners();
     };
     
+    // Funzioni helper per la pagina dettaglio (selector e add to cart) rimangono invariate o quasi
     const attachFlavorSelectorListeners = (maxQuantity) => {
         const customizer = document.querySelector('.cookie-customizer-container');
         if (!customizer) return;
-
         const plusButtons = customizer.querySelectorAll('.plus');
         const minusButtons = customizer.querySelectorAll('.minus');
         const countDisplay = document.getElementById('current-selection-count');
-        
         let totalCount = 0;
 
         const updateTotal = () => {
             totalCount = 0;
-            customizer.querySelectorAll('.quantity-count').forEach(el => {
-                totalCount += parseInt(el.textContent);
-            });
+            customizer.querySelectorAll('.quantity-count').forEach(el => totalCount += parseInt(el.textContent));
             countDisplay.textContent = totalCount;
-
-            // Abilita/Disabilita i pulsanti "+" se il totale è raggiunto
-            plusButtons.forEach(btn => {
-                btn.disabled = totalCount >= maxQuantity;
-            });
-
-            // Abilita/Disabilita i pulsanti "-"
-            minusButtons.forEach(btn => {
-                const currentCount = parseInt(btn.nextElementSibling.textContent);
-                btn.disabled = currentCount === 0;
-            });
+            plusButtons.forEach(btn => btn.disabled = totalCount >= maxQuantity);
+            minusButtons.forEach(btn => btn.disabled = parseInt(btn.nextElementSibling.textContent) === 0);
         };
-
-        plusButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (totalCount < maxQuantity) {
-                    const countEl = button.previousElementSibling;
-                    countEl.textContent = parseInt(countEl.textContent) + 1;
-                    updateTotal();
-                }
-            });
-        });
-
-        minusButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const countEl = button.nextElementSibling;
-                const currentVal = parseInt(countEl.textContent);
-                if (currentVal > 0) {
-                    countEl.textContent = currentVal - 1;
-                    updateTotal();
-                }
-            });
-        });
-
-        updateTotal(); // Inizializza lo stato dei pulsanti
+        plusButtons.forEach(button => button.addEventListener('click', () => { if (totalCount < maxQuantity) { button.previousElementSibling.textContent++; updateTotal(); } }));
+        minusButtons.forEach(button => button.addEventListener('click', () => { const el = button.nextElementSibling; if (parseInt(el.textContent) > 0) { el.textContent--; updateTotal(); } }));
+        updateTotal(); 
     };
 
-
-    // MODIFICATA: Ora memorizza anche i dati di spedizione
+    // --- CARRELLO E CHECKOUT ---
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
@@ -280,136 +230,92 @@ const renderChristmasProducts = () => {
 
         try {
             container.innerHTML = '<p class="loading-message">Caricamento informazioni sulla spedizione...</p>';
-            
             const response = await fetch('/.netlify/functions/get-shipping-info', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cart: cart })
             });
-            if (!response.ok) throw new Error('Risposta non valida dal server delle spedizioni');
-            
+            if (!response.ok) throw new Error('Errore server spedizioni');
             const shippingInfo = await response.json();
-            
-            // --- MODIFICA CHIAVE ---
-            // Salviamo i dati ricevuti nello stato globale per usarli al checkout
             shippingInfoState = shippingInfo; 
 
-            const shippingInfoHTML = `
-                <div class="shipping-info-box">
-                    <p>🚚 Posti rimasti per questa data: <strong>${shippingInfo.postiRimasti}</strong></p>
-                    <span>Data di spedizione prevista:</span>
-                    <span class="shipping-date">${shippingInfo.dataSpedizione}</span>
-                    <p><strong>Stima di consegna:</strong> Entro 2 giorni lavorativi dalla data di spedizione.</p>
-                </div>
-            `;
-            
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
             const shippingCost = shippingInfo.shippingCost;
-            const shippingDisplay = shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`;
             const grandTotal = subtotal + shippingCost;
             
-            const cartItemsHTML = cart.map((item, index) => `
-                <div class="cart-item">
-                    <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
-                    <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>Prezzo: € ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${index}">Rimuovi</button></div>
-                    <div class="cart-item-quantity"><button class="quantity-btn" data-index="${index}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${index}" data-change="1">+</button></div>
-                    <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
+            const html = `
+                <div class="shipping-info-box">
+                    <p>🚚 Posti rimasti: <strong>${shippingInfo.postiRimasti}</strong></p>
+                    <span>Spedizione prevista: </span><span class="shipping-date">${shippingInfo.dataSpedizione}</span>
                 </div>
-            `).join('');
-
-            const totalsHTML = `
+                ${cart.map((item, i) => `
+                    <div class="cart-item">
+                        <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                        <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>€ ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${i}">Rimuovi</button></div>
+                        <div class="cart-item-quantity"><button class="quantity-btn" data-index="${i}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${i}" data-change="1">+</button></div>
+                        <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
+                    </div>
+                `).join('')}
                 <div class="cart-totals">
                     <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
-                    <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingDisplay}</span></div>
-                    ${shippingCost === 0 ? '<p class="free-shipping-text">Hai diritto alla spedizione gratuita!</p>' : ''}
+                    <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`}</span></div>
                     <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
                     <div class="checkout-email-section">
-                        <label for="customer-email">La tua email per completare l'ordine:</label>
-                        <input type="email" id="customer-email" placeholder="lamiamail@esempio.com" required>
+                        <label>Email:</label><input type="email" id="customer-email" required>
                     </div>
                     <a href="#" id="checkout-button" class="cta-button">Procedi al Pagamento</a>
-                    <p class="cart-totals-note">Potrai inserire eventuali codici sconto nella pagina sicura di pagamento.</p>
                 </div>
             `;
-
-            container.innerHTML = shippingInfoHTML + cartItemsHTML + totalsHTML;
+            container.innerHTML = html;
             attachCheckoutListener();
-
         } catch (error) {
-            console.error("Errore nel caricare la pagina del carrello:", error);
-            shippingInfoState = null; // Resettiamo lo stato in caso di errore
-            container.innerHTML = `<div class="shipping-info-box" style="background-color: #ffcdd2; border-color: #f44336;"><p><strong>Oops!</strong> Non è stato possibile caricare le informazioni sulla spedizione.</p></div>`;
+            console.error(error);
+            container.innerHTML = `<p>Errore caricamento carrello. Riprova.</p>`;
         }
     };
 
-    // --- FUNZIONI PER GLI ASCOLTATORI ---
     const attachAddToCartListeners = () => {
         document.querySelectorAll('.cta-button[data-name]').forEach(button => {
-            if (button.dataset.listenerAttached) return;
-            button.dataset.listenerAttached = 'true';
-            
             button.addEventListener('click', event => {
                 event.preventDefault();
-                
-                const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-                if (currentTotalBoxes >= MAX_BOXES_PER_ORDER) {
-                    alert(`Spiacenti, non è possibile ordinare più di ${MAX_BOXES_PER_ORDER} box in un singolo ordine.\nPer ordini più grandi, contattaci direttamente!`);
-                    return;
-                }
+                const currentTotal = cart.reduce((sum, item) => sum + item.quantity, 0);
+                if (currentTotal >= MAX_BOXES_PER_ORDER) { alert(`Massimo ${MAX_BOXES_PER_ORDER} box per ordine.`); return; }
 
                 const productId = parseInt(button.dataset.productId);
-                const productInfo = allProducts.find(p => p.id === productId);
-                if (!productInfo) return;
+                const pInfo = allProducts.find(p => p.id === productId);
+                if (!pInfo) return;
 
-                const { name, price, img } = button.dataset;
                 let selectedOption = null;
-                let cartItemId = name;
+                let cartItemId = pInfo.name;
 
-                if (productInfo.options) {
-                    const optionSelect = document.getElementById('product-option-select');
-                    if (!optionSelect.value) {
-                        alert('Per favore, seleziona un\'opzione prima di aggiungere al carrello.');
-                        return;
-                    }
-                    selectedOption = optionSelect.value;
-                    cartItemId = `${name}-${selectedOption}`;
-
-                } else if (productInfo.customizable_options) {
-                    const { quantity } = productInfo.customizable_options;
-                    const flavorItems = document.querySelectorAll('.flavor-item');
-                    const selectedFlavors = [];
-                    let totalSelected = 0;
-
-                    flavorItems.forEach(item => {
-                        const flavorName = item.dataset.flavor;
-                        const count = parseInt(item.querySelector('.quantity-count').textContent);
-                        if (count > 0) {
-                            selectedFlavors.push(`${count}x ${flavorName}`);
-                        }
-                        totalSelected += count;
-                    });
-                    
-                    if (totalSelected !== quantity) {
-                        alert(`Devi selezionare esattamente ${quantity} cookie per completare la box. Ne hai selezionati ${totalSelected}.`);
-                        return;
-                    }
-
-                    selectedOption = selectedFlavors.join(', ');
-                    cartItemId = `${name}-${selectedOption}`; // Crea un ID univoco per questa combinazione
+                if (pInfo.options) {
+                    const sel = document.getElementById('product-option-select');
+                    if (!sel.value) { alert('Seleziona un\'opzione.'); return; }
+                    selectedOption = sel.value;
+                    cartItemId += `-${selectedOption}`;
+                } else if (pInfo.customizable_options) {
+                    // Logica custom cookies semplificata per brevità, assicurati di mantenerla se serve
+                     const flavorItems = document.querySelectorAll('.flavor-item');
+                     let totalSel = 0;
+                     let selFlavs = [];
+                     flavorItems.forEach(item => {
+                         const c = parseInt(item.querySelector('.quantity-count').textContent);
+                         if(c>0) selFlavs.push(`${c}x ${item.dataset.flavor}`);
+                         totalSel += c;
+                     });
+                     if(totalSel !== pInfo.customizable_options.quantity) { alert(`Seleziona esattamente ${pInfo.customizable_options.quantity} gusti.`); return; }
+                     selectedOption = selFlavs.join(', ');
+                     cartItemId += `-${selectedOption}`;
                 }
 
-                const existingProduct = cart.find(item => item.id === cartItemId);
-                if (existingProduct) {
-                    existingProduct.quantity++;
-                } else {
-                    cart.push({ id: cartItemId, name: name, price: parseFloat(price), img: img, quantity: 1, option: selectedOption, size: productInfo.size || 'normale' });
-                }
+                const existing = cart.find(item => item.id === cartItemId);
+                if (existing) existing.quantity++;
+                else cart.push({ id: cartItemId, name: pInfo.name, price: pInfo.price, img: pInfo.image_url, quantity: 1, option: selectedOption, size: pInfo.size || 'normale' });
 
                 saveCart();
                 updateCartIcon();
                 renderCartPreview();
-                showNotification(`Hai aggiunto: ${name}!`);
+                showNotification(`Aggiunto: ${pInfo.name}`);
             });
         });
     };
@@ -417,137 +323,80 @@ const renderChristmasProducts = () => {
     const attachCartPageListeners = () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
-        container.addEventListener('click', event => {
-            const target = event.target;
-            if (!target.matches('.quantity-btn') && !target.matches('.remove-item-btn')) return;
+        container.addEventListener('click', e => {
+            const t = e.target;
+            const idx = t.dataset.index;
+            if (!idx) return;
             
-            const index = target.dataset.index;
-            if (index === undefined) return;
-            
-            if (target.matches('.remove-item-btn')) {
-                cart.splice(index, 1);
-            }
-            
-            if (target.matches('.quantity-btn')) {
-                const change = parseInt(target.dataset.change);
-                
-                if (change > 0) {
-                    const currentTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-                    if (currentTotalBoxes >= MAX_BOXES_PER_ORDER) {
-                        alert(`Spiacenti, il limite massimo per ordine è di ${MAX_BOXES_PER_ORDER} box.`);
-                        return;
-                    }
-                }
-
-                if (cart[index]) {
-                    cart[index].quantity += change;
-                    if (cart[index].quantity === 0) {
-                        cart.splice(index, 1);
-                    }
-                }
+            if (t.matches('.remove-item-btn')) cart.splice(idx, 1);
+            if (t.matches('.quantity-btn')) {
+                const change = parseInt(t.dataset.change);
+                const newTotal = cart.reduce((s, i) => s + i.quantity, 0) + change;
+                if (change > 0 && newTotal > MAX_BOXES_PER_ORDER) { alert('Limite raggiunto.'); return; }
+                cart[idx].quantity += change;
+                if (cart[idx].quantity <= 0) cart.splice(idx, 1);
             }
             saveCart();
-            updateCartIcon();
             renderCartPage();
+            updateCartIcon();
             renderCartPreview();
         });
     };
-    
-    // MODIFICATA: Ora include il controllo di sicurezza ("guardia del corpo")
+
     const attachCheckoutListener = () => {
-        const checkoutButton = document.getElementById('checkout-button');
-        if (!checkoutButton) return;
-        
-        if (checkoutButton.dataset.listenerAttached) return;
-        checkoutButton.dataset.listenerAttached = 'true';
-
-        checkoutButton.addEventListener('click', async (event) => {
-            event.preventDefault();
+        const btn = document.getElementById('checkout-button');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const cartTotal = cart.reduce((s, i) => s + i.quantity, 0);
+            if (shippingInfoState && cartTotal > shippingInfoState.postiRimasti) {
+                alert(`Rimasti solo ${shippingInfoState.postiRimasti} posti.`); return;
+            }
+            const email = document.getElementById('customer-email').value.trim();
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) { alert('Email non valida.'); return; }
             
-            // --- INSERIMENTO DELLA LOGICA DAL PRIMO CODICE ---
-            // 1. Calcoliamo la quantità totale di box nel carrello
-            const cartTotalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            // 2. LA "GUARDIA DEL CORPO": controlla la disponibilità
-            // Controlla se abbiamo le info sui posti rimasti e se la quantità nel carrello è maggiore
-            if (shippingInfoState && cartTotalBoxes > shippingInfoState.postiRimasti) {
-                alert(`Spiacenti, stai cercando di ordinare ${cartTotalBoxes} box, ma per la prossima data di spedizione ne sono rimaste solo ${shippingInfoState.postiRimasti}.\nPer favore, riduci la quantità nel carrello.`);
-                return; // BLOCCHIAMO IL PROCESSO DI CHECKOUT
-            }
-            // --- FINE INSERIMENTO ---
-
-            // 3. Se il controllo passa, procediamo con la validazione dell'email e il pagamento
-            const emailInput = document.getElementById('customer-email');
-            const email = emailInput.value.trim();
-
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                alert('Per favore, inserisci un indirizzo email valido per continuare.');
-                emailInput.focus();
-                return;
-            }
-
-            checkoutButton.disabled = true;
-            checkoutButton.textContent = 'Attendi...';
-
+            btn.textContent = 'Attendi...';
             try {
-                const payload = { 
-                    cart: cart,
-                    customerEmail: email
-                };
-
-                const response = await fetch('/.netlify/functions/create-checkout', {
+                const res = await fetch('/.netlify/functions/create-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ cart, customerEmail: email })
                 });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Errore dal server durante la creazione del checkout.');
-                }
-
-                const data = await response.json();
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
                 window.location.href = data.url;
-
-            } catch (error) {
-                console.error("Errore durante il processo di Checkout:", error);
-                alert(`Si è verificato un errore: ${error.message}. Riprova.`);
-                checkoutButton.disabled = false;
-                checkoutButton.textContent = 'Procedi al Pagamento';
+            } catch (err) {
+                console.error(err);
+                alert('Errore checkout: ' + err.message);
+                btn.textContent = 'Procedi al Pagamento';
             }
         });
     };
 
-    // --- FUNZIONE DI INIZIALIZZAZIONE ---
+    // --- INIT ---
     const init = async () => {
         try {
-            const [productResponse, configResponse] = await Promise.all([
-                fetch('products.json'),
-                fetch('config.json')
-            ]);
-
-            if (!productResponse.ok) throw new Error('Catalogo prodotti non trovato.');
-            if (!configResponse.ok) throw new Error('File di configurazione non trovato.');
+            const [prodRes, confRes] = await Promise.all([fetch('products.json'), fetch('config.json')]);
+            if (!prodRes.ok) throw new Error('Prodotti non trovati');
             
-            allProducts = await productResponse.json();
-            config = await configResponse.json();
+            allProducts = await prodRes.json();
+            if (confRes.ok) config = await confRes.json();
 
-            // Una volta caricati i dati, esegui il resto
-            handleClosureBanner(); // Gestisce il banner ferie
-            renderShopProducts();
-            renderChristmasProducts();
+            console.log("Prodotti caricati:", allProducts); // DEBUG: Guarda la console del browser
+
+            handleClosureBanner();
+            renderShopProducts();       // Carica i prodotti standard
+            renderChristmasProducts();  // Carica i prodotti di Natale
             renderProductDetailPage();
-            renderCartPage(); // Ora carica anche i dati di spedizione
+            renderCartPage();
             attachCartPageListeners();
             updateCartIcon();
             renderCartPreview();
 
         } catch (error) {
-            console.error("Errore critico nell'inizializzazione:", error);
-            document.body.innerHTML = '<p style="text-align: center; padding: 2rem;">Oops! C\'è stato un problema nel caricare il sito. Riprova più tardi.</p>';
+            console.error("Errore Init:", error);
         }
     };
 
-    // Avvia l'intera applicazione.
     init();
 });
