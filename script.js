@@ -137,11 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = `${product.name} - Incantesimi di Zucchero`;
 
         let optionsHTML = '';
-        if (product.text_input_label) {
+        
+        // --- MODIFICA PER CASELLE MULTIPLE (CORRETTO) ---
+        if (product.custom_text_inputs) {
+            const inputsHTML = product.custom_text_inputs.map((label) => `
+                <div style="margin-bottom: 10px;">
+                    <label style="display:block; font-size:0.9rem; margin-bottom:2px; font-weight:bold;">${label}</label>
+                    <input type="text" class="product-custom-text-multi" data-label="${label}" placeholder="Scrivi nome..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+            `).join('');
+
             optionsHTML = `
-                <div class="product-options">
-                    <label for="product-custom-text">${product.text_input_label}</label>
-                    <input type="text" id="product-custom-text" placeholder="Scrivi qui..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px;">
+                <div class="product-options" id="custom-inputs-container" style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <strong style="display:block; margin-bottom:10px; color: #c0392b;">Personalizza qui:</strong>
+                    ${inputsHTML}
                 </div>
             `;
         }
