@@ -967,3 +967,114 @@ a.product-card-link:hover {
     border: 1px solid #f1c40f;
     box-shadow: 0 4px 15px rgba(192, 57, 43, 0.1);
 }
+/* ============================================================
+   STILE NATALIZIO "INTELLIGENTE"
+   (Si attiva SOLO se nel body c'è la classe class="pagina-natale")
+   ============================================================ */
+
+/* 1. SISTEMIAMO LA GRIGLIA DEI PRODOTTI */
+#christmas-product-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 2. COLORIAMO DI ROSSO GLI ELEMENTI STANDARD */
+
+/* Sfondo pagina */
+body.pagina-natale {
+    background-color: #f9f4ef;
+}
+
+/* Titoli e Link (che normalmente sono viola) diventano Rossi */
+body.pagina-natale h1, 
+body.pagina-natale h2, 
+body.pagina-natale h3,
+body.pagina-natale .logo a,
+body.pagina-natale .main-nav a:hover, 
+body.pagina-natale .active-link,
+body.pagina-natale .section-title {
+    color: #c0392b !important;
+}
+
+/* Hero Section Natalizia */
+body.pagina-natale .hero-section {
+    /* Usa la tua immagine di sfondo se c'è, altrimenti un gradiente */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), 
+                      url('images/christmas-bg.jpg');
+    background-color: #e8dcdc;
+    border-bottom: 4px solid #c0392b;
+}
+
+/* Aumentiamo la grandezza del titolo nella Hero solo a Natale */
+body.pagina-natale .hero-section h2 {
+    font-size: 3.5rem;
+}
+
+/* Pulsanti (CTA e pulsanti secondari) Rossi */
+body.pagina-natale .cta-button,
+body.pagina-natale .secondary-button {
+    background-color: #c0392b !important;
+    color: white !important;
+    border-radius: 30px;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+body.pagina-natale .cta-button:hover,
+body.pagina-natale .secondary-button:hover {
+    background-color: #a93226 !important;
+    transform: translateY(-3px);
+}
+
+/* 3. STILE DELLE CARD (Identico alle altre box, ma con tocco natalizio) */
+body.pagina-natale .box-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+body.pagina-natale .box-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(192, 57, 43, 0.15); /* Ombra rossa */
+    border-color: #c0392b;
+}
+
+body.pagina-natale .box-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+body.pagina-natale .box-card h3 {
+    margin: 15px;
+    font-size: 1.5rem;
+    padding: 0 10px;
+}
+
+body.pagina-natale .box-card p {
+    padding: 0 15px;
+    color: #666;
+    font-size: 0.95rem;
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+/* Assicuriamoci che il bottone dentro la card sia centrato */
+body.pagina-natale .box-card .secondary-button {
+    margin: 0 15px 20px 15px;
+    text-align: center;
+}
