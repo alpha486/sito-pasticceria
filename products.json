@@ -114,7 +114,8 @@
     "price": 70.00,
     "image_url": "images/box_christmas_tart.jpg",
     "allergens": ["Glutine", "Latte", "Uova"],
-    "size": "normale"
+    "size": "normale",
+    "custom_text_inputs": ["Nome 1", "Nome 2", "Nome 3", "Nome 4", "Nome 5"]
   },
   {
     "id": 10,

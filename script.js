@@ -137,7 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = `${product.name} - Incantesimi di Zucchero`;
 
         let optionsHTML = '';
-        if (product.options) {
+        if (product.text_input_label) {
+            optionsHTML = `
+                <div class="product-options">
+                    <label for="product-custom-text">${product.text_input_label}</label>
+                    <input type="text" id="product-custom-text" placeholder="Scrivi qui..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px;">
+                </div>
+            `;
+        }
+        else if (product.options) {
             optionsHTML = `
                 <div class="product-options">
                     <label for="product-option-select">${product.options.label}</label>
@@ -287,8 +295,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let selectedOption = null;
                 let cartItemId = pInfo.name;
+                // --- INIZIO MODIFICA: SALVATAGGIO MULTIPLO ---
+                if (pInfo.custom_text_inputs) {
+                    const inputFields = document.querySelectorAll('.product-custom-text-multi');
+                    let collectedNames = [];
+                    let allFilled = true;
 
-                if (pInfo.options) {
+                    // Raccogliamo i dati da tutte le caselle
+                    inputFields.forEach(input => {
+                        const val = input.value.trim();
+                        if (!val) allFilled = false;
+                        collectedNames.push(`${input.dataset.label}: ${val}`);
+                    });
+                    
+                    if (!allFilled) {
+                        alert('Per favore, compila tutti i nomi richiesti.');
+                        return; // Blocca se manca anche solo un nome
+                    }
+                    
+                    // Uniamo tutto in una stringa lunga per Stripe
+                    // Esempio risultato: "Nome 1: Giulia, Nome 2: Marco, ..."
+                    selectedOption = collectedNames.join(', ');
+                    
+                    // Creiamo un ID univoco per il carrello
+                    cartItemId += `-${selectedOption.replace(/\s+/g, '').substring(0, 20)}`; 
+                }
+                else if (pInfo.options) {
                     const sel = document.getElementById('product-option-select');
                     if (!sel.value) { alert('Seleziona un\'opzione.'); return; }
                     selectedOption = sel.value;
