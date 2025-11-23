@@ -237,9 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- CARRELLO E CHECKOUT ---
+    // --- CARRELLO E CHECKOUT (MODIFICATA PER BLACK FRIDAY) ---
     const renderCartPage = async () => {
         const container = document.getElementById('cart-container');
         if (!container) return;
+        
         if (cart.length === 0) {
             container.innerHTML = '<p class="cart-empty-message">Il tuo carrello è vuoto.</p>';
             return;
@@ -256,26 +258,81 @@ document.addEventListener('DOMContentLoaded', () => {
             const shippingInfo = await response.json();
             shippingInfoState = shippingInfo; 
 
+            // --- LOGICA PROMOZIONI BLACK FRIDAY ---
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            // Nota: Mese 10 = Novembre (in Javascript i mesi vanno da 0 a 11)
+            const promoStart = new Date(currentYear, 10, 24); 
+            const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
+            const isPromoPeriod = now >= promoStart && now <= promoEnd;
+
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shippingCost = shippingInfo.shippingCost;
-            const grandTotal = subtotal + shippingCost;
+            
+            // Calcolo sconti e spedizione
+            let shippingCost = shippingInfo.shippingCost;
+            let discountAmount = 0;
+            let promoMessage = "";
+
+            if (isPromoPeriod) {
+                // 1. Spedizione Gratuita
+                shippingCost = 0;
+                
+                // 2. Sconto 25% su 2 o più articoli
+                const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+                if (totalQuantity >= 2) {
+                    discountAmount = subtotal * 0.25;
+                    promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
+                        🎉 BLACK FRIDAY ATTIVO: Spedizione Gratuita + 25% di Sconto applicato!
+                    </div>`;
+                } else {
+                    promoMessage = `<div style="color: #e67e22; font-weight: bold; margin-bottom: 10px;">
+                        🔥 BLACK FRIDAY: Spedizione Gratuita attiva! Aggiungi un altro articolo per il 25% di sconto!
+                    </div>`;
+                }
+            }
+            // --- FINE LOGICA PROMO ---
+
+            const grandTotal = subtotal - discountAmount + shippingCost;
             
             const html = `
                 <div class="shipping-info-box">
                     <p>🚚 Posti rimasti: <strong>${shippingInfo.postiRimasti}</strong></p>
                     <span>Spedizione prevista: </span><span class="shipping-date">${shippingInfo.dataSpedizione}</span>
                 </div>
+                
+                ${promoMessage}
+
                 ${cart.map((item, i) => `
                     <div class="cart-item">
                         <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
-                        <div class="cart-item-details"><h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3><p>€ ${item.price.toFixed(2)}</p><button class="remove-item-btn" data-index="${i}">Rimuovi</button></div>
-                        <div class="cart-item-quantity"><button class="quantity-btn" data-index="${i}" data-change="-1">-</button><span>${item.quantity}</span><button class="quantity-btn" data-index="${i}" data-change="1">+</button></div>
+                        <div class="cart-item-details">
+                            <h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3>
+                            <p>€ ${item.price.toFixed(2)}</p>
+                            <button class="remove-item-btn" data-index="${i}">Rimuovi</button>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" data-index="${i}" data-change="-1">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn" data-index="${i}" data-change="1">+</button>
+                        </div>
                         <div class="cart-item-subtotal"><strong>€ ${(item.price * item.quantity).toFixed(2)}</strong></div>
                     </div>
                 `).join('')}
+                
                 <div class="cart-totals">
                     <div class="cart-totals-row"><span>Subtotale:</span><span>€ ${subtotal.toFixed(2)}</span></div>
-                    <div class="cart-totals-row"><span>Spedizione:</span><span>${shippingCost === 0 ? 'Gratuita!' : `€ ${shippingCost.toFixed(2)}`}</span></div>
+                    
+                    ${discountAmount > 0 ? `
+                    <div class="cart-totals-row" style="color: #c0392b;">
+                        <span>Sconto Black Friday (25%):</span>
+                        <span>- € ${discountAmount.toFixed(2)}</span>
+                    </div>` : ''}
+
+                    <div class="cart-totals-row">
+                        <span>Spedizione:</span>
+                        <span>${shippingCost === 0 ? '<strong style="color:#27ae60">GRATIS</strong>' : `€ ${shippingCost.toFixed(2)}`}</span>
+                    </div>
+                    
                     <div class="cart-totals-row grand-total"><span>TOTALE:</span><span>€ ${grandTotal.toFixed(2)}</span></div>
                     <div class="checkout-email-section">
                         <label>Email:</label><input type="email" id="customer-email" required>
