@@ -34,7 +34,7 @@ exports.handler = async (event) => {
         let discounts = [];
         if (isPromoPeriod && totalBoxes >= 2) {
             discounts = [{
-                coupon: 'INCOLLA_QUI_ID_COUPON_STRIPE', // <--- IMPORTANTE: Incolla qui l'ID del coupon creato su Stripe
+                coupon: 'xdWh1tLh', // <--- IMPORTANTE: Incolla qui l'ID del coupon creato su Stripe
             }];
         }
 
