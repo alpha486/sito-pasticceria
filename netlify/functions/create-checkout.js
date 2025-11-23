@@ -12,18 +12,37 @@ exports.handler = async (event) => {
         if (!cart || !Array.isArray(cart) || !customerEmail) {
             return { statusCode: 400, body: JSON.stringify({ error: 'Payload del carrello o email mancante/non valido.' }) };
         }
-        
-        // --- LOGICA MODIFICATA ---
+
+        // --- 1. CONFIGURAZIONE DATE BLACK FRIDAY ---
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        // Mese 10 = Novembre (Gennaio è 0)
+        const promoStart = new Date(currentYear, 10, 24); 
+        const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
+        const isPromoPeriod = now >= promoStart && now <= promoEnd;
+
+        // --- 2. LOGICA SPEDIZIONE E SCONTI ---
         const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        // Spedizione: Gratuita se è il periodo Black Friday OPPURE se ci sono 2+ box (regola standard)
         let shippingCost = config.shipping.costoStandard;
-        if (totalBoxes >= 2) {
+        if (isPromoPeriod || totalBoxes >= 2) {
             shippingCost = 0;
         }
-        // --- FINE MODIFICA ---
 
+        // Sconto: Se periodo Black Friday E ci sono 2+ articoli -> applica coupon
+        let discounts = [];
+        if (isPromoPeriod && totalBoxes >= 2) {
+            discounts = [{
+                coupon: 'INCOLLA_QUI_ID_COUPON_STRIPE', // <--- IMPORTANTE: Incolla qui l'ID del coupon creato su Stripe
+            }];
+        }
+
+        // --- CREAZIONE ELEMENTI CARRELLO ---
         const lineItems = cart.map(item => {
             const product = products.find(p => p.name === item.name);
             if (!product) throw new Error(`Prodotto non trovato: ${item.name}`);
+            
             return {
                 price_data: {
                     currency: 'eur',
@@ -37,6 +56,7 @@ exports.handler = async (event) => {
             };
         });
 
+        // Aggiungi la spedizione come riga se c'è un costo
         if (shippingCost > 0) {
             lineItems.push({
                 price_data: {
@@ -48,14 +68,16 @@ exports.handler = async (event) => {
             });
         }
         
+        // --- CREAZIONE SESSIONE STRIPE ---
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
+            discounts: discounts, // Applica lo sconto qui se presente
             success_url: `${config.websiteUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${config.websiteUrl}/cancel.html`,
             customer_email: customerEmail,
-            allow_promotion_codes: true,
+            allow_promotion_codes: true, // Lascia true se vuoi permettere altri codici, altrimenti false per evitare cumuli
             shipping_address_collection: {allowed_countries: ['IT'],},
         });
 
