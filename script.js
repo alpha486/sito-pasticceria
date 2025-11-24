@@ -461,7 +461,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ cart, customerEmail: email })
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error);
+                // Se c'è un dettaglio dell'errore, mostriamo quello, altrimenti l'errore generico
+                if (!res.ok) throw new Error(data.details || data.error);
                 window.location.href = data.url;
             } catch (err) {
                 console.error(err);
