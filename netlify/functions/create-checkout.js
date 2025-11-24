@@ -69,15 +69,18 @@ exports.handler = async (event) => {
         }
         
         // --- CREAZIONE SESSIONE STRIPE ---
+                // --- CREAZIONE SESSIONE STRIPE ---
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            discounts: discounts, // Applica lo sconto qui se presente
+            discounts: discounts, 
             success_url: `${config.websiteUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${config.websiteUrl}/cancel.html`,
             customer_email: customerEmail,
-            allow_promotion_codes: true, // Lascia true se vuoi permettere altri codici, altrimenti false per evitare cumuli
+            // MODIFICA QUI SOTTO:
+            // Se ci sono sconti automatici (Black Friday), disabilita l'inserimento manuale
+            allow_promotion_codes: discounts.length > 0 ? false : true, 
             shipping_address_collection: {allowed_countries: ['IT'],},
         });
 
