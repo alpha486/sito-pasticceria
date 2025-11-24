@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const shippingInfo = await response.json();
             shippingInfoState = shippingInfo; 
 
-            // --- LOGICA PROMOZIONI BLACK FRIDAY (AGGIORNATA) ---
+            // --- LOGICA PROMOZIONI BLACK FRIDAY (CORRETTA PER SPEDIZIONE) ---
             const now = new Date();
             const currentYear = now.getFullYear();
             const promoStart = new Date(currentYear, 10, 24); 
@@ -268,21 +268,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
             
-            // Logica Base
-            let shippingCost = shippingInfo.shippingCost; // Prende il costo standard dal server
+            // 1. Partiamo dal costo standard base
+            let shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
+            
+            // 2. Se NON è Black Friday, applica la regola standard "2 box = gratis"
+            if (!isPromoPeriod && totalQuantity >= 2) {
+                shippingCost = 0;
+            }
+
             let discountAmount = 0;
             let promoMessage = "";
 
+            // 3. Sovrascrittura regole Black Friday
             if (isPromoPeriod) {
                 if (totalQuantity === 1) {
-                    // CASO 1: Solo 1 box -> Spedizione Gratis, Niente Sconto
+                    // CASO 1: 1 Box -> Spedizione Gratis
                     shippingCost = 0;
                     promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
                         🎉 BLACK FRIDAY: Spedizione Gratuita attiva su questa Box!
                     </div>`;
                 } else if (totalQuantity >= 2) {
-                    // CASO 2: 2 o più box -> Sconto 25%, Spedizione STANDARD (si paga)
-                    // shippingCost rimane quello standard caricato sopra
+                    // CASO 2: 2+ Box -> Sconto 25%, ma Spedizione si PAGA.
+                    // Qui forziamo il costo a tornare quello standard, annullando eventuali "gratis" precedenti
+                    shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
+                    
                     discountAmount = subtotal * 0.25;
                     promoMessage = `<div style="color: #e67e22; font-weight: bold; margin-bottom: 10px;">
                         🔥 BLACK FRIDAY: Sconto del 25% applicato! (Spedizione standard)
