@@ -258,35 +258,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const shippingInfo = await response.json();
             shippingInfoState = shippingInfo; 
 
-            // --- LOGICA PROMOZIONI BLACK FRIDAY ---
+            // --- LOGICA PROMOZIONI BLACK FRIDAY (AGGIORNATA) ---
             const now = new Date();
             const currentYear = now.getFullYear();
-            // Nota: Mese 10 = Novembre (in Javascript i mesi vanno da 0 a 11)
             const promoStart = new Date(currentYear, 10, 24); 
             const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
             const isPromoPeriod = now >= promoStart && now <= promoEnd;
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
             
-            // Calcolo sconti e spedizione
-            let shippingCost = shippingInfo.shippingCost;
+            // Logica Base
+            let shippingCost = shippingInfo.shippingCost; // Prende il costo standard dal server
             let discountAmount = 0;
             let promoMessage = "";
 
             if (isPromoPeriod) {
-                // 1. Spedizione Gratuita
-                shippingCost = 0;
-                
-                // 2. Sconto 25% su 2 o più articoli
-                const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-                if (totalQuantity >= 2) {
-                    discountAmount = subtotal * 0.25;
+                if (totalQuantity === 1) {
+                    // CASO 1: Solo 1 box -> Spedizione Gratis, Niente Sconto
+                    shippingCost = 0;
                     promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
-                        🎉 BLACK FRIDAY ATTIVO: Spedizione Gratuita + 25% di Sconto applicato!
+                        🎉 BLACK FRIDAY: Spedizione Gratuita attiva su questa Box!
                     </div>`;
-                } else {
+                } else if (totalQuantity >= 2) {
+                    // CASO 2: 2 o più box -> Sconto 25%, Spedizione STANDARD (si paga)
+                    // shippingCost rimane quello standard caricato sopra
+                    discountAmount = subtotal * 0.25;
                     promoMessage = `<div style="color: #e67e22; font-weight: bold; margin-bottom: 10px;">
-                        🔥 BLACK FRIDAY: Spedizione Gratuita attiva! Aggiungi un altro articolo per il 25% di sconto!
+                        🔥 BLACK FRIDAY: Sconto del 25% applicato! (Spedizione standard)
                     </div>`;
                 }
             }
