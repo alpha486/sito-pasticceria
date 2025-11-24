@@ -13,29 +13,32 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'Dati mancanti.' }) };
         }
 
-        // --- 1. DATA E PERIODO ---
+        // --- 1. CONFIGURAZIONE DATE BLACK FRIDAY ---
         const now = new Date();
         const currentYear = now.getFullYear();
         const promoStart = new Date(currentYear, 10, 24); 
         const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
         const isPromoPeriod = now >= promoStart && now <= promoEnd;
 
-        // --- 2. CALCOLI ---
+        // --- 2. LOGICA SPEDIZIONE E SCONTI (AGGIORNATA) ---
         const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
         
-        // Spedizione
+        // Default: si paga la spedizione standard
         let shippingCost = config.shipping.costoStandard;
-        if (isPromoPeriod || totalBoxes >= 2) {
-            shippingCost = 0;
-        }
 
-        // Sconto
+        // NUOVA REGOLA SPEDIZIONE: Gratis SOLO se 1 box e siamo nel periodo promo
+        if (isPromoPeriod && totalBoxes === 1) {
+            shippingCost = 0;
+        } 
+        // Nota: Se totalBoxes >= 2, shippingCost resta quello standard (si paga)
+
+        // NUOVA REGOLA SCONTO: Se 2+ box, sconto 25% (ma la spedizione si paga, vedi sopra)
         let discounts = [];
         if (isPromoPeriod && totalBoxes >= 2) {
-            discounts = [{ coupon: 'xdWh1tLh' }]; // Il tuo ID corretto
+            discounts = [{ coupon: 'xdWh1tLh' }]; 
         }
 
-        // --- 3. LINE ITEMS ---
+        // --- 3. CREAZIONE ELEMENTI CARRELLO ---
         const lineItems = cart.map(item => {
             const product = products.find(p => p.name === item.name);
             const imageUrl = (product && product.image_url) 
@@ -55,6 +58,7 @@ exports.handler = async (event) => {
             };
         });
 
+        // Aggiungi la spedizione se il costo è maggiore di 0
         if (shippingCost > 0) {
             lineItems.push({
                 price_data: {
@@ -66,8 +70,8 @@ exports.handler = async (event) => {
             });
         }
         
-        // --- 4. COSTRUZIONE DINAMICA DELLA SESSIONE (IL FIX REALE) ---
-        // Creiamo l'oggetto base SENZA i codici promozionali
+        // --- 4. COSTRUZIONE SESSIONE ---
+        // Mantengo il fix anti-errore: se c'è sconto, niente codici manuali.
         const sessionParams = {
             payment_method_types: ['card'],
             line_items: lineItems,
@@ -78,10 +82,8 @@ exports.handler = async (event) => {
             shipping_address_collection: { allowed_countries: ['IT'] },
         };
 
-        // Aggiungiamo O lo sconto automatico O la possibilità di inserire codici. MAI ENTRAMBI.
         if (discounts.length > 0) {
             sessionParams.discounts = discounts;
-            // NON aggiungiamo proprio la proprietà 'allow_promotion_codes'
         } else {
             sessionParams.allow_promotion_codes = true;
         }
@@ -95,11 +97,10 @@ exports.handler = async (event) => {
 
     } catch (error) {
         console.error('Errore Stripe:', error);
-        // Qui mandiamo indietro l'errore VERO (details)
         return {
             statusCode: 500,
             body: JSON.stringify({ 
-                error: 'Errore Checkout Stripe', 
+                error: 'Errore Checkout', 
                 details: error.raw ? error.raw.message : error.message 
             }),
         };
