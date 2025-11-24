@@ -9,41 +9,35 @@ exports.handler = async (event) => {
 
     try {
         const { cart, customerEmail } = JSON.parse(event.body);
-        
-        // Controllo validità dati
         if (!cart || !Array.isArray(cart) || !customerEmail) {
-            return { statusCode: 400, body: JSON.stringify({ error: 'Dati mancanti o non validi.' }) };
+            return { statusCode: 400, body: JSON.stringify({ error: 'Dati mancanti.' }) };
         }
 
-        // --- 1. CONFIGURAZIONE DATE BLACK FRIDAY ---
+        // --- 1. DATA E PERIODO ---
         const now = new Date();
         const currentYear = now.getFullYear();
-        const promoStart = new Date(currentYear, 10, 24); // 24 Novembre
-        const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59); // 30 Novembre
-        
-        // Verifica se siamo nel periodo promo
+        const promoStart = new Date(currentYear, 10, 24); 
+        const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
         const isPromoPeriod = now >= promoStart && now <= promoEnd;
 
-        // --- 2. LOGICA SPEDIZIONE E SCONTI ---
+        // --- 2. CALCOLI ---
         const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
         
-        // SPEDIZIONE: Gratuita se è Black Friday OPPURE se 2+ box
+        // Spedizione
         let shippingCost = config.shipping.costoStandard;
         if (isPromoPeriod || totalBoxes >= 2) {
             shippingCost = 0;
         }
 
-        // SCONTO: Se periodo Black Friday E ci sono 2+ articoli
+        // Sconto
         let discounts = [];
         if (isPromoPeriod && totalBoxes >= 2) {
-            // ID preso dal tuo screenshot
-            discounts = [{ coupon: 'xdWh1tLh' }]; 
+            discounts = [{ coupon: 'xdWh1tLh' }]; // Il tuo ID corretto
         }
 
-        // --- 3. CREAZIONE ELEMENTI CARRELLO ---
+        // --- 3. LINE ITEMS ---
         const lineItems = cart.map(item => {
             const product = products.find(p => p.name === item.name);
-            // Fallback immagine sicura
             const imageUrl = (product && product.image_url) 
                 ? config.websiteUrl + product.image_url 
                 : 'https://via.placeholder.com/150';
@@ -61,7 +55,6 @@ exports.handler = async (event) => {
             };
         });
 
-        // Aggiungi riga spedizione solo se > 0
         if (shippingCost > 0) {
             lineItems.push({
                 price_data: {
@@ -73,23 +66,27 @@ exports.handler = async (event) => {
             });
         }
         
-        // --- 4. CREAZIONE SESSIONE STRIPE ---
-        const session = await stripe.checkout.sessions.create({
+        // --- 4. COSTRUZIONE DINAMICA DELLA SESSIONE (IL FIX REALE) ---
+        // Creiamo l'oggetto base SENZA i codici promozionali
+        const sessionParams = {
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            discounts: discounts, 
-            
-            // *** LA CORREZIONE FONDAMENTALE ***
-            // Se abbiamo applicato sconti automatici (discounts ha elementi), 
-            // DOBBIAMO disabilitare allow_promotion_codes (false).
-            allow_promotion_codes: discounts.length > 0 ? false : true, 
-            
             success_url: `${config.websiteUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${config.websiteUrl}/cancel.html`,
             customer_email: customerEmail,
             shipping_address_collection: { allowed_countries: ['IT'] },
-        });
+        };
+
+        // Aggiungiamo O lo sconto automatico O la possibilità di inserire codici. MAI ENTRAMBI.
+        if (discounts.length > 0) {
+            sessionParams.discounts = discounts;
+            // NON aggiungiamo proprio la proprietà 'allow_promotion_codes'
+        } else {
+            sessionParams.allow_promotion_codes = true;
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionParams);
 
         return {
             statusCode: 200,
@@ -98,11 +95,12 @@ exports.handler = async (event) => {
 
     } catch (error) {
         console.error('Errore Stripe:', error);
+        // Qui mandiamo indietro l'errore VERO (details)
         return {
             statusCode: 500,
             body: JSON.stringify({ 
-                error: 'Impossibile creare la sessione di pagamento.', 
-                details: error.message 
+                error: 'Errore Checkout Stripe', 
+                details: error.raw ? error.raw.message : error.message 
             }),
         };
     }
