@@ -41,7 +41,7 @@
     "price": 20.00,
     "image_url": "images/cookies.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio"],
-    "size": "personalizzata",
+    "size": "normale",
     "customizable_options": {
       "quantity": 6,
       "label": "Scegli 6 cookies per comporre la tua box:",
