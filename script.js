@@ -197,7 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="product-detail-info">
                     <h2>${product.name}</h2>
                     <div class="price">€ ${product.price.toFixed(2)}</div>
-                    ${product.size === 'grande' ? `<p class="free-shipping-hint">✨ Aggiungi un'altra box grande e la spedizione è gratis!</p>` : ''}
+ 
+                    ${product.size === 'grande' 
+                        ? `<p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 2 di queste box (o 3 miste).</p>`
+                        : `<p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 3 box qualsiasi (o 2 grandi).</p>`
+                    }
+
                     <p>${product.description}</p>
                     ${optionsHTML}
                     <div class="product-allergens-detail">
