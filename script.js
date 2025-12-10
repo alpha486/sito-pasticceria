@@ -263,47 +263,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const shippingInfo = await response.json();
             shippingInfoState = shippingInfo; 
 
-            // --- LOGICA PROMOZIONI BLACK FRIDAY (CORRETTA PER SPEDIZIONE) ---
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const promoStart = new Date(currentYear, 10, 24); 
-            const promoEnd = new Date(currentYear, 10, 30, 23, 59, 59);
-            const isPromoPeriod = now >= promoStart && now <= promoEnd;
-
+            // --- NUOVA LOGICA SPEDIZIONE (2 Grandi o 3 Totali) ---
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-            
-            // 1. Partiamo dal costo standard base
-            let shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
-            
-            // 2. Se NON è Black Friday, applica la regola standard "2 box = gratis"
-            if (!isPromoPeriod && totalQuantity >= 2) {
-                shippingCost = 0;
-            }
 
+            // Conta quante box 'grandi' ci sono
+            const largeBoxQuantity = cart.reduce((sum, item) => {
+                return item.size === 'grande' ? sum + item.quantity : sum;
+            }, 0);
+            
+            // Costo base
+            let shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
             let discountAmount = 0;
             let promoMessage = "";
 
-            // 3. Sovrascrittura regole Black Friday
-            if (isPromoPeriod) {
-                if (totalQuantity === 1) {
-                    // CASO 1: 1 Box -> Spedizione Gratis
-                    shippingCost = 0;
-                    promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
-                        🎉 BLACK FRIDAY: Spedizione Gratuita attiva su questa Box!
-                    </div>`;
-                } else if (totalQuantity >= 2) {
-                    // CASO 2: 2+ Box -> Sconto 25%, ma Spedizione si PAGA.
-                    // Qui forziamo il costo a tornare quello standard, annullando eventuali "gratis" precedenti
-                    shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
-                    
-                    discountAmount = subtotal * 0.25;
-                    promoMessage = `<div style="color: #e67e22; font-weight: bold; margin-bottom: 10px;">
-                        🔥 BLACK FRIDAY: Sconto del 25% applicato! (Spedizione standard)
-                    </div>`;
+            // REGOLA: Gratis se 3 o più totali OPPURE 2 o più grandi
+            if (totalQuantity >= 3 || largeBoxQuantity >= 2) {
+                shippingCost = 0;
+                promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
+                    🚚 Spedizione Gratuita Attiva!
+                </div>`;
+            } else {
+                // Messaggini per incentivare l'acquisto (opzionale)
+                if (totalQuantity === 2 && largeBoxQuantity < 2) {
+                     promoMessage = `<div style="color: #e67e22; font-size: 0.9em; margin-bottom: 10px;">Ne basta ancora una per la spedizione gratis!</div>`;
                 }
             }
-            // --- FINE LOGICA PROMO ---
+            // --- FINE NUOVA LOGICA ---
 
             const grandTotal = subtotal - discountAmount + shippingCost;
             
