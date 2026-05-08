@@ -114,10 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Rimosso il link <a> attorno all'immagine, ora il CSS la riconoscerà!
         return `
             <div class="box">
-                <img src="${product.image_url}" alt="${product.name}">
+                <a href="prodotto.html?id=${product.id}" class="box-image-link">
+                    <img src="${product.image_url}" alt="${product.name}">
+                </a>
                 <div class="box-info">
                     <h3>${product.name}</h3>
                     <p class="price">€${product.price.toFixed(2)}</p>
