@@ -285,6 +285,48 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTotal(); 
     };
 
+    const aggiungiAlCarrello = (productId) => {
+        const product = allProducts.find(p => p.id === parseInt(productId));
+        if (!product) return;
+
+        // Cerchiamo il menu a tendina (gestisce sia la pagina Shop che la Home)
+        const selectElement = document.getElementById(`options-${productId}`) || 
+                              document.getElementById(`home-options-${productId}`);
+        
+        const selectedOption = selectElement ? selectElement.value : null;
+
+        // Chiave unica per non mischiare i gusti diversi dello stesso prodotto
+        const cartKey = selectedOption ? `${productId}-${selectedOption}` : `${productId}`;
+
+        const existingItem = cart.find(item => item.cartKey === cartKey);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                cartKey: cartKey,
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image_url: product.image_url,
+                option: selectedOption,
+                quantity: 1
+            });
+        }
+
+        saveCart();
+        updateCartIcon();
+        if (typeof renderCartPreview === 'function') renderCartPreview();
+        
+        // Mostra la notifica di successo
+        const msg = selectedOption ? `${product.name} (${selectedOption})` : product.name;
+        showNotification(`${msg} aggiunto al carrello!`);
+    };
+
+    // Creiamo un "alias" di sicurezza: se qualche bottone nel codice cerca "addToCart", 
+    // userà comunque questa funzione senza dare errori!
+    const addToCart = aggiungiAlCarrello;
+
     // --- CARRELLO E CHECKOUT ---
     // --- CARRELLO E CHECKOUT (MODIFICATA PER BLACK FRIDAY) ---
     const renderCartPage = async () => {
