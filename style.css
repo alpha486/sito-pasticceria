@@ -6,55 +6,284 @@
     --heading-font: 'Dancing Script', cursive;
     --body-font: 'Poppins', sans-serif;
 }
-/*mmm*/
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { font-family: var(--body-font); color: var(--text-color); background-color: #fff; }
 h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 
-.main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background-color: #ffffff; border-bottom: 1px solid var(--light-bg); position: sticky; top: 0; z-index: 100; }
-.logo { font-family: var(--heading-font); font-size: 2rem; color: var(--dark-purple); }
-.main-nav a { margin-left: 20px; text-decoration: none; color: var(--text-color); font-weight: 500; }
-
-.hero-section { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/sfondo.jpg'); height: 90vh; background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; text-align: center; color: white; padding: 2rem; }
-.hero-content h1 { font-size: 4rem; color: white; margin-bottom: 1rem; }
-.hero-content p {
-    font-size: 1.1rem; /* Leggermente più piccolo per stare meglio nel box */
-    line-height: 1.7;  /* Aumenta la spaziatura tra le righe per leggibilità */
-    text-align: center;/* Lo centra! */
-    margin-bottom: 0;  /* Rimuoviamo il margine che non serve più */
+.main-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 1rem 5%; 
+    background-color: #ffffff; 
+    border-bottom: 1px solid var(--light-bg); 
+    position: sticky; 
+    top: 0;
+    z-index: 100;
 }
 
-.cta-button { background-color: var(--pink); color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; font-weight: 500; transition: background-color 0.3s; }
-.cta-button:hover { background-color: #d79fa3; }
+.logo { font-family: var(--heading-font); font-size: 2rem; color: var(--dark-purple); }
+.main-nav { display: flex; align-items: center; gap: 1rem; }
+.main-nav a { 
+    margin-left: 20px; 
+    text-decoration: none; 
+    color: var(--text-color); 
+    font-weight: 500; 
+    transition: color 0.3s;
+}
+.main-nav a:hover { color: var(--pink); }
 
-.boxes-section, .about-section, .custom-work-section { padding: 5rem 5%; text-align: center; }
-.boxes-section h2, .about-section h2, .custom-work-section h2 { font-size: 3rem; margin-bottom: 3rem; }
+/* HERO SECTION */
+.hero { 
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/sfondo.jpg'); 
+    height: 90vh; 
+    background-size: cover; 
+    background-position: center; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    position: relative;
+}
 
-.boxes-section { background-color: var(--light-bg); }
-.boxes-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 2rem; }
-.box-card { background-color: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; max-width: 350px; text-align: center; }
-.box-card img { width: 100%; height: 250px; object-fit: cover; }
-.box-card h3 { font-size: 2rem; margin: 1.5rem 0; }
-.box-card p { padding: 0 1.5rem 1.5rem 1.5rem; line-height: 1.6; }
+.hero-content {
+    text-align: center;
+    max-width: 800px;
+    padding: 2rem;
+}
 
-.secondary-button { display: inline-block; border: 2px solid var(--pink); color: var(--pink); padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 500; margin-bottom: 1.5rem; transition: all 0.3s; }
-.secondary-button:hover { background-color: var(--pink); color: white; }
+.hero-content h1 { 
+    font-size: 4rem; 
+    color: white; 
+    margin-bottom: 1rem; 
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
 
-.about-section { display: flex; align-items: center; gap: 3rem; text-align: left; }
-.about-image img { width: 100%; max-width: 350px; border-radius: 10px; }
+.hero-content p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+}
 
-.custom-work-section { background-color: var(--dark-purple); color: white; }
-.custom-work-section h2 { color: white; }
-.custom-work-section p { margin-bottom: 2rem; font-size: 1.1rem; }
+.cta-button { 
+    display: inline-block;
+    background-color: var(--pink); 
+    color: white; 
+    padding: 15px 30px; 
+    border-radius: 50px; 
+    text-decoration: none; 
+    font-weight: 500; 
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+}
 
-.main-footer { padding: 2rem 5%; text-align: center; background-color: var(--light-bg); border-top: 1px solid #ddd; color: #888; }
-/* Stili per la pagina shop */
-.shop-page-section { padding: 5rem 5%; text-align: center; }
-.shop-page-section h2 { font-size: 3rem; margin-bottom: 1rem; }
-.shop-intro { max-width: 600px; margin: 0 auto 3rem auto; }
+.cta-button:hover { 
+    background-color: #d79fa3; 
+    transform: translateY(-2px);
+}
 
-/* Stile per il prezzo */
+/* FEATURED PRODUCTS SECTION */
+.featured-products {
+    padding: 5rem 5%;
+    background-color: var(--light-bg);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.section-header p {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* BOXES GRID */
+.boxes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+}
+
+.box-card { 
+    background-color: white; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.box-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.box-card img { 
+    width: 100%; 
+    height: 250px; 
+    object-fit: cover; 
+}
+
+.box-card h3 { 
+    font-size: 1.5rem; 
+    margin: 1.5rem 1.5rem 0.5rem;
+    text-align: center;
+}
+
+.box-card p { 
+    padding: 0 1.5rem 1.5rem; 
+    line-height: 1.6;
+    text-align: center;
+    color: #666;
+}
+
+.box-card .cta-button {
+    display: block;
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.5rem;
+    text-align: center;
+}
+
+.view-all-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.secondary-button { 
+    display: inline-block; 
+    border: 2px solid var(--pink); 
+    color: var(--pink); 
+    padding: 10px 25px; 
+    border-radius: 50px; 
+    text-decoration: none; 
+    font-weight: 500; 
+    transition: all 0.3s;
+}
+
+.secondary-button:hover { 
+    background-color: var(--pink); 
+    color: white; 
+}
+
+/* ABOUT SECTION */
+.about-section { 
+    display: flex; 
+    align-items: center; 
+    gap: 3rem; 
+    padding: 5rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-image img { 
+    width: 100%; 
+    max-width: 350px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-text p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+/* CUSTOM WORK SECTION */
+.custom-work-section { 
+    padding: 5rem 5%;
+    text-align: center;
+    background-color: var(--dark-purple); 
+    color: white; 
+}
+
+.custom-work-section h2 { 
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.custom-work-section p { 
+    margin-bottom: 2rem; 
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* FOOTER */
+.main-footer { 
+    padding: 2rem 5%; 
+    text-align: center; 
+    background-color: var(--light-bg); 
+    border-top: 1px solid #ddd; 
+    color: #888; 
+}
+
+.footer-legal-links {
+    margin-bottom: 1rem;
+}
+
+.footer-legal-links a { 
+    color: var(--text-color); 
+    text-decoration: none;
+    margin: 0 10px; 
+}
+
+.footer-legal-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-vat {
+    font-size: 0.9rem;
+}
+
+/* ========================================= */
+/* === STILI PER LA PAGINA SHOP           === */
+/* ========================================= */
+.shop-page-section { 
+    padding: 5rem 5%; 
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.shop-page-section h2 { 
+    font-size: 3rem; 
+    margin-bottom: 1rem; 
+}
+
+.shop-intro { 
+    max-width: 600px; 
+    margin: 0 auto 3rem; 
+    font-size: 1.05rem;
+    color: #666;
+}
+
+/* PRICE STYLING */
 .price {
     font-size: 1.5rem;
     font-weight: 500;
@@ -62,112 +291,51 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     margin: 1rem 0;
 }
 
-/* Stile per il bottone di acquisto nella card */
-.box-card .cta-button {
-    display: inline-block;
-    width: calc(100% - 3rem); /* Occupa tutta la larghezza meno il padding */
-    margin-bottom: 1.5rem;
-}
 /* ========================================= */
-/* === STILE FINALE PAGINA CHI SIAMO     === */
+/* === STILE PAGINA CHI SIAMO             === */
 /* ========================================= */
-
-/* Stile base per entrambe le sezioni su DESKTOP */
 .about-page-section {
     display: flex;
-    align-items: center; /* Allinea verticalmente immagine e testo */
-    gap: 3rem;           /* Spazio tra immagine e testo */
+    align-items: center;
+    gap: 3rem;
     padding: 5rem 5%;
     max-width: 1100px;
     margin: 0 auto;
 }
 
-/* Regola per invertire il layout del secondo blocco SU DESKTOP */
 .about-page-section.layout-reversed {
     flex-direction: row-reverse;
 }
 
 .about-image {
-    /* Regola per dare una dimensione fissa all'immagine su desktop */
     flex: 0 0 40%;
-    max-width: 400px; /* Limite massimo per non farla diventare troppo grande */
+    max-width: 400px;
 }
 
 .about-image img {
-    width: 100%;       /* L'immagine riempie il suo contenitore */
+    width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .about-text {
-    /* Il testo occuperà in modo flessibile lo spazio rimanente */
     flex: 1;
 }
 
-/* --- Media Query per sistemare la visualizzazione MOBILE --- */
-@media (max-width: 768px) {
-    .about-page-section {
-        /* Su mobile, impiliamo sempre in verticale */
-        flex-direction: column;
-        padding: 3rem 5%;
-    }
-
-    /* Regola chiave per il secondo blocco: lo invertiamo per avere Immagine -> Testo */
-    .about-page-section.layout-reversed {
-        flex-direction: column-reverse;
-    }
-
-    .about-image {
-        /* Su mobile, l'immagine diventa un blocco normale */
-        flex-basis: auto; 
-        width: 100%;
-        max-width: 350px; /* Limita la larghezza dell'immagine su mobile */
-        margin: 0 auto;   /* Centra l'immagine */
-    }
-
-    .about-text {
-        text-align: center; /* Centriamo il testo per leggibilità */
-        margin-bottom: 2rem; /* Aggiungiamo spazio tra testo e immagine sottostante */
-    }
-}
-
-/* --- Media Query per sistemare la visualizzazione MOBILE --- */
-@media (max-width: 768px) {
-    .about-page-section ,
-    .about-page-section.layout-reversed { /* Aggiungi questa riga */
-        flex-direction: column;
-        /* Su mobile, impiliamo gli elementi in verticale */
-        flex-direction: column;
-        padding-top: 3rem;
-        padding-bottom: 3rem;
-    }
-
-    .about-image {
-        /* Su mobile, l'immagine non è più flessibile ma un blocco normale */
-        flex-basis: auto; 
-        width: 100%;
-        max-width: 350px; /* Limita la larghezza dell'immagine su mobile */
-        margin: 0 auto 2rem auto; /* Centra l'immagine e le dà spazio sotto */
-    }
-
-    .about-text {
-        /* Centriamo il testo per una migliore leggibilità su mobile */
-        text-align: center;
-    }
-}
-
-/* Stile per la casella di testo segnaposto */
+/* PLACEHOLDER BOX */
 .placeholder-box {
-    border: 2px dashed var(--pink); /* Bordo tratteggiato rosa */
+    border: 2px dashed var(--pink);
     border-radius: 10px;
     padding: 2rem;
-    background-color: #fff9fa; /* Sfondo rosa chiarissimo */
+    background-color: #fff9fa;
 }
+
 .placeholder-box p {
     font-style: italic;
     color: #777;
     margin: 0;
 }
+
 .placeholder-box .placeholder-instruction {
     font-style: normal;
     font-weight: 500;
@@ -175,20 +343,27 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     text-align: center;
     margin-top: 1rem;
 }
-/* Stili per la pagina Contatti */
+
+/* ========================================= */
+/* === STILE PAGINA CONTATTI              === */
+/* ========================================= */
 .contact-page-section {
     padding: 5rem 5%;
     background-color: var(--light-bg);
 }
+
 .contact-page-section h2 {
     text-align: center;
     font-size: 3rem;
     margin-bottom: 1rem;
 }
+
 .contact-intro {
     text-align: center;
     max-width: 700px;
-    margin: 0 auto 4rem auto;
+    margin: 0 auto 4rem;
+    font-size: 1.05rem;
+    color: #666;
 }
 
 .contact-container {
@@ -203,11 +378,26 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.contact-form { flex: 2; min-width: 300px; }
-.contact-info { flex: 1; min-width: 300px; }
+.contact-form { 
+    flex: 2; 
+    min-width: 300px; 
+}
 
-.contact-form form { display: flex; flex-direction: column; }
-.contact-form label { margin-bottom: 0.5rem; font-weight: 500; }
+.contact-info { 
+    flex: 1; 
+    min-width: 300px; 
+}
+
+.contact-form form { 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.contact-form label { 
+    margin-bottom: 0.5rem; 
+    font-weight: 500; 
+}
+
 .contact-form input,
 .contact-form textarea {
     width: 100%;
@@ -217,92 +407,159 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     margin-bottom: 1.5rem;
     font-family: var(--body-font);
     font-size: 1rem;
+    resize: vertical;
 }
-.contact-form button { border: none; cursor: pointer; width: 100%; }
 
-.contact-info h3 { font-size: 2rem; margin-bottom: 1.5rem; }
-.contact-info p { line-height: 1.7; margin-bottom: 1.5rem; }
-.contact-info a { color: var(--pink); text-decoration: none; }
-.contact-info a:hover { text-decoration: underline; }
+.contact-form button { 
+    border: none; 
+    cursor: pointer; 
+    width: 100%; 
+}
+
+.contact-info h3 { 
+    font-size: 2rem; 
+    margin-bottom: 1.5rem; 
+}
+
+.contact-info p { 
+    line-height: 1.7; 
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.contact-info a { 
+    color: var(--pink); 
+    text-decoration: none; 
+}
+
+.contact-info a:hover { 
+    text-decoration: underline; 
+}
+
 .social-links a {
     margin-right: 1rem;
     display: inline-block;
     margin-bottom: 0.5rem;
 }
+
 /* ========================================= */
-/* === ADATTAMENTI PER SCHERMI MOBILI    === */
+/* === NOTIFICA PERSONALIZZATA            === */
 /* ========================================= */
-/* 
-  Queste regole verranno lette dal browser solo se la larghezza 
-  dello schermo è di 768px o inferiore (tablet in verticale e telefoni).
-*/
-
-@media (max-width: 768px) {
-
-    /* --- STILI GENERALI --- */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--dark-purple);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 1001;
     
-    /* Riduciamo i titoli principali e di sezione per adattarli allo schermo piccolo */
-    h1 { font-size: 2.8rem; }
-    h2 { font-size: 2.5rem; }
-
-    /* Riduciamo le spaziature verticali (padding) per rendere le sezioni più compatte */
-    .boxes-section, .about-section, .custom-work-section,
-    .shop-page-section, .about-page-section, .contact-page-section {
-        padding-top: 4rem;
-        padding-bottom: 4rem;
-    }
-
-    /* --- HEADER E NAVIGAZIONE --- */
-
-    .main-header {
-        flex-direction: column; /* Mette il logo sopra la navigazione */
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .logo {
-        margin-bottom: 1rem; /* Aggiunge spazio tra logo e menu */
-    }
-
-    .main-nav a {
-        margin: 0 10px; /* Riduce lo spazio tra le voci di menu */
-        font-size: 0.9rem; /* Rimpicciolisce un po' il testo del menu */
-    }
-    
-    /* --- HOMEPAGE: SEZIONE EROE --- */
-    
-    .hero-content h1 {
-        font-size: 2.5rem; /* Titolo principale più piccolo */
-    }
-
-    /* --- SEZIONI CON LAYOUT AFFIANCATO --- */
-
-    /* 
-      Questa è la magia principale: tutte le sezioni che prima erano affiancate
-      ora si impileranno una sopra l'altra.
-    */
-    .about-section,
-    .about-page-section,
-    .contact-container {
-        flex-direction: column;
-    }
-    
-    .about-text, .about-image {
-        text-align: center; /* Centriamo il testo quando è impilato */
-    }
-
-    /* --- PAGINA CONTATTI --- */
-
-    .contact-container {
-        padding: 2rem 1.5rem; /* Riduciamo il padding interno del box contatti */
-    }
-
-    /* Rendiamo il form più compatto */
-    .contact-form button {
-        padding: 12px 20px;
-    }
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
 }
-/* Stile per il link del carrello */
+
+.notification.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ========================================= */
+/* === STILE PAGINA CARRELLO              === */
+/* ========================================= */
+.cart-page-section {
+    padding: 5rem 5%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cart-page-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--light-bg);
+}
+
+.cart-item-image {
+    flex-shrink: 0;
+}
+
+.cart-item-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.cart-item-details { 
+    flex-grow: 1; 
+}
+
+.cart-item-details h3 { 
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.cart-item-quantity { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+}
+
+.quantity-btn {
+    background: none; 
+    border: 1px solid #ccc; 
+    width: 30px; 
+    height: 30px;
+    cursor: pointer; 
+    border-radius: 50%; 
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background-color: var(--pink);
+    color: white;
+}
+
+.remove-item-btn {
+    color: var(--pink); 
+    background: none; 
+    border: none;
+    cursor: pointer; 
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.remove-item-btn:hover {
+    color: #d79fa3;
+}
+
+.cart-empty-message { 
+    text-align: center; 
+    font-size: 1.2rem; 
+    padding: 3rem 0; 
+    color: #999;
+}
+
+/* ========================================= */
+/* === ANTEPRIMA CARRELLO (WIDGET)        === */
+/* ========================================= */
+.cart-widget {
+    position: relative;
+    display: inline-block;
+}
+
 .cart-link {
     font-weight: bold;
     color: var(--dark-purple);
@@ -310,76 +567,18 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     padding: 5px 12px;
     border-radius: 20px;
     border: 1px solid var(--pink);
+    text-decoration: none;
+    transition: all 0.2s;
 }
-/* ========================================= */
-/* === STILE PER LA NOTIFICA PERSONALIZZATA === */
-/* ========================================= */
-.notification {
-    position: fixed; /* Rimane fisso anche se scorri la pagina */
-    top: 20px;       /* Distanza dall'alto */
-    left: 50%;
-    transform: translateX(-50%); /* Trucco per centrarlo perfettamente */
-    background-color: var(--dark-purple);
+
+.cart-link:hover {
+    background-color: var(--pink);
     color: white;
-    padding: 15px 30px;
-    border-radius: 50px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    z-index: 1001; /* Sta sopra a tutto il resto */
-    
-    /* Per l'animazione */
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s ease;
-    transform: translate(-50%, -20px);
 }
 
-/* Classe che viene aggiunta da JavaScript per MOSTRARE la notifica */
-.notification.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-}
-/* ========================================= */
-/* === STILE PER LA PAGINA CARRELLO      === */
-/* ========================================= */
-.cart-page-section {
-    padding: 5rem 5%;
-    max-width: 900px;
-    margin: 0 auto;
-}
-.cart-page-section h2 {
-    text-align: center;
-    font-size: 3rem;
-    margin-bottom: 3rem;
-}
-
-.cart-item-details { flex-grow: 1; }
-.cart-item-details h3 { font-size: 1.5rem; }
-.cart-item-quantity { display: flex; align-items: center; gap: 0.5rem; }
-.quantity-btn {
-    background: none; border: 1px solid #ccc; width: 30px; height: 30px;
-    cursor: pointer; border-radius: 50%; font-size: 1.2rem;
-}
-.remove-item-btn {
-    color: var(--pink); background: none; border: none;
-    cursor: pointer; text-decoration: underline;
-}
-
-.cart-empty-message { text-align: center; font-size: 1.2rem; padding: 3rem 0; }
-/* ========================================= */
-/* === STILE PER ANTEPRIMA CARRELLO      === */
-/* ========================================= */
-
-/* Contenitore principale del widget */
-.cart-widget {
-    position: relative; /* Necessario per posizionare il menu a tendina */
-    display: inline-block;
-}
-
-/* Il menu a tendina */
 .cart-preview {
     position: absolute;
-    top: 100%; /* Appare subito sotto l'icona del carrello */
+    top: 100%;
     right: 0;
     width: 320px;
     background-color: white;
@@ -388,201 +587,69 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     padding: 1rem;
     z-index: 1002;
     
-    /* Nascosto di default, con animazione */
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.3s ease;
 }
 
-/* Regola per MOSTRARE il menu al passaggio del mouse */
 .cart-widget:hover .cart-preview {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.preview-item-image {
+    flex-shrink: 0;
+}
+
+.preview-item-image img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.preview-item-details { 
+    flex-grow: 1; 
+}
+
+.preview-item-details h4 { 
+    font-family: var(--body-font); 
+    font-size: 1rem; 
+    margin: 0;
+    font-weight: 600;
+}
+
+.preview-item-details p { 
+    margin: 0; 
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.cart-preview-content {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 .preview-button {
-    display: block; /* Occupa tutta la larghezza */
+    display: block;
     text-align: center;
     margin-top: 1rem;
     width: 100%;
 }
 
-
-.preview-item-details { flex-grow: 1; }
-.preview-item-details h4 { font-family: var(--body-font); font-size: 1rem; margin: 0; }
-.preview-item-details p { margin: 0; color: #777; }
-/* Stile per il nuovo box di testo nella sezione hero */
-.hero-text-box {
-    background-color: rgba(45, 44, 70, 0.5); /* Un colore viola/blu scuro semi-trasparente */
-    padding: 1.5rem 2rem;   /* Spaziatura interna per far respirare il testo */
-    border-radius: 10px;      /* Angoli arrotondati per un look morbido */
-    max-width: 750px;         /* Limita la larghezza massima del box */
-    margin: 2rem auto;        /* Spazio sopra/sotto e centratura orizzontale */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Ombra leggera per dare profondità */
-}
 /* ========================================= */
-/* === STILE PAGINA DETTAGLIO PRODOTTO   === */
+/* === STILE TOTALI CARRELLO              === */
 /* ========================================= */
-.product-detail-section {
-    padding: 4rem 5%;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-.product-detail-content {
-    display: flex;
-    gap: 3rem;
-    align-items: flex-start;
-}
-.product-detail-image {
-    flex: 1; /* Occupa metà dello spazio */
-}
-.product-detail-image img {
-    width: 100%;
-    border-radius: 10px;
-}
-.product-detail-info {
-    flex: 1; /* Occupa l'altra metà */
-}
-.product-detail-info h2 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-.product-detail-info .price {
-    font-size: 2rem;
-    color: var(--pink);
-    margin-bottom: 1.5rem;
-}
-.product-detail-info p {
-    line-height: 1.7;
-    margin-bottom: 2rem;
-}
-
-.product-allergens-detail {
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: var(--light-bg);
-    border-left: 4px solid var(--pink);
-}
-.product-allergens-detail strong {
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-/* Regola per rendere cliccabili le card nello shop */
-a.product-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: transform 0.3s ease;
-}
-a.product-card-link:hover {
-    transform: translateY(-5px);
-}
-
-
-/* ========================================= */
-/* === STILE PAGINE DI SUCCESSO/ERRORE   === */
-/* ========================================= */
-.feedback-page-container {
-    max-width: 600px;
-    margin: 5rem auto; /* Spazio sopra/sotto e centratura orizzontale */
-    padding: 2rem;
-    text-align: center;
-    background-color: var(--light-bg);
-    border-radius: 10px;
-}
-
-.feedback-page-container h2 {
-    font-size: 2.5rem;
-    color: var(--dark-purple);
-    margin-bottom: 1.5rem;
-}
-
-.feedback-page-container p {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    margin-bottom: 2.5rem; /* Aumenta lo spazio prima del bottone */
-}
-
-/* Regola specifica per il bottone in queste pagine */
-.feedback-page-container .cta-button {
-    display: inline-block; /* Assicura che si comporti come un blocco per i margini */
-}
-/* ========================================= */
-/* === RESPONSIVE PER DETTAGLIO PRODOTTO === */
-/* ========================================= */
-@media (max-width: 768px) {
-
-    .product-detail-section {
-        /* Riduciamo lo spazio sopra e sotto su mobile */
-        padding: 2rem 5%;
-    }
-
-    .product-detail-content {
-        /* Questa è la regola più importante:
-           Fa in modo che immagine e testo si impilino in verticale */
-        flex-direction: column;
-        gap: 1.5rem; /* Riduciamo lo spazio tra immagine e testo */
-    }
-
-    .product-detail-info {
-        /* Centriamo tutto il testo per un look pulito su mobile */
-        text-align: center;
-    }
-
-    .product-detail-info h2 {
-        /* Riduciamo la dimensione del titolo su mobile */
-        font-size: 2.5rem;
-    }
-
-    .product-detail-info .price {
-        /* Riduciamo anche la dimensione del prezzo */
-        font-size: 1.8rem;
-    }
-
-    .product-allergens-detail {
-        /* Allineiamo a sinistra il testo degli allergeni anche se il resto è centrato */
-        text-align: left;
-    }
-
-}
-    /* ========================================= */
-    /* === FIX PER HERO SECTION SU MOBILE    === */
-    /* ========================================= */
-
-    .hero-section {
-        /* Rimuoviamo l'immagine di sfondo che non funziona su mobile */
-        background-image: none;
-        /* E la sostituiamo con un colore di sfondo pulito e coerente */
-        background-color: var(--light-bg);
-        
-        /* Adattiamo l'altezza e la spaziatura per mobile */
-        height: auto;
-        padding: 4rem 1.5rem;
-    }
-
-    /* Ora dobbiamo cambiare il colore del testo, che era bianco */
-    .hero-content h1 {
-        color: var(--dark-purple); /* Usa il viola scuro del brand */
-    }
-
-    /* Modifichiamo anche il box di testo */
-    .hero-text-box {
-        /* Sostituiamo lo sfondo trasparente con uno solido */
-        background-color: #ffffff;
-    }
-    
-    .hero-text-box p {
-        /* E rendiamo il testo al suo interno scuro e leggibile */
-        color: var(--text-color);
-    }
-    /* ========================================= */
-/* === STILE FINALE PER TOTALI CARRELLO  === */
-/* ========================================= */
-
-/* Contenitore principale per totali, email e bottone */
 .cart-totals {
     max-width: 450px;
     margin-left: auto;
@@ -591,13 +658,10 @@ a.product-card-link:hover {
     padding: 1.5rem;
     background-color: var(--light-bg);
     border-radius: 10px;
-    
-    /* Usiamo Grid per un controllo totale sul layout */
     display: grid;
-    gap: 1rem; /* Spazio tra le righe */
+    gap: 1rem;
 }
 
-/* Stile per ogni riga di totali (Subtotale, Spedizione, Sconto) */
 .cart-totals-row {
     display: flex;
     justify-content: space-between;
@@ -614,34 +678,24 @@ a.product-card-link:hover {
     padding-top: 1rem;
 }
 
-/* Stile per il bottone di pagamento dentro questo blocco */
 .cart-totals .cta-button {
     width: 100%;
     text-align: center;
-    margin-top: 1rem; /* Spazio prima del bottone */
+    margin-top: 1rem;
 }
 
-/* --- Media Query per sistemare la visualizzazione MOBILE --- */
-@media (max-width: 768px) {
-    .cart-totals {
-        /* Su mobile, il box occupa tutta la larghezza */
-        max-width: 100%;
-        margin-left: 0;
-    }
-}
-/* Stile per il testo della spedizione gratuita */
 .free-shipping-text {
-    color: #27ae60; /* Un bel colore verde speranza */
+    color: #27ae60;
     font-style: italic;
     font-size: 1rem;
     text-align: right;
     margin-top: -0.5rem;
     margin-bottom: 1rem;
 }
-/* Stile per il banner della spedizione gratuita */
+
 .shipping-banner {
     max-width: 800px;
-    margin: 0 auto 3rem auto; /* Spazio sotto e centratura */
+    margin: 0 auto 3rem;
     padding: 1rem 1.5rem;
     background-color: var(--dark-purple);
     color: white;
@@ -650,90 +704,104 @@ a.product-card-link:hover {
     font-size: 1.1rem;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
 .free-shipping-hint {
-    background-color: #e8f5e9; /* Verde molto chiaro */
-    color: #2e7d32; /* Verde scuro */
+    background-color: #e8f5e9;
+    color: #2e7d32;
     border-radius: 5px;
     padding: 0.75rem;
     font-weight: 500;
 }
-/* Stile per il box informativo sulla data di spedizione */
+
 .shipping-info-box {
     text-align: center;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    background-color: #e3f2fd; /* Un azzurro chiaro e rassicurante */
+    background-color: #e3f2fd;
     border: 2px solid #90caf9;
     border-radius: 10px;
     color: #1e3a56;
 }
+
 .shipping-info-box .shipping-date {
-     margin: 0.5rem 0; 
+    margin: 0.5rem 0;
     display: block;
     font-size: 1.5rem;
     font-weight: bold;
     margin-top: 0.5rem;
 }
+
 /* ========================================= */
-/* === STILE IMMAGINI CARRELLO E PREVIEW === */
+/* === STILE PAGINA DETTAGLIO PRODOTTO   === */
 /* ========================================= */
-
-/* --- Stile per la pagina Carrello principale (carrello.html) --- */
-
-/* Contenitore di un singolo articolo */
-.cart-item {
-    display: flex; /* Mette gli elementi in riga */
-    align-items: center; /* Allinea verticalmente l'immagine e i dettagli */
-    gap: 1.5rem; /* Spazio tra gli elementi */
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--light-bg);
+.product-detail-section {
+    padding: 4rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
-/* Contenitore dell'immagine nella pagina carrello */
-.cart-item-image {
-    flex-shrink: 0; /* Impedisce all'immagine di rimpicciolirsi */
-}
-.cart-item-image img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover; /* Riempie lo spazio senza deformarsi */
-    border-radius: 10px;
-}
-
-/* --- Stile per l'anteprima (widget a discesa) --- */
-
-/* Contenitore di un singolo articolo nell'anteprima */
-.preview-item {
+.product-detail-content {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+.product-detail-image {
+    flex: 1;
+}
+
+.product-detail-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.product-detail-info {
+    flex: 1;
+}
+
+.product-detail-info h2 {
+    font-size: 3rem;
     margin-bottom: 1rem;
-    font-size: 0.9rem;
 }
 
-/* Contenitore dell'immagine nell'anteprima */
-.preview-item-image {
-    flex-shrink: 0;
-}
-.preview-item-image img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 5px;
+.product-detail-info .price {
+    font-size: 2rem;
+    color: var(--pink);
+    margin-bottom: 1.5rem;
 }
 
-.preview-item-details {
-    flex-grow: 1; /* Occupa lo spazio rimanente */
+.product-detail-info p {
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    color: #555;
 }
-/* Stile per il selettore di opzioni prodotto */
+
+.product-allergens-detail {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: var(--light-bg);
+    border-left: 4px solid var(--pink);
+}
+
+.product-allergens-detail strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* ========================================= */
+/* === STILE OPZIONI PRODOTTO             === */
+/* ========================================= */
 .product-options {
     margin: 2rem 0;
 }
+
 .product-options label {
     display: block;
     font-weight: 500;
     margin-bottom: 0.75rem;
 }
+
 .product-options select {
     width: 100%;
     padding: 12px;
@@ -742,23 +810,50 @@ a.product-card-link:hover {
     font-family: var(--body-font);
     font-size: 1rem;
     background-color: white;
+    cursor: pointer;
 }
-.promo-code-section { margin: 2rem 0; text-align: right; }
-.promo-code-input-wrapper { display: flex; max-width: 450px; margin-left: auto; }
-.promo-code-input-wrapper input { flex-grow: 1; border-right: none; }
-.promo-code-input-wrapper button { border-radius: 0 5px 5px 0; }
+
+/* PROMO CODE */
+.promo-code-section { 
+    margin: 2rem 0; 
+    text-align: right; 
+}
+
+.promo-code-input-wrapper { 
+    display: flex; 
+    max-width: 450px; 
+    margin-left: auto; 
+}
+
+.promo-code-input-wrapper input { 
+    flex-grow: 1; 
+    border-right: none;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+}
+
+.promo-code-input-wrapper button { 
+    border-radius: 0 5px 5px 0;
+    padding: 12px 20px;
+}
+
 .discount-row {
     color: #27ae60;
     font-weight: bold;
 }
+
+/* CHECKOUT EMAIL */
 .checkout-email-section {
-    margin-top: 0.5rem; /* Spazio prima del campo email */
+    margin-top: 0.5rem;
 }
+
 .checkout-email-section label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
+
 .checkout-email-section input {
     width: 100%;
     padding: 12px;
@@ -766,87 +861,8 @@ a.product-card-link:hover {
     border-radius: 5px;
     font-size: 1rem;
 }
-/* Stile per il banner di chiusura per ferie */
-.closure-banner {
-    background-color: var(--pink);
-    color: white;
-    text-align: center;
-    padding: 0.75rem;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-.footer-legal-links {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-.footer-legal-links a {
-    color: var(--text-color);
-    margin: 0 10px;
-}
-/* ...TUTTO IL CSS PRECEDENTE... */
 
-/* Stile per il selettore di opzioni prodotto */
-.product-options {
-    margin: 2rem 0;
-}
-.product-options label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 0.75rem;
-}
-.product-options select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-family: var(--body-font);
-    font-size: 1rem;
-    background-color: white;
-}
-.promo-code-section { margin: 2rem 0; text-align: right; }
-.promo-code-input-wrapper { display: flex; max-width: 450px; margin-left: auto; }
-.promo-code-input-wrapper input { flex-grow: 1; border-right: none; }
-.promo-code-input-wrapper button { border-radius: 0 5px 5px 0; }
-.discount-row {
-    color: #27ae60;
-    font-weight: bold;
-}
-.checkout-email-section {
-    margin-top: 0.5rem; /* Spazio prima del campo email */
-}
-.checkout-email-section label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-.checkout-email-section input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-/* Stile per il banner di chiusura per ferie */
-.closure-banner {
-    background-color: var(--pink);
-    color: white;
-    text-align: center;
-    padding: 0.75rem;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-.footer-legal-links {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-.footer-legal-links a {
-    color: var(--text-color);
-    margin: 0 10px;
-}
-
-/* ...TUTTO IL CSS PRECEDENTE... */
-
-/* NUOVI STILI PER LA PERSONALIZZAZIONE DEI COOKIE */
+/* COOKIE CUSTOMIZER */
 .cookie-customizer-container {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -871,12 +887,11 @@ a.product-card-link:hover {
 
 .flavor-grid-container {
     display: grid;
-    grid-template-columns: 1fr; /* Una colonna su mobile */
+    grid-template-columns: 1fr;
     gap: 0.75rem;
     margin-top: 1rem;
 }
 
-/* Due colonne su schermi più grandi */
 @media (min-width: 500px) {
     .flavor-grid-container {
         grid-template-columns: repeat(2, 1fr);
@@ -933,28 +948,67 @@ a.product-card-link:hover {
     min-width: 20px;
     text-align: center;
 }
-/* --- STILE NATALIZIO --- */
 
-/* Link Natale nel menu */
+/* ========================================= */
+/* === STILE PAGINE DI FEEDBACK           === */
+/* ========================================= */
+.feedback-page-container {
+    max-width: 600px;
+    margin: 5rem auto;
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+}
+
+.feedback-page-container h2 {
+    font-size: 2.5rem;
+    color: var(--dark-purple);
+    margin-bottom: 1.5rem;
+}
+
+.feedback-page-container p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    color: #666;
+}
+
+.feedback-page-container .cta-button {
+    display: inline-block;
+}
+
+/* ========================================= */
+/* === STILE BANNER DI CHIUSURA           === */
+/* ========================================= */
+.closure-banner {
+    background-color: var(--pink);
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* ========================================= */
+/* === STILE NATALIZIO                    === */
+/* ========================================= */
 .xmas-link {
-    color: #c0392b !important; /* Rosso Natale */
+    color: #c0392b !important;
     font-weight: bold;
 }
 
-/* Hero section specifica per Natale */
 .christmas-hero {
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/sfondo.jpg'); 
-    /* Se hai un'immagine specifica natalizia, cambia 'images/sfondo.jpg' con quella nuova */
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/sfondo.jpg');
     background-size: cover;
     background-position: center;
 }
 
 .christmas-hero h2 {
-    color: #f1c40f; /* Oro */
+    color: #f1c40f;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
-/* Titoli delle sezioni nella pagina natale */
 #christmas-list .section-title {
     color: #c0392b;
     border-bottom: 2px solid #f1c40f;
@@ -962,17 +1016,11 @@ a.product-card-link:hover {
     padding-bottom: 10px;
 }
 
-/* Opzionale: Bordo dorato per le card di natale */
 #christmas-product-list-container .box-card {
     border: 1px solid #f1c40f;
     box-shadow: 0 4px 15px rgba(192, 57, 43, 0.1);
 }
-/* ============================================================
-   STILE NATALIZIO "INTELLIGENTE"
-   (Si attiva SOLO se nel body c'è la classe class="pagina-natale")
-   ============================================================ */
 
-/* 1. SISTEMIAMO LA GRIGLIA DEI PRODOTTI */
 #christmas-product-list-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -982,99 +1030,222 @@ a.product-card-link:hover {
     margin: 0 auto;
 }
 
-/* 2. COLORIAMO DI ROSSO GLI ELEMENTI STANDARD */
-
-/* Sfondo pagina */
 body.pagina-natale {
     background-color: #f9f4ef;
 }
 
-/* Titoli e Link (che normalmente sono viola) diventano Rossi */
-body.pagina-natale h1, 
-body.pagina-natale h2, 
+body.pagina-natale h1,
+body.pagina-natale h2,
 body.pagina-natale h3,
 body.pagina-natale .logo a,
-body.pagina-natale .main-nav a:hover, 
+body.pagina-natale .main-nav a:hover,
 body.pagina-natale .active-link,
 body.pagina-natale .section-title {
     color: #c0392b !important;
 }
 
-/* Hero Section Natalizia */
-body.pagina-natale .hero-section {
-    /* Usa la tua immagine di sfondo se c'è, altrimenti un gradiente */
-    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), 
-                      url('images/christmas-bg.jpg');
-    background-color: #e8dcdc;
-    border-bottom: 4px solid #c0392b;
+/* ========================================= */
+/* === MEDIA QUERY - TABLET E MOBILE     === */
+/* ========================================= */
+
+@media (max-width: 768px) {
+    
+    /* STILI GENERALI */
+    h1 { font-size: 2.8rem; }
+    h2 { font-size: 2.5rem; }
+    
+    .main-header {
+        flex-direction: column;
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .logo {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .main-nav {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .main-nav a {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+    
+    /* HERO SECTION */
+    .hero {
+        height: auto;
+        padding: 3rem 1.5rem;
+        background-image: none !important;
+        background-color: var(--light-bg);
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+        color: var(--dark-purple);
+        text-shadow: none;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+        color: var(--text-color);
+        text-shadow: none;
+    }
+    
+    /* FEATURED PRODUCTS */
+    .featured-products {
+        padding: 3rem 1.5rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .boxes-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* ABOUT SECTION */
+    .about-section {
+        flex-direction: column;
+        padding: 3rem 1.5rem;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .about-text {
+        text-align: center;
+    }
+    
+    .about-page-section,
+    .about-page-section.layout-reversed {
+        flex-direction: column;
+        padding: 3rem 1.5rem;
+    }
+    
+    .about-image {
+        flex: none;
+        max-width: 100%;
+        margin: 0 auto 2rem;
+    }
+    
+    .about-image img {
+        max-width: 350px;
+        width: 100%;
+    }
+    
+    /* CUSTOM WORK SECTION */
+    .custom-work-section {
+        padding: 3rem 1.5rem;
+    }
+    
+    .custom-work-section h2 {
+        font-size: 1.8rem;
+    }
+    
+    .custom-work-section p {
+        font-size: 1rem;
+    }
+    
+    /* SHOP PAGE */
+    .shop-page-section {
+        padding: 3rem 1.5rem;
+    }
+    
+    .shop-page-section h2 {
+        font-size: 2rem;
+    }
+    
+    /* CONTACT PAGE */
+    .contact-page-section {
+        padding: 3rem 1.5rem;
+    }
+    
+    .contact-page-section h2 {
+        font-size: 2rem;
+    }
+    
+    .contact-container {
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 2rem;
+    }
+    
+    .contact-form,
+    .contact-info {
+        flex: none;
+    }
+    
+    .contact-info {
+        text-align: center;
+    }
+    
+    /* PRODUCT DETAIL */
+    .product-detail-section {
+        padding: 2rem 1.5rem;
+    }
+    
+    .product-detail-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .product-detail-info {
+        text-align: center;
+    }
+    
+    .product-detail-info h2 {
+        font-size: 2rem;
+    }
+    
+    .product-detail-info .price {
+        font-size: 1.5rem;
+    }
+    
+    /* CART PAGE */
+    .cart-page-section {
+        padding: 3rem 1.5rem;
+    }
+    
+    .cart-totals {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 2rem;
+    }
+    
+    /* FEEDBACK PAGES */
+    .feedback-page-container {
+        margin: 3rem 1.5rem;
+        padding: 1.5rem;
+    }
 }
 
-/* Aumentiamo la grandezza del titolo nella Hero solo a Natale */
-body.pagina-natale .hero-section h2 {
-    font-size: 3.5rem;
-}
-
-/* Pulsanti (CTA e pulsanti secondari) Rossi */
-body.pagina-natale .cta-button,
-body.pagina-natale .secondary-button {
-    background-color: #c0392b !important;
-    color: white !important;
-    border-radius: 30px;
-    padding: 10px 20px;
-    text-decoration: none;
-    display: inline-block;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-body.pagina-natale .cta-button:hover,
-body.pagina-natale .secondary-button:hover {
-    background-color: #a93226 !important;
-    transform: translateY(-3px);
-}
-
-/* 3. STILE DELLE CARD (Identico alle altre box, ma con tocco natalizio) */
-body.pagina-natale .box-card {
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    height: 100%;
-}
-
-body.pagina-natale .box-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 25px rgba(192, 57, 43, 0.15); /* Ombra rossa */
-    border-color: #c0392b;
-}
-
-body.pagina-natale .box-card img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-body.pagina-natale .box-card h3 {
-    margin: 15px;
-    font-size: 1.5rem;
-    padding: 0 10px;
-}
-
-body.pagina-natale .box-card p {
-    padding: 0 15px;
-    color: #666;
-    font-size: 0.95rem;
-    flex-grow: 1;
-    margin-bottom: 15px;
-}
-
-/* Assicuriamoci che il bottone dentro la card sia centrato */
-body.pagina-natale .box-card .secondary-button {
-    margin: 0 15px 20px 15px;
-    text-align: center;
+@media (max-width: 480px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.8rem; }
+    
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-content p {
+        font-size: 0.95rem;
+    }
+    
+    .logo {
+        font-size: 1.2rem;
+    }
+    
+    .boxes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .flavor-grid-container {
+        grid-template-columns: 1fr;
+    }
 }
