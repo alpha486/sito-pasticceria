@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getCartItemImage = (item) => item.img || item.image_url || '';
+    const isCookieProduct = (product) => /cookies?/i.test(product.name);
 
     // --- GESTIONE BANNER CHIUSURA ---
     const handleClosureBanner = () => {
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </a>
                 <div class="box-info">
                     <h3>${product.name}</h3>
+                    <p>${product.description.substring(0, 100)}...</p>
                     <p class="price">€${product.price.toFixed(2)}</p>
                     ${optionsHTML}
                     <button class="add-to-cart-btn" data-id="${product.id}">Aggiungi</button>
@@ -256,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="product-allergens-detail">
                         <strong>Allergeni Presenti:</strong>
                         <p>${product.allergens.join(', ')}</p>
+                        ${isCookieProduct(product) ? `<p><a href="https://docs.google.com/document/d/1B59PjsmgOMQkdJCg4VXkUXE4q194Gzpg12DQMVn-YvE/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Consulta l'elenco completo degli ingredienti dei Cookies</a></p>` : ''}
                     </div>
                     <a href="#" class="cta-button" data-product-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
                 </div>
