@@ -5,7 +5,7 @@
     "category": "singoli",
     "description": "I nostri iconici cookies artigianali: croccanti fuori e con un cuore morbido o ripieno. Scegli il tuo gusto preferito tra la nostra vasta selezione!",
     "price": 3.50,
-    "image_url": "images/cookies.jpg",
+    "image_url": "images/cookies2.jpg",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio", "Arachidi", "Soia"],
     "size": "1 pezzo",
     "options": {
