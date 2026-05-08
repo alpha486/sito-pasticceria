@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderHomeProducts = () => {
-    const container = document.getElementById('boxes'); // L'ID che abbiamo messo nella index.html
+    const container = document.getElementById('boxes'); 
     if (!container) return;
 
     // Scegliamo quanti prodotti mostrare in anteprima nella Home (es. i primi 4)
@@ -115,16 +115,17 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
+        // ECCO LA MODIFICA: Usiamo "box" e "box-info" come nel tuo CSS originale
         return `
-            <div class="product-card">
+            <div class="box">
                 <a href="prodotto.html?id=${product.id}">
                     <img src="${product.image_url}" alt="${product.name}">
                 </a>
-                <div class="product-info">
+                <div class="box-info">
                     <h3>${product.name}</h3>
                     <p class="price">€${product.price.toFixed(2)}</p>
                     ${optionsHTML}
-                    <button class="add-to-cart-btn" data-id="${product.id}" data-location="home">Aggiungi</button>
+                    <button class="add-to-cart-btn" data-id="${product.id}">Aggiungi</button>
                 </div>
             </div>
         `;
@@ -134,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     container.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.getAttribute('data-id');
-            addToCart(productId);
+            // Chiama la tua funzione di aggiunta al carrello
+            aggiungiAlCarrello(productId); 
         });
     });
 };
