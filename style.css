@@ -903,6 +903,28 @@ a:hover {
     margin-bottom: 0.5rem;
 }
 
+.ingredients-link-box {
+    margin-top: 0.85rem;
+    margin-bottom: 0;
+}
+
+.ingredients-link {
+    display: inline-block;
+    font-weight: 700;
+    color: #8e2a57;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background-color: #fff2f7;
+    border: 1px solid #f3c9dc;
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+}
+
+.ingredients-link:hover {
+    color: #6f1e45;
+    background-color: #ffe8f2;
+}
+
 /* ========================================= */
 /* === STILE OPZIONI PRODOTTO             === */
 /* ========================================= */
@@ -918,11 +940,26 @@ a:hover {
 
 .product-options select {
     width: 100%;
+    max-width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-family: var(--body-font);
     font-size: 1rem;
+    line-height: 1.4;
+    background-color: white;
+    cursor: pointer;
+}
+
+.flavor-select {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: var(--body-font);
+    font-size: 1rem;
+    line-height: 1.4;
     background-color: white;
     cursor: pointer;
 }
@@ -1340,6 +1377,12 @@ body.pagina-natale .section-title {
     
     .product-detail-info .price {
         font-size: 1.5rem;
+    }
+
+    .product-options select,
+    .flavor-select {
+        font-size: 16px; /* Prevent iOS zoom and keep text legible */
+        padding: 12px 10px;
     }
     
     /* CART PAGE */

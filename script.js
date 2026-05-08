@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="product-allergens-detail">
                         <strong>Allergeni Presenti:</strong>
                         <p>${product.allergens.join(', ')}</p>
-                        ${isCookieProduct(product) ? `<p><a href="https://docs.google.com/document/d/1B59PjsmgOMQkdJCg4VXkUXE4q194Gzpg12DQMVn-YvE/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Consulta l'elenco completo degli ingredienti dei Cookies</a></p>` : ''}
+                        ${isCookieProduct(product) ? `<p class="ingredients-link-box"><a class="ingredients-link" href="https://docs.google.com/document/d/1B59PjsmgOMQkdJCg4VXkUXE4q194Gzpg12DQMVn-YvE/edit?tab=t.0" target="_blank" rel="noopener noreferrer">📋 Consulta l'elenco completo degli ingredienti dei Cookies</a></p>` : ''}
                     </div>
                     <a href="#" class="cta-button" data-product-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-img="${product.image_url}">Aggiungi al Carrello</a>
                 </div>
