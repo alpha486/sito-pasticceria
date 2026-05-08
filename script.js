@@ -248,7 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>${product.name}</h2>
                     <div class="price">€ ${product.price.toFixed(2)}</div>
  
-                    <p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Per ordini da € 60,00 in su.</p>
+                    <p class="free-shipping-hint">🚚 <strong>Spedizione gratuita:</strong> da € 60,00.</p>
+                    <p class="free-shipping-hint">🧾 <strong>Ordine minimo:</strong> € 20,00.</p>
 
                     <p>${product.description}</p>
                     ${optionsHTML}
@@ -356,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- NUOVA LOGICA SPEDIZIONE (SOGLIA MINIMA ORDINE) ---
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const freeShippingThreshold = (config.shipping && config.shipping.sogliaGratis) ? config.shipping.sogliaGratis : 60;
+            const minimumOrder = (config.order && config.order.minimoOrdine) ? config.order.minimoOrdine : 20;
             
             // Costo base
             let shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
@@ -382,6 +384,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="shipping-info-box">
                     <p>🚚 Posti rimasti: <strong>${shippingInfo.postiRimasti}</strong></p>
                     <span>Spedizione prevista: </span><span class="shipping-date">${shippingInfo.dataSpedizione}</span>
+                </div>
+
+                <div class="shipping-info-box">
+                    <p>🧾 Ordine minimo: <strong>€ ${minimumOrder.toFixed(2)}</strong></p>
                 </div>
                 
                 ${promoMessage}
@@ -530,6 +536,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!btn) return;
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const minimumOrder = (config.order && config.order.minimoOrdine) ? config.order.minimoOrdine : 20;
+            if (subtotal < minimumOrder) {
+                alert(`Ordine minimo € ${minimumOrder.toFixed(2)}. Mancano € ${(minimumOrder - subtotal).toFixed(2)}.`);
+                return;
+            }
             const cartTotal = cart.reduce((s, i) => s + i.quantity, 0);
             if (shippingInfoState && cartTotal > shippingInfoState.postiRimasti) {
                 alert(`Rimasti solo ${shippingInfoState.postiRimasti} posti.`); return;

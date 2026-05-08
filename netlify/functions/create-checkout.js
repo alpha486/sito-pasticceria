@@ -16,6 +16,16 @@ exports.handler = async (event) => {
         // --- 1. CALCOLO LOGICA SPEDIZIONE (ALLINEATA AL SITO) ---
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const freeShippingThreshold = (config.shipping && config.shipping.sogliaGratis) ? config.shipping.sogliaGratis : 60;
+        const minimumOrder = (config.order && config.order.minimoOrdine) ? config.order.minimoOrdine : 20;
+
+        if (subtotal < minimumOrder) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    error: `Ordine minimo di € ${minimumOrder.toFixed(2)} non raggiunto.`,
+                }),
+            };
+        }
         
         // Default: si paga la spedizione standard
         let shippingCost = config.shipping.costoStandard;

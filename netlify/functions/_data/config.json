@@ -8,5 +8,8 @@
     "costoStandard": 9.9,
     "sogliaGratis": 60
   },
+  "order": {
+    "minimoOrdine": 20
+  },
   "websiteUrl": "https://incantesimidizuccherodigiuly.netlify.app/"
 }
