@@ -14,25 +14,14 @@ exports.handler = async (event) => {
         }
 
         // --- 1. CALCOLO LOGICA SPEDIZIONE (ALLINEATA AL SITO) ---
-        
-        // Calcolo totale box
-        const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-        // Calcolo box "grandi". 
-        // Nota: È più sicuro verificare la grandezza dal file products.json invece che fidarsi del frontend
-        const largeBoxes = cart.reduce((sum, item) => {
-            const product = products.find(p => p.name === item.name);
-            if (product && product.size === 'grande') {
-                return sum + item.quantity;
-            }
-            return sum;
-        }, 0);
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const freeShippingThreshold = (config.shipping && config.shipping.sogliaGratis) ? config.shipping.sogliaGratis : 60;
         
         // Default: si paga la spedizione standard
         let shippingCost = config.shipping.costoStandard;
 
-        // REGOLA: Gratis se hai almeno 3 box totali OPPURE almeno 2 box grandi
-        if (totalBoxes >= 3 || largeBoxes >= 2) {
+        // REGOLA: Gratis da soglia minima ordine
+        if (subtotal >= freeShippingThreshold) {
             shippingCost = 0;
         }
 

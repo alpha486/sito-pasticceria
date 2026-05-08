@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const getCartItemImage = (item) => item.img || item.image_url || '';
+
     // --- GESTIONE BANNER CHIUSURA ---
     const handleClosureBanner = () => {
         const bannerContainer = document.getElementById('closure-banner-container');
@@ -63,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         cartPreviewContainer.innerHTML = cart.map(item => `
             <div class="preview-item">
-                <div class="preview-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                <div class="preview-item-image"><img src="${getCartItemImage(item)}" alt="${item.name}"></div>
                 <div class="preview-item-details">
                     <h4>${item.name} ${item.option ? `(${item.option})` : ''}</h4>
                     <p>Quantità: ${item.quantity}</p>
@@ -246,10 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2>${product.name}</h2>
                     <div class="price">€ ${product.price.toFixed(2)}</div>
  
-                    ${product.size === 'grande' 
-                        ? `<p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 2 di queste box (o 3 miste).</p>`
-                        : `<p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Ottienila con 3 box qualsiasi (o 2 grandi).</p>`
-                    }
+                    <p class="free-shipping-hint">🚚 <strong>Spedizione Gratuita!</strong> Per ordini da € 60,00 in su.</p>
 
                     <p>${product.description}</p>
                     ${optionsHTML}
@@ -312,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: product.id,
                 name: product.name,
                 price: product.price,
+                img: product.image_url,
                 image_url: product.image_url,
                 option: selectedOption,
                 quantity: 1
@@ -353,31 +353,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const shippingInfo = await response.json();
             shippingInfoState = shippingInfo; 
 
-            // --- NUOVA LOGICA SPEDIZIONE (2 Grandi o 3 Totali) ---
+            // --- NUOVA LOGICA SPEDIZIONE (SOGLIA MINIMA ORDINE) ---
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            // Conta quante box 'grandi' ci sono
-            const largeBoxQuantity = cart.reduce((sum, item) => {
-                return item.size === 'grande' ? sum + item.quantity : sum;
-            }, 0);
+            const freeShippingThreshold = (config.shipping && config.shipping.sogliaGratis) ? config.shipping.sogliaGratis : 60;
             
             // Costo base
             let shippingCost = config.shipping ? config.shipping.costoStandard : 7.90; 
             let discountAmount = 0;
             let promoMessage = "";
 
-            // REGOLA: Gratis se 3 o più totali OPPURE 2 o più grandi
-            if (totalQuantity >= 3 || largeBoxQuantity >= 2) {
+            // REGOLA: Gratis da soglia minima ordine
+            if (subtotal >= freeShippingThreshold) {
                 shippingCost = 0;
                 promoMessage = `<div style="color: #27ae60; font-weight: bold; margin-bottom: 10px;">
                     🚚 Spedizione Gratuita Attiva!
                 </div>`;
             } else {
-                // Messaggini per incentivare l'acquisto (opzionale)
-                if (totalQuantity === 2 && largeBoxQuantity < 2) {
-                     promoMessage = `<div style="color: #e67e22; font-size: 0.9em; margin-bottom: 10px;">Ne basta ancora una per la spedizione gratis!</div>`;
-                }
+                const missingAmount = freeShippingThreshold - subtotal;
+                promoMessage = `<div style="color: #e67e22; font-size: 0.9em; margin-bottom: 10px;">
+                    Aggiungi ancora € ${missingAmount.toFixed(2)} per ottenere la spedizione gratis.
+                </div>`;
             }
             // --- FINE NUOVA LOGICA ---
 
@@ -393,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 ${cart.map((item, i) => `
                     <div class="cart-item">
-                        <div class="cart-item-image"><img src="${item.img}" alt="${item.name}"></div>
+                        <div class="cart-item-image"><img src="${getCartItemImage(item)}" alt="${item.name}"></div>
                         <div class="cart-item-details">
                             <h3>${item.name} ${item.option ? `(${item.option})` : ''}</h3>
                             <p>€ ${item.price.toFixed(2)}</p>

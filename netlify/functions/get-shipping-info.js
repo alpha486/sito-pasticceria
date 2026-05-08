@@ -16,16 +16,13 @@ exports.handler = async (event) => {
         const shippingData = await getShippingSlots();
         // --- FINE NUOVA LOGICA ---
         
-        // Calcola il totale delle box
-        const totalBoxes = cart.reduce((sum, item) => sum + item.quantity, 0);
-        
-        // Calcola quante sono "grandi"
-        const largeBoxes = cart.filter(item => item.size === 'grande').reduce((sum, item) => sum + item.quantity, 0);
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const freeShippingThreshold = (config.shipping && config.shipping.sogliaGratis) ? config.shipping.sogliaGratis : 60;
 
         let shippingCost = config.shipping.costoStandard;
 
-        // REGOLA: Gratis se hai almeno 3 box totali OPPURE almeno 2 box grandi
-        if (totalBoxes >= 3 || largeBoxes >= 2) {
+        // REGOLA: Gratis da soglia minima ordine
+        if (subtotal >= freeShippingThreshold) {
             shippingCost = 0;
         }
 
