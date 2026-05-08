@@ -1170,7 +1170,7 @@ body.pagina-natale .section-title {
     
     .main-header {
         flex-direction: column;
-        padding: 1rem;
+        padding: 0.75rem 1rem;
         text-align: center;
     }
     
@@ -1180,14 +1180,35 @@ body.pagina-natale .section-title {
     }
     
     .main-nav {
-        flex-direction: column;
-        gap: 0.5rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.4rem 0.9rem;
         width: 100%;
     }
     
     .main-nav a {
-        margin: 0.5rem 0;
+        margin: 0;
+        padding: 0.2rem 0;
         font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .cart-widget {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 0.35rem;
+    }
+
+    .cart-preview {
+        right: 50%;
+        width: min(92vw, 320px);
+        transform: translate(50%, 10px);
+    }
+
+    .cart-widget:hover .cart-preview {
+        transform: translate(50%, 0);
     }
     
     /* HERO SECTION */
@@ -1353,6 +1374,10 @@ body.pagina-natale .section-title {
     
     .logo {
         font-size: 1.2rem;
+    }
+
+    .main-header {
+        padding: 0.65rem 0.75rem;
     }
     
     .boxes-grid {
