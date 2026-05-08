@@ -12,6 +12,29 @@ html { scroll-behavior: smooth; }
 body { font-family: var(--body-font); color: var(--text-color); background-color: #fff; }
 h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 
+/* Link styles - RIMOZIONE SOTTOLINEATURA BLU */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Specifico per link nei prodotti */
+.product-card-link {
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.product-card-link:hover {
+    transform: translateY(-5px);
+    text-decoration: none !important;
+}
+
 .main-header { 
     display: flex; 
     justify-content: space-between; 
@@ -85,6 +108,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 .cta-button:hover { 
     background-color: #d79fa3; 
     transform: translateY(-2px);
+    text-decoration: none;
 }
 
 /* FEATURED PRODUCTS SECTION */
@@ -110,7 +134,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     margin: 0 auto;
 }
 
-/* BOXES GRID */
+/* BOXES GRID - HOMEPAGE */
 .boxes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -119,6 +143,74 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     margin: 0 auto 3rem;
 }
 
+.box {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.box img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+
+.box-info {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.box-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-purple);
+}
+
+.box-info p {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.box-info .price {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--dark-purple);
+    margin: 0.5rem 0 1rem 0;
+}
+
+.add-to-cart-btn {
+    background-color: var(--pink);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #d79fa3;
+}
+
+/* PRODUCT CARD - SHOP */
 .box-card { 
     background-color: white; 
     border-radius: 10px; 
@@ -135,7 +227,8 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 .box-card img { 
     width: 100%; 
     height: 250px; 
-    object-fit: cover; 
+    object-fit: cover;
+    display: block;
 }
 
 .box-card h3 { 
@@ -151,7 +244,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     color: #666;
 }
 
-.box-card .cta-button {
+.box-card .secondary-button {
     display: block;
     width: calc(100% - 3rem);
     margin: 0 1.5rem 1.5rem;
@@ -176,7 +269,8 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
 
 .secondary-button:hover { 
     background-color: var(--pink); 
-    color: white; 
+    color: white;
+    text-decoration: none;
 }
 
 /* ABOUT SECTION */
@@ -194,6 +288,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     max-width: 350px; 
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: block;
 }
 
 .about-text {
@@ -316,6 +411,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: block;
 }
 
 .about-text {
@@ -499,6 +595,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     height: 80px;
     object-fit: cover;
     border-radius: 10px;
+    display: block;
 }
 
 .cart-item-details { 
@@ -616,6 +713,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     height: 50px;
     object-fit: cover;
     border-radius: 5px;
+    display: block;
 }
 
 .preview-item-details { 
@@ -754,6 +852,7 @@ h1, h2, h3 { font-family: var(--heading-font); color: var(--dark-purple); }
     width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: block;
 }
 
 .product-detail-info {
