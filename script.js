@@ -103,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const featuredProducts = allProducts.slice(0, 4);
 
     container.innerHTML = featuredProducts.map(product => {
-        // Gestione della tendina dei gusti (se presenti)
         let optionsHTML = '';
         if (product.options) {
             optionsHTML = `
@@ -115,12 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // ECCO LA MODIFICA: Usiamo "box" e "box-info" come nel tuo CSS originale
+        // Rimosso il link <a> attorno all'immagine, ora il CSS la riconoscerà!
         return `
             <div class="box">
-                <a href="prodotto.html?id=${product.id}">
-                    <img src="${product.image_url}" alt="${product.name}">
-                </a>
+                <img src="${product.image_url}" alt="${product.name}">
                 <div class="box-info">
                     <h3>${product.name}</h3>
                     <p class="price">€${product.price.toFixed(2)}</p>
@@ -135,8 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
     container.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.getAttribute('data-id');
-            // Chiama la tua funzione di aggiunta al carrello
-            aggiungiAlCarrello(productId); 
+            // Usiamo aggiungiAlCarrello come lo chiama il tuo script
+            if (typeof aggiungiAlCarrello === 'function') {
+                aggiungiAlCarrello(productId);
+            } else if (typeof addToCart === 'function') {
+                addToCart(productId);
+            }
         });
     });
 };
