@@ -95,6 +95,50 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
+    const renderHomeProducts = () => {
+    const container = document.getElementById('boxes'); // L'ID che abbiamo messo nella index.html
+    if (!container) return;
+
+    // Scegliamo quanti prodotti mostrare in anteprima nella Home (es. i primi 4)
+    const featuredProducts = allProducts.slice(0, 4);
+
+    container.innerHTML = featuredProducts.map(product => {
+        // Gestione della tendina dei gusti (se presenti)
+        let optionsHTML = '';
+        if (product.options) {
+            optionsHTML = `
+                <div class="product-options">
+                    <select id="home-options-${product.id}" class="flavor-select">
+                        ${product.options.choices.map(choice => `<option value="${choice}">${choice}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="product-card">
+                <a href="prodotto.html?id=${product.id}">
+                    <img src="${product.image_url}" alt="${product.name}">
+                </a>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="price">€${product.price.toFixed(2)}</p>
+                    ${optionsHTML}
+                    <button class="add-to-cart-btn" data-id="${product.id}" data-location="home">Aggiungi</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Listener per i bottoni "Aggiungi" della Homepage
+    container.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const productId = e.target.getAttribute('data-id');
+            addToCart(productId);
+        });
+    });
+};
+
     // 2. FUNZIONE NATALE (Mostra SOLO Natale)
     const renderChristmasProducts = () => {
         const container = document.getElementById('christmas-product-list-container');
@@ -483,8 +527,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Prodotti caricati:", allProducts); // DEBUG: Guarda la console del browser
 
             handleClosureBanner();
+            renderHomeProducts();
             renderShopProducts();       // Carica i prodotti standard
-            renderChristmasProducts();  // Carica i prodotti di Natale
             renderProductDetailPage();
             renderCartPage();
             attachCartPageListeners();
