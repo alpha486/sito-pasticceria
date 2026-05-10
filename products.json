@@ -89,23 +89,20 @@
   },
   {
     "id": 7,
-    "name": "Cookie Pastiera Napoletana",
+    "name": "Cookies Speciali",
     "category": "singoli",
-    "description": "Edizione speciale: cookie ripieno al gusto della tipica pastiera napoletana.",
+    "description": "Edizioni speciali dei nostri iconici cookies artigianali, ripieni dei gusti più golosi ed esclusivi.",
     "price": 4.00,
-    "image_url": "images/cookie_pastiera.jpg",
-    "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio"],
-    "size": "1 pezzo"
-  },
-  {
-    "id": 9,
-    "name": "Cookie Classico Luxury",
-    "category": "singoli",
-    "description": "Il massimo della golosità: cookie ripieno di Brownie e Nutella.",
-    "price": 4.00,
-    "image_url": "images/cookie_luxury.jpg",
+    "image_url": "images/cookies_speciali.jpg",
     "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio", "Soia"],
-    "size": "1 pezzo"
+    "size": "1 pezzo",
+    "options": {
+      "label": "Scegli il gusto speciale:",
+      "choices": [
+        "Pastiera Napoletana (ripieno)",
+        "Classico Luxury (ripieno brownie e Nutella)"
+      ]
+    }
   },
   {
     "id": 10,
