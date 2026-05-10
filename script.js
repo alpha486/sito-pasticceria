@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     ${discountAmount > 0 ? `
                     <div class="cart-totals-row" style="color: #c0392b;">
-                        <span>Sconto Black Friday (25%):</span>
+                        <span>Sconto:</span>
                         <span>- € ${discountAmount.toFixed(2)}</span>
                     </div>` : ''}
 
