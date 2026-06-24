@@ -71,7 +71,7 @@
     "id": 5,
     "name": "Nuvole Croccanti",
     "category": "singoli",
-    "description": "Biscotti croccanti alle nocciole e cacao che si sciolgono in bocca. Realizzati con ingredienti senza glutine (possibile contaminazione). Ingredienti: Zucchero, vaniglia, cacao, albume, nocciole tostate.",
+    "description": "Biscotti croccanti alle nocciole e cacao che si sciolgono in bocca. Realizzati con ingredienti senza glutine (possibile contaminazione). Ingredienti: Zucchero, vaniglia, cacao, farina di riso, fecola, nocciole.",
     "price": 6.50,
     "image_url": "images/nuvole_croccanti.jpg",
     "allergens": ["Uova", "Frutta a guscio"],
@@ -137,5 +137,45 @@
         "Frutti di bosco"
       ]
     }
+  },
+  {
+    "id": 12,
+    "name": "Peanut Brownie",
+    "category": "singoli",
+    "description": "Un intenso brownie al cacao dal cuore cremoso di burro di arachidi. Peso indicativo: circa 90 g. Ingredienti: Zucchero, cacao, burro, sale, farina di frumento, uova, crema di burro di arachidi.",
+    "price": 4.50,
+    "image_url": "images/peanut_brownie.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Arachidi"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 13,
+    "name": "Nutella Brownie",
+    "category": "singoli",
+    "description": "Un brownie al cacao dalla consistenza intensa e fondente che racchiude un generoso cuore di Nutella. Peso indicativo: circa 90 g. Ingredienti: Zucchero, cacao, burro, sale, farina di frumento, uova, Nutella® (crema spalmabile alle nocciole e cacao).",
+    "price": 4.50,
+    "image_url": "images/nutella_brownie.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Nocciole"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 14,
+    "name": "Brownie con crema di nocciola",
+    "category": "singoli",
+    "description": "Un raffinato brownie al cacao arricchito da un cuore di crema alla nocciola dal gusto morbido e delicato. Peso indicativo: circa 90 g. Ingredienti: Zucchero, cacao, burro, sale, farina di frumento, uova, crema alla nocciola chiara.",
+    "price": 4.50,
+    "image_url": "images/crema_nocciola_brownie.jpg",
+    "allergens": ["Glutine", "Uova", "Latte", "Nocciole"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 15,
+    "name": "Dulce de Leche Brownie",
+    "category": "singoli",
+    "description": "Un brownie al cacao dal carattere deciso che custodisce al suo interno un irresistibile cuore di dulce de leche. Peso indicativo: circa 90 g. Ingredienti: Zucchero, cacao, burro, sale, farina di frumento, uova, crema al dulce de leche.",
+    "price": 4.50,
+    "image_url": "images/dulce_de_leche_brownie.jpg",
+    "allergens": ["Glutine", "Uova", "Latte"],
+    "size": "1 pezzo (circa 90 g)"
   }
 ]
