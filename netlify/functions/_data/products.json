@@ -6,6 +6,7 @@
     "description": "I nostri iconici cookies artigianali: croccanti fuori e con un cuore morbido o ripieno. Scegli il tuo gusto preferito tra la nostra vasta selezione!",
     "price": 3.50,
     "image_url": "images/cookies2.jpg",
+    "image_alt": "Cookies artigianali",
     "allergens": ["Glutine", "Uova", "Latte", "Frutta a guscio", "Arachidi", "Soia"],
     "size": "1 pezzo",
     "options": {
@@ -44,6 +45,7 @@
     "description": "Brownie classico dalla consistenza morbida e leggermente umida, con gusto intenso di cacao. Ingredienti: Zucchero, burro, cacao, vaniglia, sale, uova, farina.",
     "price": 6.50,
     "image_url": "images/brownie.jpg",
+    "image_alt": "Brownie classico",
     "allergens": ["Glutine", "Latte", "Uova"],
     "size": "200 g"
   },
@@ -54,6 +56,7 @@
     "description": "Incontro tra brownie e cookie: morbidi all'interno e leggermente croccanti fuori. Ricchi di cioccolato fondente. Ingredienti: Zucchero, zucchero di canna, burro, cacao, vaniglia, sale, uova, farina, cioccolato fondente, bicarbonato.",
     "price": 8.00,
     "image_url": "images/brownkies.jpg",
+    "image_alt": "Brownkies",
     "allergens": ["Glutine", "Latte", "Uova", "Soia"],
     "size": "200 g"
   },
@@ -64,6 +67,7 @@
     "description": "Cookie gusto classico a forma di ciambella, con glassatura al cioccolato bianco. Ingredienti: Zucchero semolato, zucchero di canna, burro, uova, vaniglia, farina, cioccolato fondente, cioccolato bianco, bicarbonato.",
     "price": 12.00,
     "image_url": "images/fake_donuts.jpg",
+    "image_alt": "Fake Donuts",
     "allergens": ["Glutine", "Latte", "Uova", "Soia"],
     "size": "4 pezzi (250 g)"
   },
@@ -71,9 +75,10 @@
     "id": 5,
     "name": "Nuvole Croccanti",
     "category": "singoli",
-    "description": "Biscotti croccanti alle nocciole e cacao che si sciolgono in bocca. Realizzati con ingredienti senza glutine (possibile contaminazione). Ingredienti: Zucchero, vaniglia, cacao, albume, nocciole tostate.",
+    "description": "Biscotti croccanti alle nocciole e cacao che si sciolgono in bocca. Realizzati con ingredienti senza glutine (possibile contaminazione). Ingredienti: Zucchero, vaniglia, cacao, farina di riso, fecola, nocciole.",
     "price": 6.50,
     "image_url": "images/nuvole_croccanti.jpg",
+    "image_alt": "Nuvole Croccanti",
     "allergens": ["Uova", "Frutta a guscio"],
     "size": "150 g"
   },
@@ -84,6 +89,7 @@
     "description": "Frollini da colazione con gocce di cioccolato fondente, genuini e senza conservanti. Friabili e golosi.",
     "price": 5.50,
     "image_url": "images/le_giuliette.jpg",
+    "image_alt": "Le Giuliette",
     "allergens": ["Glutine", "Latte", "Uova", "Soia"],
     "size": "250 g"
   },
@@ -94,6 +100,7 @@
     "description": "Edizioni speciali dei nostri iconici cookies artigianali, ripieni dei gusti più golosi ed esclusivi.",
     "price": 4.00,
     "image_url": "images/cookies_speciali.jpg",
+    "image_alt": "Cookies Speciali",
     "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio", "Soia"],
     "size": "1 pezzo",
     "options": {
@@ -111,6 +118,7 @@
     "description": "Piccola crostata artigianale dal gusto semplice e goloso, realizzata con frolla friabile e farcita con Nutella. Perfetta per una pausa dolce o una merenda sfiziosa.",
     "price": 3.50,
     "image_url": "images/crostata_nutella.jpg",
+    "image_alt": "Crostata alla Nutella",
     "allergens": ["Glutine", "Latte", "Uova", "Frutta a guscio", "Soia"],
     "size": "1 pezzo",
     "options": {
@@ -128,6 +136,7 @@
     "description": "Crostata monoporzione realizzata con frolla alla vaniglia e farcita con confettura. Un dolce classico, semplice e genuino, perfetto in ogni momento della giornata.",
     "price": 3.00,
     "image_url": "images/crostata_confettura.jpg",
+    "image_alt": "Crostata con confettura",
     "allergens": ["Glutine", "Latte", "Uova"],
     "size": "1 pezzo",
     "options": {
@@ -137,5 +146,57 @@
         "Frutti di bosco"
       ]
     }
+  },
+  {
+    "id": 12,
+    "name": "Peanut Brownie",
+    "category": "singoli",
+    "description": "Un intenso brownie al cacao dal cuore cremoso di burro di arachidi. La ricchezza del cioccolato incontra la morbidezza avvolgente della crema di arachidi, dando vita a un dolce dal gusto deciso e irresistibile, pensato per gli amanti dei sapori autentici e golosi.",
+    "tasting_advice": "Per esaltarne al massimo profumo, consistenza e scioglievolezza del ripieno, si consiglia di scaldare il Peanut Brownie per qualche secondo nel forno a microonde prima del consumo. Il cuore di burro di arachidi diventerà ancora più cremoso e avvolgente.",
+    "allergens_info": "Contiene: glutine, uova, latte, arachidi. Può contenere tracce di frutta a guscio, soia e sesamo.",
+    "price": 4.50,
+    "image_url": "images/peanut_brownie.jpg",
+    "image_alt": "Peanut Brownie - cuore di burro di arachidi",
+    "allergens": ["Glutine", "Uova", "Latte", "Arachidi"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 13,
+    "name": "Nutella Brownie",
+    "category": "singoli",
+    "description": "Un brownie al cacao dalla consistenza intensa e fondente che racchiude un generoso cuore di Nutella. L’incontro tra il gusto profondo del cioccolato e la celebre crema alle nocciole crea un equilibrio perfetto tra carattere e golosità.",
+    "tasting_advice": "Per esaltarne al meglio il ripieno, si consiglia di scaldare il Nutella Brownie per qualche secondo nel forno a microonde prima del consumo. Il cuore diventerà morbido e vellutato, esaltando il contrasto con la struttura del brownie.",
+    "allergens_info": "Contiene: glutine, uova, latte, nocciole. Può contenere tracce di altra frutta a guscio, arachidi, soia e sesamo.",
+    "price": 4.50,
+    "image_url": "images/nutella_brownie.jpg",
+    "image_alt": "Nutella Brownie - cuore di Nutella",
+    "allergens": ["Glutine", "Uova", "Latte", "Nocciole"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 14,
+    "name": "Brownie con crema di nocciola",
+    "category": "singoli",
+    "description": "Un raffinato brownie al cacao arricchito da un cuore di crema alla nocciola dal gusto morbido e delicato. La nota intensa del cacao lascia gradualmente spazio alla dolcezza avvolgente della nocciola.",
+    "tasting_advice": "Per una degustazione ottimale, si consiglia di scaldare il Brownie con crema di nocciola per qualche secondo nel forno a microonde. La crema alla nocciola diventerà più fluida e profumata, valorizzando ogni sfumatura del prodotto.",
+    "allergens_info": "Contiene: glutine, uova, latte, nocciole. Può contenere tracce di altra frutta a guscio, arachidi, soia e sesamo.",
+    "price": 4.50,
+    "image_url": "images/crema_nocciola_brownie.jpg",
+    "image_alt": "Brownie con crema di nocciola",
+    "allergens": ["Glutine", "Uova", "Latte", "Nocciole"],
+    "size": "1 pezzo (circa 90 g)"
+  },
+  {
+    "id": 15,
+    "name": "Dulce de Leche Brownie",
+    "category": "singoli",
+    "description": "Un brownie al cacao dal carattere deciso che custodisce al suo interno un irresistibile cuore di dulce de leche. Le intense note del cacao si fondono con la dolcezza caramellata del latte.",
+    "tasting_advice": "Scaldato per qualche secondo nel forno a microonde, il Dulce de Leche Brownie sprigiona tutta la sua cremosità. Il ripieno diventerà morbido e setoso.",
+    "allergens_info": "Contiene: glutine, uova, latte. Può contenere tracce di frutta a guscio, arachidi, soia e sesamo.",
+    "price": 4.50,
+    "image_url": "images/dulce_de_leche_brownie.jpg",
+    "image_alt": "Dulce de Leche Brownie",
+    "allergens": ["Glutine", "Uova", "Latte"],
+    "size": "1 pezzo (circa 90 g)"
   }
 ]
